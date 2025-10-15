@@ -16,6 +16,6 @@ export const userSchema = z.strictObject({
   lastName: z.string().min(1),
   email: z.string(),
   password: z.string().min(8).max(20),
-  roles: z.string().min(1).max(50).default('user'),
+  roles: z.array(z.string().min(1).max(50).default('user')),
   ...dbEntrySchema.shape
 });

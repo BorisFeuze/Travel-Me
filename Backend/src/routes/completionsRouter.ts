@@ -14,6 +14,6 @@ completionsRouter.get('/history/:id', getChatHistory);
 completionsRouter.use(validateZod(promptBodySchema, 'body'));
 completionsRouter.post('/simple-chat', createSimpleChatCompletion);
 completionsRouter.post('/chat', createChatCompletion);
-completionsRouter.post('/agent', authenticate, createPersonalizedChatCompletion);
+completionsRouter.post('/agent', authenticate('lax'), createPersonalizedChatCompletion);
 
 export default completionsRouter;

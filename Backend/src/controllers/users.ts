@@ -42,7 +42,7 @@ export const updateUser: RequestHandler<{ id: string }, UserDTO, UserInputDTO> =
   user.lastName = lastName;
   user.email = email;
   user.password = password;
-  user.roles = roles;
+  user.roles.push(roles);
 
   const updatedUser = await user.save();
 
