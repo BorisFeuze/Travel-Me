@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactNode } from "react";
 import { toast } from "react-toastify";
-import { AuthorizContext } from ".";
+import { AuthContext } from ".";
 import { me, login, logout, register, createUserCard } from "@/data";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
