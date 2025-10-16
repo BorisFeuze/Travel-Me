@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { UserCard } from '#models';
+import { User, UserProfile } from '#models';
 
 const hasRole = (...AllowRoles: string[]): RequestHandler => {
   return async (request, response, next) => {
@@ -10,22 +10,22 @@ const hasRole = (...AllowRoles: string[]): RequestHandler => {
     // console.log(request.user);
     const { id } = request.params;
     const { roles: userRoles, id: userId } = request.user;
-    let userCard: InstanceType<typeof UserCard> | null = null;
+    let userProfile: InstanceType<typeof UserProfile> | null = null;
 
     if (id) {
-      userCard = await UserCard.findById(id);
-      if (!userCard) {
+      userProfile = await UserProfile.findById(id);
+      if (!userProfile) {
         next(new Error('post not found', { cause: { status: 404 } }));
         return;
       }
 
-      request.userCard = userCard;
+      request.userProfile = UserProfile;
     }
     // console.log(userCard);
     if (userRoles.includes('admin')) {
       next();
     } else if (AllowRoles.includes('self')) {
-      if (userId !== userCard?.userId.toString()) {
+      if (userId !== userProfile?.userId.toString()) {
         next(new Error('Not authorized', { cause: { status: 403 } }));
         return;
       }
