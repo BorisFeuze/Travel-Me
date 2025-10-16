@@ -14,10 +14,10 @@ export const jobOfferInputSchema = z.strictObject({
     .string()
     .refine(val => isValidObjectId(val), 'Invalid userProfile ID')
     .transform(val => val.toString()),
-  pictureGallery: z.array(z.string().optional()),
+  pictureGallery: z.array(z.string().default('')),
   description: z.string(),
-  needs: z.array(z.string().optional()),
-  language: z.array(z.string())
+  needs: z.array(z.string().default('')),
+  languages: z.array(z.string().default(''))
 });
 
 export const jobOfferSchema = z.strictObject({

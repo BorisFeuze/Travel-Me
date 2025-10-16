@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { validateZod, authenticate, hasRole } from '#middlewares';
 import {
-  createuserProfile,
-  deleteuserProfile,
-  getAlluserProfiles,
-  getSingleuserProfile,
-  updateuserProfile
+  createUserProfile,
+  deleteUserProfile,
+  getAllUserProfiles,
+  getSingleUserProfile,
+  updateUserProfile
 } from '#controllers';
 import { userProfileInputSchema, querySchema, paramSchema } from '#schemas';
 
@@ -13,17 +13,17 @@ const userProfilesRouter = Router();
 
 userProfilesRouter
   .route('/')
-  .get(validateZod(querySchema, 'query'), getAlluserProfiles)
+  .get(validateZod(querySchema, 'query'), getAllUserProfiles)
   .post(
     authenticate('strict'),
     /* hasRole('self', 'admin'),*/ validateZod(userProfileInputSchema, 'body'),
-    createuserProfile
+    createUserProfile
   );
 userProfilesRouter.use('/:id', validateZod(paramSchema, 'params'));
 userProfilesRouter
   .route('/:id')
-  .get(getSingleuserProfile)
-  .put(authenticate, hasRole('self', 'admin'), validateZod(userProfileInputSchema, 'body'), updateuserProfile)
-  .delete(authenticate, hasRole('self', 'admin'), deleteuserProfile);
+  .get(getSingleUserProfile)
+  .put(authenticate, hasRole('self', 'admin'), validateZod(userProfileInputSchema, 'body'), updateUserProfile)
+  .delete(authenticate, hasRole('self', 'admin'), deleteUserProfile);
 
 export default userProfilesRouter;

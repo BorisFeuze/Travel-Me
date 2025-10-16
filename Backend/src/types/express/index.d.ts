@@ -1,18 +1,18 @@
-import { userSchema, userCardSchema, signInSchema, querySchema } from '#schemas';
+import { userSchema, UserProfileSchema, signInSchema, querySchema } from '#schemas';
 import { z } from 'zod/v4';
-import { User, UserCard, Post } from '#models';
+import { User, UserProfile, Post } from '#models';
 
 declare global {
   type UserRequestBody = z.infer<typeof userSchema>;
-  type UserCardRequestBody = z.infer<typeof userCardSchema>;
+  type UserProfileRequestBody = z.infer<typeof UserProfileSchema>;
   type SignInRequestBody = z.infer<typeof signInSchema>;
 
-  type SanitizedBody = UserRequestBody | UserCardRequestBody | SignInRequestBody;
+  type SanitizedBody = UserRequestBody | UserProfileRequestBody | SignInRequestBody;
 
   namespace Express {
     export interface Request {
       sanitQuery?: z.infer<typeof querySchema>;
-      userCard?: InstanceType<typeof UserCard>;
+      userProfile?: InstanceType<typeof UserProfile>;
       user?: {
         id: string;
         roles: string[];

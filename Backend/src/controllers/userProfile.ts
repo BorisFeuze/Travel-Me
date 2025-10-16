@@ -1,72 +1,91 @@
 import type { RequestHandler } from 'express';
 import { isValidObjectId } from 'mongoose';
-import { UserCard } from '#models';
+import { UserProfile } from '#models';
 import { type z } from 'zod/v4';
 import type { userProfileInputSchema, userProfileSchema } from '#schemas';
 
-type UserCardInputDTO = z.infer<typeof userProfileInputSchema>;
-type UserCardDTO = z.infer<typeof userProfileSchema>;
+type UserProfileInputDTO = z.infer<typeof userProfileInputSchema>;
+type UserProfileDTO = z.infer<typeof userProfileSchema>;
 
-export const getAllUserCards: RequestHandler<{}, UserCardDTO[]> = async (req, res) => {
-  const userId = req.sanitQuery?.userId;
+export const getAllUserProfiles: RequestHandler<{}, UserProfileDTO[]> = async (req, res) => {
+  const userId = req.sanitQuery?.Id;
 
-  let userCards: UserCardDTO[];
+  let UserProfiles: UserProfileDTO[];
   if (userId) {
-    userCards = await UserCard.find({ userId: userId }).lean();
+    UserProfiles = await UserProfile.find({ userId: userId }).lean();
   } else {
-    userCards = await UserCard.find().lean().populate('userId');
+    UserProfiles = await UserProfile.find().lean().populate('userId');
   }
-  res.json(userCards);
+  res.json(UserProfiles);
 };
 
-export const createUserCard: RequestHandler<{}, UserCardDTO, UserCardInputDTO> = async (req, res) => {
+export const createUserProfile: RequestHandler<{}, UserProfileDTO, UserProfileInputDTO> = async (req, res) => {
   const {
-    body: { userId, points, score }
+    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations }
   } = req;
-  let newUserCard;
-  const UserCards = await UserCard.find();
-  const isCard = UserCards.some(c => c.userId.toString() === userId.toString());
+  let newUserProfile;
+  const UserProfiles = await UserProfile.find();
+  const isCard = UserProfiles.some(c => c.userId.toString() === userId.toString());
   if (!isCard) {
-    newUserCard = await UserCard.create({ userId, points, score });
+    newUserProfile = await UserProfile.create({
+      pictureURL,
+      userId,
+      age,
+      continent,
+      country,
+      gender,
+      skills,
+      languages,
+      educations
+    });
   }
-  res.status(201).json(newUserCard);
+  res.status(201).json(newUserProfile);
 };
 
-export const getSingleUserCard: RequestHandler<{ id: string }, UserCardDTO> = async (req, res) => {
+export const getSingleUserProfile: RequestHandler<{ id: string }, UserProfileDTO> = async (req, res) => {
   const {
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  const userCard = await UserCard.findById(id).lean().populate('userId');
-  if (!userCard) throw new Error(`UserCard with id of ${id} doesn't exist`, { cause: 404 });
-  res.json(userCard);
+  const userProfile = await UserProfile.findById(id).lean().populate('userId');
+  if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
+  res.json(userProfile);
 };
 
-export const updateUserCard: RequestHandler<{ id: string }, UserCardDTO, UserCardInputDTO> = async (req, res) => {
+export const updateUserProfile: RequestHandler<{ id: string }, UserProfileDTO, UserProfileInputDTO> = async (
+  req,
+  res
+) => {
   const {
     params: { id },
-    body: { points, score },
-    userCard
+    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations },
+    userProfile
   } = req;
-  const { wins, losses } = score || { wins: 0, losses: 0 };
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  if (!userCard) throw new Error(`UserCard with id of ${id} doesn't exist`, { cause: 404 });
+  if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
 
-  userCard.points = points! <= 100 ? Math.max(userCard.points - points!, 0) : userCard.points + points!;
-  userCard.score = { wins: score!.wins + wins, losses: score!.losses + losses };
+  userProfile.pictureURL = pictureURL;
+  userProfile.userId = userId;
+  userProfile.age = age;
+  userProfile.continent = continent;
+  userProfile.country = country;
+  userProfile.gender = gender;
+  userProfile.skills = skills || [];
+  userProfile.languages = languages || [];
+  userProfile.educations = educations || [];
 
-  const updatedUserCard = await userCard.save();
+  const updatedUserProfile = await userProfile.save();
 
-  res.json(updatedUserCard);
+  res.json(updatedUserProfile);
 };
 
-export const deleteUserCard: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {
+export const deleteUserProfile: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {
   const {
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  const deletedUserCard = await UserCard.findByIdAndDelete(id).populate('userId');
-  if (!deletedUserCard) throw new Error(`UserCard with id of ${id} doesn't exist`, { cause: 404 });
-  res.json({ message: `UserCard with id of ${id} was deleted` });
+  const deletedUserProfile = await UserProfile.findByIdAndDelete(id).populate('userId');
+  if (!deletedUserProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
+  res.json({ message: `UserProfile with id of ${id} was deleted` });
 };
