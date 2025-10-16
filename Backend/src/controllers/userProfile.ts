@@ -2,10 +2,10 @@ import type { RequestHandler } from 'express';
 import { isValidObjectId } from 'mongoose';
 import { UserCard } from '#models';
 import { type z } from 'zod/v4';
-import type { userCardInputSchema, userCardSchema } from '#schemas';
+import type { userProfileInputSchema, userProfileSchema } from '#schemas';
 
-type UserCardInputDTO = z.infer<typeof userCardInputSchema>;
-type UserCardDTO = z.infer<typeof userCardSchema>;
+type UserCardInputDTO = z.infer<typeof userProfileInputSchema>;
+type UserCardDTO = z.infer<typeof userProfileSchema>;
 
 export const getAllUserCards: RequestHandler<{}, UserCardDTO[]> = async (req, res) => {
   const userId = req.sanitQuery?.userId;

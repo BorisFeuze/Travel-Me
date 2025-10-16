@@ -39,7 +39,7 @@ export const loginSchema = z.object({
 
 export const userAuthSchema = registerAuthSchema.omit({ confirmPassword: true });
 
-export const userProfileSchema = z.object({
+export const userProfileAuthSchema = z.object({
   ...userAuthSchema.omit({ password: true }).shape,
   _id: z.instanceof(Types.ObjectId),
   createdAt: z.date(),
