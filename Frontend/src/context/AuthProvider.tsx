@@ -1,78 +1,56 @@
-import { useState, useEffect, type ReactNode } from "react";
-import { toast } from "react-toastify";
-import { AuthContext } from ".";
-import { me, login, logout, register, createUserCard } from "@/data";
+import { useEffect, useState, type ReactNode } from 'react';
+import { AuthContext } from '.';
+import { login, me, logout, register } from '@/data';
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // Track authentication state
-  const [signedIn, setSignedIn] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [checkSession, setCheckSession] = useState(true);
+	const [signedIn, setSignedIn] = useState(false);
+	const [user, setUser] = useState<User | null>(null);
+	const [checkSession, setCheckSession] = useState(true);
 
-  // console.log(user);
+	const handleSignIn = async ({ email, password }: LoginData) => {
+		await login({ email, password });
+		setSignedIn(true);
+		setCheckSession(true);
+	};
 
-  // Handle sign-in: save token and update state
-  const handleSignIn = async ({ email, password }: LoginData) => {
-    await login({ email, password });
-    setCheckSession(true); // Trigger session check
-    setSignedIn(true);
-  };
+	const handleRegister = async (formState: RegisterData) => {
+		await register(formState);
+		setSignedIn(true);
+		setCheckSession(true);
+	};
 
-  // Handle sign-out: clear token and reset state
-  const handleSignOut = async () => {
-    await logout();
-    setSignedIn(false);
-    setUser(null);
-  };
+	const handleSignOut = async () => {
+		await logout();
+		setSignedIn(false);
+		setUser(null);
+	};
 
-  const handleRegister = async ({
-    firstName,
-    lastName,
-    email,
-    password,
-    confirmPassword,
-  }: RegisterData) => {
-    await register({ firstName, lastName, email, password, confirmPassword });
-    setCheckSession(true);
-    setSignedIn(true);
-  };
+	useEffect(() => {
+		const getUser = async () => {
+			try {
+				const userData = await me();
 
-  // On mount (or when checkSession changes), verify if user is logged in
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const data = await me(); // Get user profile from API
-        setUser(data.user);
-        // console.log(data.user);
-        // console.log(data.user?._id);
-        await createUserCard({ userId: user?._id });
-        setSignedIn(true);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Something went wrong ";
-        toast.error(errorMessage);
-      } finally {
-        setCheckSession(false); // Stop checking session after attempt
-      }
-    };
+				setUser(userData);
+				setSignedIn(true);
+			} catch (error) {
+				console.error(error);
+			} finally {
+				setCheckSession(false);
+			}
+		};
 
-    if (checkSession) getUser();
-  }, [checkSession]);
+		if (checkSession) getUser();
+	}, [checkSession]);
 
-  return (
-    <AuthorizContext
-      value={{
-        checkSession,
-        signedIn,
-        user,
-        handleSignIn,
-        handleSignOut,
-        handleRegister,
-      }}
-    >
-      {children}
-    </AuthorizContext>
-  );
+	const value: AuthContextType = {
+		signedIn,
+		user,
+		handleSignOut,
+		handleSignIn,
+		handleRegister
+	};
+
+	return <AuthContext value={value}>{children}</AuthContext>;
 };
 
 export default AuthProvider;
