@@ -1,8 +1,11 @@
 import Home from "./Home";
 import Login from "./Login";
 import NotFound from "./NotFound";
-import Post from "./Battle";
-import Register from "./Register";
-import LeaderBoard from "./LeaderBoard";
+import Chat from "./Chat";
+import Registration from "./Registration";
+import CreateJob from "./CreateJob";
+import DetailCountry from "./DetailCountry";
+import DetailJob from "./DetailJob";
+import UserAccount from "./UserAccount";
 
-export { Home, Login, NotFound, Post, Register, LeaderBoard };
+export { Home, Login, NotFound, Chat, Registration, CreateJob, DetailCountry, DetailJob, UserAccount };
