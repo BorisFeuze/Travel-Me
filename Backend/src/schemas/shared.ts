@@ -11,7 +11,7 @@ const dbEntrySchema = z.strictObject({
 });
 
 const querySchema = z.strictObject({
-  userId: z
+  Id: z
     .string()
     .refine(val => isValidObjectId(val), 'Invalid user ID')
     .optional()

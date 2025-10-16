@@ -30,7 +30,7 @@ export const getSingleUser: RequestHandler<{ id: string }, UserDTO> = async (req
 export const updateUser: RequestHandler<{ id: string }, UserDTO, UserInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { firstName, lastName, email, password, roles }
+    body: { firstName, lastName, email, password, roles, phoneNumber }
   } = req;
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
@@ -41,8 +41,9 @@ export const updateUser: RequestHandler<{ id: string }, UserDTO, UserInputDTO> =
   user.firstName = firstName;
   user.lastName = lastName;
   user.email = email;
+  user.phoneNumber = phoneNumber;
   user.password = password;
-  user.roles.push(roles);
+  user.roles = roles || [];
 
   const updatedUser = await user.save();
 

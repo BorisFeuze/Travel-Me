@@ -19,7 +19,7 @@ const hasRole = (...AllowRoles: string[]): RequestHandler => {
         return;
       }
 
-      request.userProfile = UserProfile;
+      request.userProfile = userProfile;
     }
     // console.log(userCard);
     if (userRoles.includes('admin')) {
