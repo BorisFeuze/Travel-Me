@@ -1,4 +1,4 @@
-export type Gerder = 'male' | 'female' | 'other';
+export type Gender = 'male' | 'female' | 'other';
 
 export type User = {
   id: string;                 // prefer string ids (e.g., UUID)
@@ -8,16 +8,15 @@ export type User = {
   continent: string;          // fixed: "continent" (spelling)
   country: string;
   city: string;
-  gender: string;             // string union instead of nested booleans
+  gender: Gender;             // string union instead of nested booleans
   phone: string;              // keep phone as string for leading zeros/+
   email: string;
   pictureURL?: string;
-  role?: 'Volunteer' | 'Host' | 'Admin';
+  role?: 'Volunteer' | 'Host' ;
   skills: string[];           // arrays for list fields
   languages: string[];
   educations: string[];
 };
-
 
 export const Users: User[] = [
   {
@@ -38,6 +37,5 @@ export const Users: User[] = [
     educations: ['Master of Arts'],                             // array
   },
 ];
-
 
 export default Users;
