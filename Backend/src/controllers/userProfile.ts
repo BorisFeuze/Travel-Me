@@ -87,7 +87,7 @@ export const deleteUserProfile: RequestHandler<{ id: string }, SuccessMsg> = asy
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  const deletedUserProfile = await UserProfile.findByIdAndDelete(id).populate('userId');
+  const deletedUserProfile = await UserProfile.findByIdAndDelete(id);
   if (!deletedUserProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
   res.json({ message: `UserProfile with id of ${id} was deleted` });
 };

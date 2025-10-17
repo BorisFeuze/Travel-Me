@@ -14,15 +14,16 @@ const hasRole = (...AllowRoles: string[]): RequestHandler => {
 
     if (id) {
       userProfile = await UserProfile.findById(id);
+
       if (!userProfile) {
-        next(new Error('post not found', { cause: { status: 404 } }));
+        next(new Error('userProfile not found', { cause: { status: 404 } }));
         return;
       }
 
       request.userProfile = userProfile;
     }
     // console.log(userCard);
-    if (userRoles.includes('admin')) {
+    else if (userRoles.includes('admin')) {
       next();
     } else if (AllowRoles.includes('self')) {
       if (userId !== userProfile?.userId.toString()) {
