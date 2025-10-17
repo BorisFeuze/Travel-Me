@@ -29,6 +29,9 @@ const Navbar = () => {
             <Link to="/chat" className="btn btn-ghost">
               Chat
             </Link>
+            <Link to="/profile" className="btn btn-ghost">
+              Profile
+            </Link>
 
             <button
               onClick={handleSignOut}

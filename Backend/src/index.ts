@@ -5,8 +5,6 @@ import cookieParser from 'cookie-parser';
 import { errorHandler, notFoundHandler } from '#middlewares';
 import { usersRouter, userProfilesRouter, /* completionsRouter,*/ authRouter, jobOffersRouter } from '#routes';
 import { CLIENT_BASE_URL } from '#config';
-import { usersRouter, userProfilesRouter, /*completionsRouter*/ authRouter } from '#routes';
-import { CLIENT_BASE_URL, } from '#config';
 
 const app = express();
 const port = process.env.PORT || 8000;

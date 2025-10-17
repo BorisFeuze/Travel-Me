@@ -4,7 +4,9 @@ import { addUserDetails } from "@/data/auth"
 const VolunteerAccountPage = () => {
   const [userData, setUserData] = useState<UserProfileFormData | null>(null);
   const [editingField, setEditingField] = useState<string | null>(null); 
-  const token = "DEIN_JWT_TOKEN"; 
+
+  const res = await login({ email, password });
+  const token = res.token; 
 
   useEffect(() => {
     // Daten vom Backend holen

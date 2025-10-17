@@ -91,7 +91,7 @@ const Register = () => {
 
   return (
     <div
-      className="fixed top-0 left-0 w-full h-full bg-cover bg-center z-0"
+      className="top-0 left-0 w-full h-full bg-cover bg-center z-0"
     >
       <div className="relative z-10 flex items-start justify-center min-h-screen mt-20">
         <form
