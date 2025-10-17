@@ -3,8 +3,8 @@ import express from 'express';
 import '#db';
 import cookieParser from 'cookie-parser';
 import { errorHandler, notFoundHandler } from '#middlewares';
-import { usersRouter, userProfilesRouter, completionsRouter, authRouter } from '#routes';
-import { CLIENT_BASE_URL, BACKEND_USER_URL } from '#config';
+import { usersRouter, userProfilesRouter, /* completionsRouter,*/ authRouter } from '#routes';
+import { CLIENT_BASE_URL } from '#config';
 
 const app = express();
 const port = process.env.PORT || 8000;

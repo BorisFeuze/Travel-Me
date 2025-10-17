@@ -16,7 +16,7 @@ userProfilesRouter
   .get(validateZod(querySchema, 'query'), getAllUserProfiles)
   .post(
     authenticate('strict'),
-    /* hasRole('self', 'admin'),*/ validateZod(userProfileInputSchema, 'body'),
+    /*hasRole('self', 'admin'),*/ validateZod(userProfileInputSchema, 'body'),
     createUserProfile
   );
 userProfilesRouter.use('/:id', validateZod(paramSchema, 'params'));

@@ -11,14 +11,19 @@ const dbEntrySchema = z.strictObject({
 });
 
 const querySchema = z.strictObject({
-  Id: z
+  userId: z
+    .string()
+    .refine(val => isValidObjectId(val), 'Invalid user ID')
+    .optional(),
+  userProfileId: z
     .string()
     .refine(val => isValidObjectId(val), 'Invalid user ID')
     .optional()
 });
 
 const paramSchema = z.strictObject({
-  id: stringIdSchema
+  userId: stringIdSchema,
+  userProfileId: stringIdSchema
 });
 
 export { dbEntrySchema, paramSchema, querySchema };

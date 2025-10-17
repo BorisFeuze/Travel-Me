@@ -18,19 +18,18 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<RootLayout />}>
-         
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Registration />} />
           <Route path="job/:id" element={<DetailJob />} />
           <Route path="country/:name" element={<DetailCountry />} />
-          <Route path="*" element={<NotFound />} />
 
           <Route element={<AuthLayout />}>
             <Route path="chat" element={<Chat />} />
             <Route path="account" element={<UserAccount />} />
             <Route path="create-job" element={<CreateJob />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
