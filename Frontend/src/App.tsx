@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router";
 import {
   Home,
   Login,
@@ -18,7 +18,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<RootLayout />}>
-          {/* Public Routes */}
+         
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Registration />} />
@@ -26,7 +26,6 @@ function App() {
           <Route path="country/:name" element={<DetailCountry />} />
           <Route path="*" element={<NotFound />} />
 
-          {/* Protected Routes */}
           <Route element={<AuthLayout />}>
             <Route path="chat" element={<Chat />} />
             <Route path="account" element={<UserAccount />} />

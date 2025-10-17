@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
 const envSchema = z.object({
-  VITE_APP_USER_API_URL: z.url().default("http://localhost:4000"),
+  VITE_APP_USER_API_URL: z.url().default("http://localhost:8000"),
 });
 
 const { success, data, error } = envSchema.safeParse(import.meta.env);
