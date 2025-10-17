@@ -23,7 +23,7 @@ userProfilesRouter.use('/:id', validateZod(paramSchema, 'params'));
 userProfilesRouter
   .route('/:id')
   .get(getSingleUserProfile)
-  .put(authenticate, hasRole('self', 'admin'), validateZod(userProfileInputSchema, 'body'), updateUserProfile)
-  .delete(authenticate, hasRole('self', 'admin'), deleteUserProfile);
+  .put(authenticate('strict'), hasRole('self', 'admin'), validateZod(userProfileInputSchema, 'body'), updateUserProfile)
+  .delete(authenticate('strict'), hasRole('self', 'admin'), deleteUserProfile);
 
 export default userProfilesRouter;

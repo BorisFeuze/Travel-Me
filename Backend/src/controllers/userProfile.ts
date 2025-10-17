@@ -16,7 +16,7 @@ export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async
   if (userId) {
     userProfiles = await UserProfile.find({ userId: userId }).lean();
   } else {
-    userProfiles = await UserProfile.find().lean().populate('userId');
+    userProfiles = await UserProfile.find().lean().populate('userId', '-password');
   }
   res.json({ message: 'List of UserProfiles', userProfiles });
 };
@@ -49,7 +49,7 @@ export const getSingleUserProfile: RequestHandler<{ id: string }, UserProfileTyp
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  const userProfile = await UserProfile.findById(id).lean().populate('userId');
+  const userProfile = await UserProfile.findById(id).lean().populate('userId', '-password');
   if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
   res.json({ message: 'userProfile created', userProfile });
 };
