@@ -22,8 +22,7 @@ const querySchema = z.strictObject({
 });
 
 const paramSchema = z.strictObject({
-  userId: stringIdSchema,
-  userProfileId: stringIdSchema
+  id: stringIdSchema
 });
 
 export { dbEntrySchema, paramSchema, querySchema };
