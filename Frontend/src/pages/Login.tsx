@@ -69,7 +69,7 @@ const Login = () => {
               onChange={handleChange}
               type="email"
               className="grow text-black text-[0.9rem]"
-              placeholder="Username"
+              placeholder="E-mail"
             />
           </label>
 
