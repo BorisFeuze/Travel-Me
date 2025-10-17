@@ -3,7 +3,7 @@ import express from 'express';
 import '#db';
 import cookieParser from 'cookie-parser';
 import { errorHandler, notFoundHandler } from '#middlewares';
-import { usersRouter, userProfilesRouter, /* completionsRouter,*/ authRouter } from '#routes';
+import { usersRouter, userProfilesRouter, /* completionsRouter,*/ authRouter, jobOffersRouter } from '#routes';
 import { CLIENT_BASE_URL } from '#config';
 
 const app = express();
@@ -22,6 +22,8 @@ app.use(express.json(), cookieParser());
 app.use('/users', usersRouter);
 
 app.use('/userProfiles', userProfilesRouter);
+
+app.use('/jobOffers', jobOffersRouter);
 
 app.use('/auth', authRouter);
 
