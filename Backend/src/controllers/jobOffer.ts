@@ -9,7 +9,7 @@ type JobofferDTO = z.infer<typeof jobOfferSchema>;
 type GetJobOffersType = SuccessMsg & { jobOffers: JobofferDTO[] };
 type JobOfferType = SuccessMsg & { jobOffer: JobofferDTO };
 
-export const getJoboffers: RequestHandler<{}, GetJobOffersType> = async (req, res) => {
+export const getJobOffers: RequestHandler<{}, GetJobOffersType> = async (req, res) => {
   const userProfileId = req.sanitQuery?.userProfileId;
 
   let jobOffers: JobofferDTO[];
