@@ -14,4 +14,4 @@ const jobOfferSchema = new Schema(
   }
 );
 
-export default model('jobOfferSchema', jobOfferSchema);
+export default model('jobOffer', jobOfferSchema);

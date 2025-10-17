@@ -5,4 +5,4 @@ const SchemaChat = new Schema({
   message: { type: String }
 });
 
-export default model('SchemaChat', SchemaChat);
+export default model('chat', SchemaChat);

@@ -43,9 +43,7 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="fixed top-0 left-0 w-full h-full bg-cover bg-center z-0"
-    >
+    <div className="w-full h-full bg-cover bg-center z-0">
       <div className="relative z-10 flex items-start justify-center min-h-screen mt-20">
         <form
           className="my-5 md:w-1/4 h-[35rem] flex flex-col gap-3 bg-white/30 backdrop-blur-sm border-amber-300 border-2 p-6 rounded-xl shadow-lg items-center justify-start"

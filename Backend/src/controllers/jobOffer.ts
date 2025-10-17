@@ -6,22 +6,24 @@ import { type z } from 'zod/v4';
 
 type JobOfferInputDTO = z.infer<typeof jobOfferInputSchema>;
 type JobofferDTO = z.infer<typeof jobOfferSchema>;
+type GetJobOffersType = SuccessMsg & { jobOffers: JobofferDTO[] };
+type JobOfferType = SuccessMsg & { jobOffer: JobofferDTO };
 
-export const getJoboffers: RequestHandler<{}, JobofferDTO[]> = async (req, res) => {
-  const userProfileId = req.sanitQuery?.Id;
+export const getJoboffers: RequestHandler<{}, GetJobOffersType> = async (req, res) => {
+  const userProfileId = req.sanitQuery?.userProfileId;
 
-  let JobOffers: JobofferDTO[];
+  let jobOffers: JobofferDTO[];
   if (userProfileId) {
-    JobOffers = await JobOffer.find({ userProfileId: userProfileId }).lean();
+    jobOffers = await JobOffer.find({ userProfileId: userProfileId }).lean();
   } else {
-    JobOffers = await JobOffer.find().lean();
+    jobOffers = await JobOffer.find().lean();
   }
-  res.json(JobOffers);
+  res.json({ message: 'List of jobOffers', jobOffers });
 };
 
-export const createUser: RequestHandler<{}, JobofferDTO, JobOfferInputDTO> = async (req, res) => {
+export const createJobOffer: RequestHandler<{}, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const { location, userProfileId, pictureGallery, description, needs, languages } = req.body;
-  const newUser = await JobOffer.create<JobOfferInputDTO>({
+  const jobOffer = await JobOffer.create<JobOfferInputDTO>({
     location,
     userProfileId,
     pictureGallery,
@@ -29,20 +31,20 @@ export const createUser: RequestHandler<{}, JobofferDTO, JobOfferInputDTO> = asy
     needs,
     languages
   });
-  res.status(201).json(newUser);
+  res.status(201).json({ message: 'jobOffer created', jobOffer });
 };
 
-export const getSingleJobOffer: RequestHandler<{ id: string }, JobofferDTO> = async (req, res) => {
+export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = async (req, res) => {
   const {
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   const jobOffer = await JobOffer.findById(id).lean();
   if (!jobOffer) throw new Error(`JobOffer with id of ${id} doesn't exist`, { cause: 404 });
-  res.send(jobOffer);
+  res.send({ message: 'searched jobOffer', jobOffer });
 };
 
-export const updateJobOffer: RequestHandler<{ id: string }, JobofferDTO, JobOfferInputDTO> = async (req, res) => {
+export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
     body: { location, userProfileId, pictureGallery, description, needs, languages }
@@ -60,9 +62,9 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobofferDTO, JobOffe
   jobOffer.needs = needs || [];
   jobOffer.languages = languages || [];
 
-  const updatedUser = await jobOffer.save();
+  await jobOffer.save();
 
-  res.json(updatedUser);
+  res.json({ message: 'updated jobOffer', jobOffer });
 };
 
 export const deleteJobOffer: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {

@@ -3,7 +3,7 @@ import { useAuth } from "@/context";
 import Searchbar from "./Searchbar";
 
 const Navbar = () => {
-const { signedIn, handleSignOut } = useAuth();
+  const { signedIn, handleSignOut } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -13,7 +13,6 @@ const { signedIn, handleSignOut } = useAuth();
 
   return (
     <div className="navbar bg-base-100 shadow-sm px-6">
-  
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-xl font-bold">
           TravelMe
@@ -28,12 +27,10 @@ const { signedIn, handleSignOut } = useAuth();
 
       <div className="flex-none">
         {!signedIn ? (
-      
           <Link to="/login" className="btn btn-outline btn-primary ml-2">
             Sign In
           </Link>
         ) : (
-      
           <div className="flex items-center gap-3">
             <Link to="/chat" className="btn btn-ghost">
               Chat

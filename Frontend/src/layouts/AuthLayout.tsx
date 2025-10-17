@@ -1,5 +1,5 @@
 import { useAuth } from "@/context";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate } from "react-router";
 
 const AuthLayout = () => {
   const { signedIn } = useAuth();
