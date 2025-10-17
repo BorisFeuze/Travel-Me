@@ -8,7 +8,7 @@ const jobOffersRouter = Router();
 jobOffersRouter
   .route('/')
   .get(getJobOffers)
-  .post(authenticate, hasRole('self', 'admin'), validateZod(jobOfferInputSchema, 'body'), createJobOffer);
+  .post(authenticate, /*hasRole('self', 'admin'),*/ validateZod(jobOfferInputSchema, 'body'), createJobOffer);
 jobOffersRouter.use('/:id', validateZod(paramSchema, 'params'));
 jobOffersRouter
   .route('/:id')
