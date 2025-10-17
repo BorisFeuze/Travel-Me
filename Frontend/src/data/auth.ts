@@ -52,4 +52,20 @@ const register = async (formData: RegisterData): Promise<SuccessRes> => {
   return data;
 };
 
-export { login, me, logout, register };
+const addUserDetails = async (formData: UserProfileFormData, token: string) => {
+  const res = await fetch(`${authServiceURL}/volunteer/details`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!res.ok) throw new Error("Failed to save volunteer details");
+  const data = await res.json();
+  return data;
+};
+
+
+export { login, me, logout, register, addUserDetails };

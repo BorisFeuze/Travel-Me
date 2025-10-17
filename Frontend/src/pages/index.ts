@@ -6,6 +6,7 @@ import Registration from "./Registration";
 import CreateJob from "./CreateJob";
 import DetailCountry from "./DetailCountry";
 import DetailJob from "./DetailJob";
-import UserAccount from "./UserAccount";
+import VolunteerAccount from "./VolunteerAccount";
+import HostAccount from "./HostAccount";
 
-export { Home, Login, NotFound, Chat, Registration, CreateJob, DetailCountry, DetailJob, UserAccount };
+export { Home, Login, NotFound, Chat, Registration, CreateJob, DetailCountry, DetailJob, VolunteerAccount, HostAccount };
