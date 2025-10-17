@@ -19,7 +19,7 @@ declare global {
      email: string;
      password: string;
      confirmPassword: string;
-     roles: boolean[];
+     roles: string[];
   };
 
  type AuthContextType = {
