@@ -14,11 +14,7 @@ const userProfilesRouter = Router();
 userProfilesRouter
   .route('/')
   .get(validateZod(querySchema, 'query'), getAllUserProfiles)
-  .post(
-    authenticate('strict'),
-    /*hasRole1('self', 'admin'),*/ validateZod(userProfileInputSchema, 'body'),
-    createUserProfile
-  );
+  .post(authenticate('strict'), validateZod(userProfileInputSchema, 'body'), createUserProfile);
 userProfilesRouter.use('/:id', validateZod(paramSchema, 'params'));
 userProfilesRouter
   .route('/:id')

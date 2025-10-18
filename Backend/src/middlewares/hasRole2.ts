@@ -16,7 +16,7 @@ const hasRole2 = (...AllowRoles: string[]): RequestHandler => {
       jobOffer = await JobOffer.findById(id);
 
       if (!jobOffer) {
-        next(new Error('userProfile not found', { cause: { status: 404 } }));
+        next(new Error('jobOffer not found', { cause: { status: 404 } }));
         return;
       }
 
