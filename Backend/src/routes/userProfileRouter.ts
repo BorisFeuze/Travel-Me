@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validateZod, authenticate, hasRole } from '#middlewares';
+import { validateZod, authenticate, hasRole1 } from '#middlewares';
 import {
   createUserProfile,
   deleteUserProfile,
@@ -16,14 +16,19 @@ userProfilesRouter
   .get(validateZod(querySchema, 'query'), getAllUserProfiles)
   .post(
     authenticate('strict'),
-    /*hasRole('self', 'admin'),*/ validateZod(userProfileInputSchema, 'body'),
+    /*hasRole1('self', 'admin'),*/ validateZod(userProfileInputSchema, 'body'),
     createUserProfile
   );
 userProfilesRouter.use('/:id', validateZod(paramSchema, 'params'));
 userProfilesRouter
   .route('/:id')
   .get(getSingleUserProfile)
-  .put(authenticate('strict'), hasRole('self', 'admin'), validateZod(userProfileInputSchema, 'body'), updateUserProfile)
-  .delete(authenticate('strict'), hasRole('self', 'admin'), deleteUserProfile);
+  .put(
+    authenticate('strict'),
+    hasRole1('self', 'admin'),
+    validateZod(userProfileInputSchema, 'body'),
+    updateUserProfile
+  )
+  .delete(authenticate('strict'), hasRole1('self', 'admin'), deleteUserProfile);
 
 export default userProfilesRouter;
