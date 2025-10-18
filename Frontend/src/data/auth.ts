@@ -23,7 +23,7 @@ const me = async () => {
   if (!res.ok) throw new Error("Something went wrong!");
 
   const data = await res.json();
-  return data; // Returns user profile
+  return data; 
 };
 
 const logout = async () => {
@@ -53,11 +53,11 @@ const register = async (formData: RegisterData): Promise<SuccessRes> => {
 };
 
 const addUserDetails = async (formData: UserProfileFormData) => {
-  const res = await fetch(`${authServiceURL}/volunteer/details`, {
+  const res = await fetch(`${authServiceURL}/userProfiles`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
-    credentials: "include", // Cookies werden automatisch mitgeschickt
+    credentials: "include", 
   });
 
   if (!res.ok) throw new Error("Failed to save volunteer details");
@@ -65,5 +65,26 @@ const addUserDetails = async (formData: UserProfileFormData) => {
   return data;
 };
 
+const getUserDetails = async (): Promise<UserProfileFormData | null> => {
+  const res = await fetch(`${authServiceURL}/userProfiles/me`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", 
+  });
 
-export { login, me, logout, register, addUserDetails };
+  if (res.status === 401) {
+    console.warn("Unauthorized – user not logged in.");
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch user details: ${res.statusText}`);
+  }
+
+  const data: UserProfileFormData = await res.json();
+  return data;
+};
+
+
+
+export { login, me, logout, register, addUserDetails, getUserDetails };

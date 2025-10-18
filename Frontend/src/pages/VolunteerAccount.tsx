@@ -1,265 +1,221 @@
 import { useState, useEffect } from "react";
-
-type UserProfileFormData = {
-  pictureURL?: string;
-  userId: string;
-  age?: number;
-  continent: string;
-  country: string;
-  gender: string;
-  skills: string[];
-  languages: string[];
-  educations: string[];
-};
+import { addUserDetails, getUserDetails } from "@/data";
 
 const VolunteerAccountPage = () => {
-  const [userData, setUserData] = useState<UserProfileFormData | null>(null);
-  const [formData, setFormData] = useState<UserProfileFormData | null>(null);
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
+  type VolunteerFormData = UserProfileFormData & Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
+
+  const [formData, setFormData] = useState<VolunteerFormData>({
+    pictureURL: "",
+    userId: "",
+    age: undefined,
+    continent: "",
+    country: "",
+    gender: "",
+    skills: [],
+    languages: [],
+    educations: [],
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: 0,
+  });
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+  const [saveMessage, setSaveMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  const skillOptions = ["Cooking", "Teaching", "Building", "Gardening", "First Aid"];
+  const languageOptions = ["English", "Spanish", "German", "French", "Portuguese"];
+  const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadUser = async () => {
       try {
-        const res = await fetch("http://localhost:8000/auth/volunteer/me", {
-          credentials: "include", 
-        });
-        if (!res.ok) {
-          const defaultData = {
-            userId: "",
-            continent: "",
-            country: "",
-            gender: "",
-            skills: [],
-            languages: [],
-            educations: [],
-          };
-          setUserData(defaultData);
-          setFormData(defaultData);
-          return;
-        }
-        const data: UserProfileFormData = await res.json();
-        setUserData(data);
-        setFormData(data);
-        if (data.pictureURL) {
-          setPreviewUrl(data.pictureURL);
+        const user = await getUserDetails();
+        if (user) {
+          setFormData(prev => ({ ...prev, ...user }));
+          setPreviewUrl(user.pictureURL || null);
         }
       } catch (err) {
-        console.error(err);
-        const defaultData = {
-          userId: "",
-          continent: "",
-          country: "",
-          gender: "",
-          skills: [],
-          languages: [],
-          educations: [],
-        };
-        setUserData(defaultData);
-        setFormData(defaultData);
+        console.error("Failed to load user data", err);
       }
     };
-
-    fetchData();
+    loadUser();
   }, []);
 
-  const handleInputChange = (field: keyof UserProfileFormData, value: string) => {
-    if (!formData) return;
-    setFormData({
-      ...formData,
-      [field]: value
-    });
-  };
-
-  const handleArrayInputChange = (field: keyof UserProfileFormData, value: string) => {
-    if (!formData) return;
-    const arrayValue = value.split(',').map(item => item.trim()).filter(item => item);
-    setFormData({
-      ...formData,
-      [field]: arrayValue
-    });
-  };
-
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setSaveMessage({type: 'error', text: 'File size must be less than 5MB'});
-        return;
-      }
-      if (!file.type.startsWith('image/')) {
-        setSaveMessage({type: 'error', text: 'Please select an image file'});
-        return;
-      }
-      setProfilePicture(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleInputChange = <K extends keyof VolunteerFormData>(
+    field: K,
+    value: VolunteerFormData[K]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = async () => {
-    if (!formData) return;
-    
     setIsSaving(true);
     setSaveMessage(null);
-
     try {
-      const formDataToSend = new FormData();
-      
-      if (profilePicture) {
-        formDataToSend.append('profilePicture', profilePicture);
-      }
-      
-      formDataToSend.append('continent', formData.continent);
-      formDataToSend.append('country', formData.country);
-      formDataToSend.append('gender', formData.gender);
-      formDataToSend.append('skills', JSON.stringify(formData.skills));
-      formDataToSend.append('languages', JSON.stringify(formData.languages));
-      formDataToSend.append('educations', JSON.stringify(formData.educations));
-      
-      if (formData.age) {
-        formDataToSend.append('age', formData.age.toString());
-      }
-
-      const res = await fetch("http://localhost:8000/user-profiles/:id}", {
-        method: "PUT",
-        credentials: "include",
-        body: formDataToSend,
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to update profile');
-      }
-
-      const updatedData = await res.json();
-      setUserData(updatedData);
-      setFormData(updatedData);
-      setSaveMessage({type: 'success', text: 'Profile updated successfully!'});
-      setProfilePicture(null);
+      await addUserDetails(formData);
+      setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
       console.error(err);
-      setSaveMessage({
-        type: 'error', 
-        text: err instanceof Error ? err.message : 'Failed to save changes'
-      });
+      setSaveMessage({ text: "Error while saving changes.", type: "error" });
     } finally {
       setIsSaving(false);
     }
   };
 
-  if (!formData) return <div className="p-4">Loading...</div>;
-
   return (
-    <div className="hero bg-base-200 min-h-screen">
-      <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-base-200 p-4 gap-8">
+
+      {/* Left-Side: Profile Picture */}
+      <div className="w-full lg:w-1/3 flex flex-col items-center gap-4">
+     <div className="avatar mb-4">
+        <div className="w-40 h-40 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="flex items-center justify-center w-full h-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-1/2 h-1/2 text-white"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
+     </div>
+          {/* Register infos */}
+        <div className="bg-white/50 backdrop-blur-sm p-4 rounded-lg w-full text-center flex flex-col gap-2">
+          <div className="flex justify-center gap-2 font-bold text-xl">
+            <span>{formData.firstName}</span>
+            <span>{formData.lastName}</span>
+          </div>
+          <p>{formData.email}</p>
+          <p>{formData.phoneNumber}</p>
+        </div>
+      </div>
+
+      {/* Rightside: Form for User */}
+      <div className="w-full lg:w-2/3">
+        <div className="card bg-base-100 shadow-2xl">
           <div className="card-body">
-            <h2 className="card-title">Account Settings</h2>
-            
+            <h2 className="card-title text-2xl mb-4">Edit Volunteer Details</h2>
             {saveMessage && (
-              <div className={`alert ${saveMessage.type === 'success' ? 'alert-success' : 'alert-error'}`}>
+              <div className={`alert mb-4 ${saveMessage.type === "success" ? "alert-success" : "alert-error"}`}>
                 <span>{saveMessage.text}</span>
               </div>
             )}
 
-            <fieldset className="fieldset">
-              <label className="label">
-                <span className="label-text">Profile Picture</span>
-              </label>
-              {previewUrl && (
-                <div className="avatar mb-2">
-                  <div className="w-24 rounded-full">
-                    <img src={previewUrl} alt="Profile preview" />
-                  </div>
-                </div>
-              )}
-              <input 
-                type="file" 
-                accept="image/*"
-                className="file-input file-input-bordered w-full" 
-                onChange={handleProfilePictureChange}
-              />
-              
-              <label className="label mt-4">
-                <span className="label-text">Country</span>
-              </label>
-              <input 
-                type="text" 
-                className="input input-bordered" 
-                placeholder="Enter Country"
-                value={formData.country}
-                onChange={(e) => handleInputChange('country', e.target.value)}
-              />
+            <label className="label">
+              <span className="label-text">Age</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4"
+              placeholder="Enter your age"
+              value={formData.age ?? ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                const numberValue = value === "" ? undefined : Number(value);
+                handleInputChange("age", numberValue);
+              }}
+            />
 
-          <label className="label">
-                <span className="label-text">Continent</span>
-              </label>
-              <input 
-                type="text" 
-                className="input input-bordered" 
-                placeholder="Enter Continent"
-                value={formData.continent}
-                onChange={(e) => handleInputChange('continent', e.target.value)}
-              />
+            <label className="label">
+              <span className="label-text">Country</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4"
+              value={formData.country}
+              onChange={(e) => handleInputChange("country", e.target.value)}
+            />
 
-              <label className="label">
-                <span className="label-text">Gender</span>
-              </label>
-              <input 
-                type="text" 
-                className="input input-bordered" 
-                placeholder="Enter Gender"
-                value={formData.gender}
-                onChange={(e) => handleInputChange('gender', e.target.value)}
-              />
+            <label className="label">
+              <span className="label-text">Continent</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4"
+              value={formData.continent}
+              onChange={(e) => handleInputChange("continent", e.target.value)}
+            />
 
-              <label className="label">
-                <span className="label-text">Skills</span>
-              </label>
-              <input 
-                type="text" 
-                className="input input-bordered" 
-                placeholder="Enter skills separated by commas"
-                value={formData.skills.join(', ')}
-                onChange={(e) => handleArrayInputChange('skills', e.target.value)}
-              />
+            <label className="label">
+              <span className="label-text">Gender</span>
+            </label>
+            <select
+              className="select select-bordered w-full mb-4"
+              value={formData.gender}
+              onChange={(e) => handleInputChange("gender", e.target.value)}
+            >
+              <option value="">Select gender</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="diverse">Others</option>
+            </select>
 
-              <label className="label">
-                <span className="label-text">Languages</span>
-              </label>
-              <input 
-                type="text" 
-                className="input input-bordered" 
-                placeholder="Enter languages separated by commas"
-                value={formData.languages.join(', ')}
-                onChange={(e) => handleArrayInputChange('languages', e.target.value)}
-              />
+           
+            <label className="label">
+              <span className="label-text">Skills</span>
+            </label>
+            <select
+              className="select select-bordered w-full mb-4"
+              value={formData.skills[0] ?? ""}
+              onChange={(e) => handleInputChange("skills", [e.target.value])}
+            >
+              <option value="">Select a skill</option>
+              {skillOptions.map((skill) => (
+                <option key={skill} value={skill}>{skill}</option>
+              ))}
+            </select>
 
-              <label className="label">
-                <span className="label-text">Education</span>
-              </label>
-              <input 
-                type="text" 
-                className="input input-bordered" 
-                placeholder="Enter education separated by commas"
-                value={formData.educations.join(', ')}
-                onChange={(e) => handleArrayInputChange('educations', e.target.value)}
-              />
+         
+            <label className="label">
+              <span className="label-text">Languages</span>
+            </label>
+            <select
+              className="select select-bordered w-full mb-4"
+              value={formData.languages[0] ?? ""}
+              onChange={(e) => handleInputChange("languages", [e.target.value])}
+            >
+              <option value="">Select a language</option>
+              {languageOptions.map((lang) => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
 
-              <button 
-                className="btn btn-neutral mt-4" 
-                onClick={handleSave}
-                disabled={isSaving}
-              >
-                {isSaving ? 'Saving...' : 'Save Changes'}
-              </button>
-            </fieldset>
+            
+            <label className="label">
+              <span className="label-text">Education</span>
+            </label>
+            <select
+              className="select select-bordered w-full mb-6"
+              value={formData.educations[0] ?? ""}
+              onChange={(e) => handleInputChange("educations", [e.target.value])}
+            >
+              <option value="">Select education</option>
+              {educationOptions.map((edu) => (
+                <option key={edu} value={edu}>{edu}</option>
+              ))}
+            </select>
+
+            <button
+              className="btn btn-neutral w-full"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
           </div>
         </div>
       </div>
