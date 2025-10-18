@@ -1,6 +1,6 @@
 import { userSchema, UserProfileSchema, signInSchema, querySchema } from '#schemas';
 import { z } from 'zod/v4';
-import { User, UserProfile, Post } from '#models';
+import { UserProfile, JobOffer } from '#models';
 
 declare global {
   type UserRequestBody = z.infer<typeof userSchema>;
@@ -13,10 +13,10 @@ declare global {
     export interface Request {
       sanitQuery?: z.infer<typeof querySchema>;
       userProfile?: InstanceType<typeof UserProfile>;
+      jobOffer?: InstanceType<typeof JobOffer>;
       user?: {
         id: string;
         roles: string[];
-        post?: InstanceType<typeof Post>;
       };
     }
   }
