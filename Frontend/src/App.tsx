@@ -8,7 +8,8 @@ import {
   CreateJob,
   DetailCountry,
   DetailJob,
-  UserAccount,
+  VolunteerAccount,
+  HostAccount
 } from "./pages";
 import RootLayout from "./layouts/RootLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -26,7 +27,8 @@ function App() {
 
           <Route element={<AuthLayout />}>
             <Route path="chat" element={<Chat />} />
-            <Route path="account" element={<UserAccount />} />
+            <Route path="userProfiles" element={<VolunteerAccount />} />
+            <Route path="userProfiles" element={<HostAccount />} />
             <Route path="create-job" element={<CreateJob />} />
           </Route>
           <Route path="*" element={<NotFound />} />

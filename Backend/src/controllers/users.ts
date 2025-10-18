@@ -9,9 +9,9 @@ type UserDTO = z.infer<typeof userSchema>;
 type GetUsersType = SuccessMsg & { users: UserDTO[] };
 type UserType = SuccessMsg & { user: UserDTO };
 
-export const getUsers: RequestHandler<{}, GetUsersType> = async (_req, res) => {
-  const users = await User.find().lean().select('-password');
-  res.json({ message: 'List of users', users });
+export const getUsers: RequestHandler<{}, UserDTO[]> = async (_req, res) => {
+  const users = await User.find().lean();
+  res.json(users);
 };
 
 export const createUser: RequestHandler<{}, UserType, UserInputDTO> = async (req, res) => {
@@ -24,7 +24,7 @@ export const getSingleUser: RequestHandler<{ id: string }, UserType> = async (re
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  const user = await User.findById(id).lean().select('-password');
+  const user = await User.findById(id).lean();
   if (!user) throw new Error(`User with id of ${id} doesn't exist`, { cause: 404 });
   res.send({ message: ' searched user', user });
 };

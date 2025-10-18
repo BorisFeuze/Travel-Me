@@ -1,15 +1,9 @@
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useAuth } from "@/context";
 import Searchbar from "./Searchbar";
 
 const Navbar = () => {
-  const { signedIn, handleSignOut } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await handleSignOut();
-    navigate("/login");
-  };
+ const { signedIn, handleSignOut } = useAuth();
 
   return (
     <div className="navbar bg-base-100 shadow-sm px-6">
@@ -35,9 +29,12 @@ const Navbar = () => {
             <Link to="/chat" className="btn btn-ghost">
               Chat
             </Link>
+            <Link to="/userProfiles" className="btn btn-ghost">
+              Profile
+            </Link>
 
             <button
-              onClick={handleLogout}
+              onClick={handleSignOut}
               className="btn btn-outline btn-error ml-2"
             >
               Sign Out
