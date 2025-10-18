@@ -27,8 +27,8 @@ function App() {
 
           <Route element={<AuthLayout />}>
             <Route path="chat" element={<Chat />} />
-            <Route path="account" element={<VolunteerAccount />} />
-            <Route path="account" element={<HostAccount />} />
+            <Route path="userProfiles" element={<VolunteerAccount />} />
+            <Route path="userProfiles" element={<HostAccount />} />
             <Route path="create-job" element={<CreateJob />} />
           </Route>
           <Route path="*" element={<NotFound />} />

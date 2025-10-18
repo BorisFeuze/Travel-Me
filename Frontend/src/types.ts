@@ -46,3 +46,4 @@ declare global {
 }
 
 export type { AuthContextType, User, LoginData, RegisterData };
+

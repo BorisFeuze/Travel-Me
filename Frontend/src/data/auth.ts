@@ -52,14 +52,12 @@ const register = async (formData: RegisterData): Promise<SuccessRes> => {
   return data;
 };
 
-const addUserDetails = async (formData: UserProfileFormData, token: string) => {
+const addUserDetails = async (formData: UserProfileFormData) => {
   const res = await fetch(`${authServiceURL}/volunteer/details`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
+    credentials: "include", // Cookies werden automatisch mitgeschickt
   });
 
   if (!res.ok) throw new Error("Failed to save volunteer details");

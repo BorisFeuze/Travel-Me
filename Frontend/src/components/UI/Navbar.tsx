@@ -29,7 +29,7 @@ const Navbar = () => {
             <Link to="/chat" className="btn btn-ghost">
               Chat
             </Link>
-            <Link to="/profile" className="btn btn-ghost">
+            <Link to="/userProfiles" className="btn btn-ghost">
               Profile
             </Link>
 

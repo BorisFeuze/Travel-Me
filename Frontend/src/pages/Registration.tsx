@@ -3,15 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context";
 
-type RegisterData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  phoneNumber: number;
-  confirmPassword: string;
-  roles: string[];
-};
+
 const Register = () => {
   const [
     {
@@ -33,6 +25,7 @@ const Register = () => {
     confirmPassword: "",
     roles: ["volunteer"],
   });
+  
   const { handleRegister } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
