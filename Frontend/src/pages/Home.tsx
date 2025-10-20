@@ -6,9 +6,9 @@ import {
   Features,
   TopHosts,
   Countries,
+  Requiredskills,
   Joinus,
   Footer,
-  // Requiredskills,
 } from "@/components/UI";
 
 const Home = () => {
@@ -52,7 +52,7 @@ const Home = () => {
       <Countries />
 
       {/* Required skills/WORK TAGS */}
-      {/* <Requiredskills /> */}
+      <Requiredskills />
 
       {/* Join Us Section */}
       <Joinus />
