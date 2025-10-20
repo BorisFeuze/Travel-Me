@@ -3,7 +3,7 @@ import { useAuth } from "@/context";
 import Searchbar from "./Searchbar";
 
 const Navbar = () => {
- const { signedIn, handleSignOut } = useAuth();
+ const { signedIn, handleSignOut, user } = useAuth();
 
   return (
     <div className="navbar bg-base-100 shadow-sm px-6">
@@ -29,9 +29,12 @@ const Navbar = () => {
             <Link to="/chat" className="btn btn-ghost">
               Chat
             </Link>
-            <Link to="/userProfiles" className="btn btn-ghost">
-              Profile
-            </Link>
+            
+            {user?.roles[0] === "host" ? (
+            <Link to="/hostAccount" className="btn btn-ghost">Profile</Link>
+            ) : (
+            <Link to="/volunteerAccount" className="btn btn-ghost">Profile</Link>
+            )}
 
             <button
               onClick={handleSignOut}

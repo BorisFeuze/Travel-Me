@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { AuthContext } from '.';
-import { login, me, logout, register } from '@/data';
+import { login, me, logout, register, addUserDetails } from '@/data';
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [signedIn, setSignedIn] = useState(false);
@@ -26,21 +26,26 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 	};
 
 	useEffect(() => {
-		const getUser = async () => {
-			try {
-				const userData = await me();
+  const getUser = async () => {
+    try {
+      const userData = await me();
+      console.log("Data", userData);
+      
+      setUser(userData.user); 
+      setSignedIn(true);
+      
+      const detailUser = await addUserDetails({ userId: userData.user._id });
+      console.log(detailUser);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setCheckSession(false);
+    }
+  };
 
-				setUser(userData);
-				setSignedIn(true);
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setCheckSession(false);
-			}
-		};
+  if (checkSession) getUser();
+}, [checkSession]);
 
-		if (checkSession) getUser();
-	}, [checkSession]);
 
 	const value: AuthContextType = {
 		signedIn,
