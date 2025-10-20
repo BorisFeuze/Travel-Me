@@ -1,4 +1,3 @@
-// src/library/users.ts
 export type Gender = "male" | "female" | "other";
 export type UserRole = "Volunteer" | "Host";
 
@@ -22,6 +21,13 @@ export type User = {
   reviewsCount?: number;
   hostedCount?: number;
   isSuperhost?: boolean;
+};
+
+// New type for skill statistics
+export type SkillsStat = {
+  skill: string;
+  count: number;
+  hostIds: string[]; // which hosts require it
 };
 
 // ---- All users (volunteers + hosts) live in ONE array ----
@@ -198,7 +204,7 @@ export const Users: User[] = [
     email: "sofia@example.com",
     role: "Host",
     pictureURL: "",
-    skills: ["DIY", "Baking"],
+    skills: ["Baking"],
     languages: ["German", "English"],
     educations: ["BSc Architecture"],
     rating: 4.8,
@@ -229,6 +235,9 @@ export const Users: User[] = [
   },
 ];
 
+export default Users;
+
+// In usersMock.ts
 export const UsersAPI = {
   async getTopHosts(limit = 10): Promise<User[]> {
     const hosts = Users.filter((u) => u.role === "Host");
@@ -239,6 +248,25 @@ export const UsersAPI = {
     );
     return hosts.slice(0, limit);
   },
-};
 
-export default Users;
+  async getSkillStats(limit = 8): Promise<SkillsStat[]> {
+    const hosts = Users.filter((u) => u.role === "Host");
+    const map = new Map<string, { count: number; hostIds: string[] }>();
+
+    for (const h of hosts) {
+      const uniqueSkills = Array.from(new Set(h.skills));
+      for (const s of uniqueSkills) {
+        const curr = map.get(s) ?? { count: 0, hostIds: [] };
+        curr.count += 1;
+        curr.hostIds.push(h.id);
+        map.set(s, curr);
+      }
+    }
+
+    const stats: SkillsStat[] = Array.from(map.entries())
+      .map(([skill, v]) => ({ skill, count: v.count, hostIds: v.hostIds }))
+      .sort((a, b) => b.count - a.count);
+
+    return stats.slice(0, limit);
+  },
+};
