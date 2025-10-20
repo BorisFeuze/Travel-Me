@@ -9,17 +9,13 @@ cloudinary.config({
 });
 
 const cloudUploader: RequestHandler = async (request, response, next) => {
-  try {
-    const filepath = request.image!.filepath;
+  const filepath = request.image!.filepath;
 
-    const results = await cloudinary.uploader.upload(filepath);
+  const results = await cloudinary.uploader.upload(filepath);
 
-    request.body.image = results.secure_url;
+  request.body.image = results.secure_url;
 
-    next();
-  } catch (error) {
-    next(error);
-  }
+  next();
 };
 
 export default cloudUploader;

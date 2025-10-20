@@ -1,8 +1,9 @@
 declare global {
   type User = {
     _id: string;
-    firstName?: string;
-    lastName?: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: number;
     email: string;
     roles: string[];
   };
@@ -12,38 +13,32 @@ declare global {
     password: string;
   };
 
-  type RegisterData = {
-    firstName: string;
-    lastName: string;
-    email: string;
+  type RegisterData = User & {
     password: string;
-    phoneNumber: number;
     confirmPassword: string;
-    roles: string[];
   };
 
- type AuthContextType = {
-		signedIn: boolean | null;
-		user: User | null;
-		handleSignIn: ({ email, password }: LoginData) => Promise<void>;
-		handleSignOut: () => Promise<void>;
-		handleRegister: (formState: RegisterData) => Promise<void>;
-	};
+  type AuthContextType = {
+    signedIn: boolean | null;
+    user: User | null;
+    handleSignIn: ({ email, password }: LoginData) => Promise<void>;
+    handleSignOut: () => Promise<void>;
+    handleRegister: (formState: RegisterData) => Promise<void>;
+  };
 
   type UserProfileFormData = {
-  pictureURL?: string;
-  userId: string;
-  age?: number;
-  continent: string;
-  country: string;
-  gender: string;
-  skills: string[];
-  languages: string[];
-  educations: string[];
-};
+    pictureURL?: string;
+    userId: string;
+    age?: number;
+    continent: string;
+    country: string;
+    gender: string;
+    skills: string[];
+    languages: string[];
+    educations: string[];
+  };
 
   type SuccessRes = { message: string };
 }
 
 export type { AuthContextType, User, LoginData, RegisterData };
-
