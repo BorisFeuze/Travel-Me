@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validateZod, authenticate, hasRole1 } from '#middlewares';
+import { validateZod, authenticate, hasRole1, formMiddleWare, cloudUploader } from '#middlewares';
 import {
   createUserProfile,
   deleteUserProfile,
@@ -20,6 +20,8 @@ userProfilesRouter
   .route('/:id')
   .get(getSingleUserProfile)
   .put(
+    formMiddleWare,
+    cloudUploader,
     authenticate('strict'),
     hasRole1('self', 'admin'),
     validateZod(userProfileInputSchema, 'body'),

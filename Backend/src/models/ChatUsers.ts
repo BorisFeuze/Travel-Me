@@ -1,8 +1,14 @@
 import { model, Schema } from 'mongoose';
 
-const SchemaChat = new Schema({
-  userProfileId: { type: String, ref: 'userProfile', required: true, unique: true },
-  message: { type: String }
-});
+const Chat = new Schema(
+  {
+    senderId: { type: Schema.Types.ObjectId, ref: 'user', required: true, unique: true },
+    receiverId: { type: Schema.Types.ObjectId, ref: 'user', required: true, unique: true },
+    message: { type: String },
+    image: { type: String },
+    seen: { type: Boolean, default: false }
+  },
+  { timestamps: true }
+);
 
-export default model('chat', SchemaChat);
+export default model('chat', Chat);

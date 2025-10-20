@@ -3,7 +3,7 @@ import { model, Schema } from 'mongoose';
 const userProfile = new Schema(
   {
     pictureURL: { type: String, default: '' },
-    userId: { type: String, ref: 'user', required: true, unique: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'user', required: true, unique: true },
     age: { type: Number, required: [true, 'Age is required'], default: 18 },
     continent: { type: String, required: [true, 'Continent is required'] },
     country: { type: String, required: [true, 'Country is required'] },

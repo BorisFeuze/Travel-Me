@@ -4,3 +4,5 @@ export { default as notFoundHandler } from './notFoundHandler.ts';
 export { default as authenticate } from './authenticate.ts';
 export { default as hasRole1 } from './hasRole1.ts';
 export { default as hasRole2 } from './hasRole2.ts';
+export { default as formMiddleWare } from './formMiddleware.ts';
+export { default as cloudUploader } from './cloudUploader.ts';
