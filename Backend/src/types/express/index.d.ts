@@ -1,3 +1,4 @@
+import { File } from 'formidable';
 import { userSchema, UserProfileSchema, signInSchema, querySchema } from '#schemas';
 import { z } from 'zod/v4';
 import { UserProfile, JobOffer } from '#models';
@@ -18,6 +19,7 @@ declare global {
         id: string;
         roles: string[];
       };
+      image?: File;
     }
   }
 }

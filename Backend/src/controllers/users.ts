@@ -10,7 +10,7 @@ type GetUsersType = SuccessMsg & { users: UserDTO[] };
 type UserType = SuccessMsg & { user: UserDTO };
 
 export const getUsers: RequestHandler<{}, UserDTO[]> = async (_req, res) => {
-  const users = await User.find().lean();
+  const users = await User.find().lean().select('-password');
   res.json(users);
 };
 
@@ -24,7 +24,7 @@ export const getSingleUser: RequestHandler<{ id: string }, UserType> = async (re
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  const user = await User.findById(id).lean();
+  const user = await User.findById(id).lean().select('-password');
   if (!user) throw new Error(`User with id of ${id} doesn't exist`, { cause: 404 });
   res.send({ message: ' searched user', user });
 };

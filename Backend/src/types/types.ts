@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { promptBodySchema } from '#schemas';
+import type { promptBodySchema, userSocketMapSchema } from '#schemas';
 import { registerSchema, loginSchema, userProfileAuthSchema, userSchema, userAuthSchema } from '#schemas';
 
 export type IncomingPrompt = z.infer<typeof promptBodySchema>;
@@ -22,5 +22,7 @@ export type UserProfileAuthSchemaDTO = z.infer<typeof userProfileAuthSchema>;
 
 declare global {
   type SuccessMsg = { message: string };
+
+  type userSocketMapType = z.infer<typeof userSocketMapSchema>;
 }
 export {};

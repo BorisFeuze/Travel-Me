@@ -17,7 +17,11 @@ const envSchema = z.object({
   CLIENT_BASE_URL: z.url().default('http://localhost:5173'),
   AI_API_KEY: z.string(),
   AI_MODEL: z.string().default('gemini-2.0-flash'),
-  AI_URL: z.string().default('https://generativelanguage.googleapis.com/v1beta/openai/')
+  AI_URL: z.string().default('https://generativelanguage.googleapis.com/v1beta/openai/'),
+
+  CLOUD_NAME: z.string(),
+  API_KEY: z.string(),
+  API_SECRET: z.string()
 });
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -37,5 +41,8 @@ export const {
   SALT_ROUNDS,
   AI_API_KEY,
   AI_MODEL,
-  AI_URL
+  AI_URL,
+  CLOUD_NAME,
+  API_KEY,
+  API_SECRET
 } = data;
