@@ -42,7 +42,7 @@ const TopHosts = () => {
           See all
         </a>
       </div>
-      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
+      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 justify-items-center">
         {displayedHosts.map((h) => (
           <div
             key={h.id}
