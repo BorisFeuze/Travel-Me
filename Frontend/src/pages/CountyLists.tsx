@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { Users } from "@/library";
 import type { User } from "@/library";
 
@@ -8,7 +8,7 @@ type CountriesProps = {
   limit?: number;
 };
 
-export default function Countries({ hosts, limit = 4 }: CountriesProps) {
+const CountryLists = ({ hosts, limit = 24 }: CountriesProps) => {
   const base = hosts ?? Users;
 
   // compute [country, count] pairs, typed
@@ -23,13 +23,7 @@ export default function Countries({ hosts, limit = 4 }: CountriesProps) {
   return (
     <section id="countrylist" className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-4 flex items-end justify-between">
-        <h2 className="text-xl font-semibold">Our Top Countries</h2>
-        <Link
-          className="text-sm text-slate-600 hover:text-slate-900"
-          to="/countrylist"
-        >
-          See more
-        </Link>
+        <h2 className="text-xl font-semibold">show all Countries</h2>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
@@ -50,4 +44,6 @@ export default function Countries({ hosts, limit = 4 }: CountriesProps) {
       </div>
     </section>
   );
-}
+};
+
+export default CountryLists;

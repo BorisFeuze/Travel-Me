@@ -1,5 +1,8 @@
-import { Users, User } from "@/library";
+import { UsersAPI, type User } from "@/library/usersMock";
 import { useEffect, useState } from "react";
+
+const initials = (u: User) =>
+  `${u.firstName?.[0] ?? ""}${u.lastName?.[0] ?? ""}`.toUpperCase();
 
 const TopHosts = () => {
   const [displayedHosts, setDisplayedHosts] = useState<User[]>([]);
@@ -7,19 +10,16 @@ const TopHosts = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchHosts = async () => {
+    (async () => {
       try {
-        const hosts: User[] = await Users.getTopHosts();
+        const hosts = await UsersAPI.getTopHosts(6);
         setDisplayedHosts(hosts);
-      } catch (error) {
+      } catch {
         setError("Error fetching top hosts");
-        console.error("Error fetching top hosts:", error);
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchHosts();
+    })();
   }, []);
 
   if (loading) {
