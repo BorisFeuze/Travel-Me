@@ -3,6 +3,7 @@ import heroBg from "@/assets/images/image1.jpg"; // or ../../assets/images/image
 import {
   Filters,
   Heroheader,
+  Features,
   Joinus,
   Footer,
   Countries,
@@ -39,6 +40,9 @@ const Home = () => {
         overlayOpacity={0.45}
         media={{ type: "image", src: heroBg, alt: "Travel dashboard preview" }} // ← same here
       />
+
+      {/* add main Features Section */}
+      <Features />
 
       {/* Top hosts Scroller */}
       {/* <TopHosts /> */}

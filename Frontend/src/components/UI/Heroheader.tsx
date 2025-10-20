@@ -56,19 +56,19 @@ const Heroheader: React.FC<HeroheaderProps> = ({
             position: "relative",
             zIndex: 2,
             textAlign: isCenter ? "center" : "left",
-            padding: "40px 0",
+            padding: "100px 0",
           }}
         >
           {eyebrow && (
-            <Typography variant="h6" color="white">
+            <Typography variant="h5" color="#C6F36B">
               {eyebrow}
             </Typography>
           )}
-          <Typography variant="h2" color="white">
+          <Typography variant="h1" color="#C6F36B">
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="h5" color="white">
+            <Typography variant="h5" color="#C6F36B">
               {subtitle}
             </Typography>
           )}
