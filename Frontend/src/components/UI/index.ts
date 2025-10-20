@@ -3,7 +3,7 @@ import Searchbar from "./Searchbar";
 import Heroheader from "./Heroheader";
 import Filters from "./Filters";
 import Features from "./Features";
-// import TopHosts from "./TopHosts";
+import TopHosts from "./TopHosts";
 import Countries from "./Countries";
 import Requiredskills from "./Requiredskills";
 import Joinus from "./Joinus";
@@ -15,7 +15,7 @@ export {
   Filters,
   Heroheader,
   Features,
-  //   TopHosts,
+  TopHosts,
   Countries,
   Requiredskills,
   Joinus,

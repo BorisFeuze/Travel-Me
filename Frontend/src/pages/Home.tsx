@@ -4,9 +4,10 @@ import {
   Filters,
   Heroheader,
   Features,
+  TopHosts,
+  Countries,
   Joinus,
   Footer,
-  Countries,
   // Requiredskills,
 } from "@/components/UI";
 
@@ -45,7 +46,7 @@ const Home = () => {
       <Features />
 
       {/* Top hosts Scroller */}
-      {/* <TopHosts /> */}
+      <TopHosts />
 
       {/* Countries Grid */}
       <Countries />

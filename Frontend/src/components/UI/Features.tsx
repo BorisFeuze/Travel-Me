@@ -30,11 +30,11 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-12 lg:py-16 bg-base-200">
+    <section className="py-12 lg:py-16 bg-[#0F1525]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-4xl font-black inline-block rounded-2xl px-4 py-4 text-[#0F1525] bg-[#C6F36B] mt-4">
-            why Travel Me?
+          <h2 className="text-6xl font-black inline-block rounded-2xl px-4 py-4 text-[#C6F36B] mt-4">
+            Why Travel Me?
           </h2>
         </div>
 

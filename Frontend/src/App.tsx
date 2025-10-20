@@ -7,6 +7,7 @@ import {
   Registration,
   CreateJob,
   DetailCountry,
+  CountryLists,
   DetailJob,
   UserAccount,
 } from "./pages";
@@ -23,6 +24,7 @@ function App() {
           <Route path="register" element={<Registration />} />
           <Route path="job/:id" element={<DetailJob />} />
           <Route path="country/:name" element={<DetailCountry />} />
+          <Route path="countrylist" element={<CountryLists />} />
 
           <Route element={<AuthLayout />}>
             <Route path="chat" element={<Chat />} />
