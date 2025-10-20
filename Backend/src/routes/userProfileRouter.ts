@@ -14,7 +14,13 @@ const userProfilesRouter = Router();
 userProfilesRouter
   .route('/')
   .get(validateZod(querySchema, 'query'), getAllUserProfiles)
-  .post(authenticate('strict'), validateZod(userProfileInputSchema, 'body'), createUserProfile);
+  .post(
+    formMiddleWare,
+    cloudUploader,
+    authenticate('strict'),
+    validateZod(userProfileInputSchema, 'body'),
+    createUserProfile
+  );
 userProfilesRouter.use('/:id', validateZod(paramSchema, 'params'));
 userProfilesRouter
   .route('/:id')

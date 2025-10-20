@@ -40,8 +40,11 @@ export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputD
       languages,
       educations
     });
+
+    res.status(201).json({ message: 'userProfile created' });
+  } else {
+    res.status(201).json({ message: 'userProfile already exists' });
   }
-  res.status(201).json({ message: 'userProfile created' });
 };
 
 export const getSingleUserProfile: RequestHandler<{ id: string }, UserProfileType> = async (req, res) => {

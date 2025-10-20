@@ -10,7 +10,12 @@ export const genderSchema = z.strictObject({
 
 export const jobOfferInputSchema = z.strictObject({
   location: z.string(),
-  userProfileId: z.instanceof(Types.ObjectId),
+  userProfileId: /*z
+    .string('userProfileId must be a string')
+    .min(1, 'userProfileId is required')
+    .refine(val => {
+      return isValidObjectId(val);
+    }, 'Invalid userProfile ID')*/z.instanceof(Types.ObjectId),
   pictureGallery: z.array(z.string().default('')),
   description: z.string(),
   needs: z.array(z.string().default('')),

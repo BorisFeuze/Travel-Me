@@ -5,9 +5,7 @@ import { AuthProvider } from "@/context";
 const RootLayout = () => {
   return (
     <AuthProvider>
-      <div>
-        <Navbar />
-      </div>
+      <Navbar />
       <Outlet />
     </AuthProvider>
   );

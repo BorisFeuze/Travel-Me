@@ -4,7 +4,12 @@ import { Types, isValidObjectId } from 'mongoose';
 
 export const userProfileInputSchema = z.strictObject({
   pictureURL: z.string().optional().default(''),
-  userId: z.instanceof(Types.ObjectId),
+  userId: z
+    .string('userId must be a string')
+    .min(1, 'userId is required')
+    .refine(val => {
+      return isValidObjectId(val);
+    }, 'Invalid user ID'),
   age: z.coerce.number().default(18),
   continent: z.string(),
   country: z.string(),

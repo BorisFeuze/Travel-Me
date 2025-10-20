@@ -1,11 +1,12 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { addUserDetails, getUserDetails } from "@/data";
+import { useAuth } from "@/context";
 
 const VolunteerAccount = () => {
-  
-  type VolunteerFormData = UserProfileFormData & Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
-
-  const [formData, setFormData] = useState<VolunteerFormData>({
+  type VolunteerFormData = UserProfileFormData &
+    Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
+  const { user } = useAuth();
+  const [formData, setFormData] = useState<UserProfileFormData>({
     pictureURL: "",
     userId: "",
     age: undefined,
@@ -15,19 +16,30 @@ const VolunteerAccount = () => {
     skills: [],
     languages: [],
     educations: [],
-    firstName: "Leon",
-    lastName: "Rabl",
-    email: "leon-rabl@web.de",
-    phoneNumber: 17631330089,
   });
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [saveMessage, setSaveMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
 
-  const skillOptions = ["Cooking", "Teaching", "Building", "Gardening", "First Aid"];
-  const languageOptions = ["English", "Spanish", "German", "French", "Portuguese"];
+  const skillOptions = [
+    "Cooking",
+    "Teaching",
+    "Building",
+    "Gardening",
+    "First Aid",
+  ];
+  const languageOptions = [
+    "English",
+    "Spanish",
+    "German",
+    "French",
+    "Portuguese",
+  ];
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
@@ -36,7 +48,7 @@ const VolunteerAccount = () => {
       try {
         const user = await getUserDetails();
         if (user) {
-          setFormData(prev => ({ ...prev, ...user }));
+          setFormData((prev) => ({ ...prev, ...user }));
           setPreviewUrl(user.pictureURL || null);
         }
       } catch (err) {
@@ -63,19 +75,24 @@ const VolunteerAccount = () => {
       setPreviewUrl(reader.result as string);
     };
     reader.readAsDataURL(file);
+
+    console.log(selectedFile);
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     setSaveMessage(null);
 
+    formData.userId = user!._id;
+    // formData.pictureURL = selectedFile;
+
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
-      data.append("firstName", formData.firstName);
-      data.append("lastName", formData.lastName);
-      data.append("email", formData.email);
-      data.append("phoneNumber", String(formData.phoneNumber));
+      // data.append("firstName", formData.firstName);
+      // data.append("lastName", formData.lastName);
+      // data.append("email", formData.email);
+      // data.append("phoneNumber", String(formData.phoneNumber));
       data.append("age", formData.age?.toString() || "");
       data.append("continent", formData.continent);
       data.append("country", formData.country);
@@ -87,8 +104,8 @@ const VolunteerAccount = () => {
       if (selectedFile) {
         data.append("picture", selectedFile);
       }
-
-      await addUserDetails(formData);
+      console.log(formData);
+      // await addUserDetails(formData);
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
       console.error(err);
@@ -100,13 +117,16 @@ const VolunteerAccount = () => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
-      
       {/* Left Side: Profile Picture */}
       <div className="w-full lg:w-1/3 flex flex-col items-center gap-6 bg-white rounded-2xl shadow-xl p-6">
         <div className="avatar mb-4">
           <div className="w-44 h-44 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center transition-transform duration-300 hover:scale-105">
             {previewUrl ? (
-              <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
+              <img
+                src={previewUrl}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="flex items-center justify-center w-full h-full">
                 <svg
@@ -124,24 +144,53 @@ const VolunteerAccount = () => {
 
         <label className="btn btn-neutral btn-outline w-40 bg-black text-white transition">
           Add Picture
-          <input type="file" accept="image/*" className="hidden" onChange={handlePictureUpload} />
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handlePictureUpload}
+          />
         </label>
 
         <div className="bg-purple-50/70 backdrop-blur-sm p-4 rounded-xl w-full text-center flex flex-col gap-1">
-          <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
-          
+          <h2 className="text-xl font-semibold">
+            {user!.firstName} {user!.lastName}
+          </h2>
+
           <div className="flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
             </svg>
-            <p className="text-gray-600">{formData.email}</p>
+            <p className="text-gray-600">{user!.email}</p>
           </div>
 
           <div className="flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+              />
             </svg>
-            <p className="text-gray-600">{formData.phoneNumber}</p>
+            <p className="text-gray-600">{user!.phoneNumber}</p>
           </div>
         </div>
       </div>
@@ -150,10 +199,18 @@ const VolunteerAccount = () => {
       <div className="w-full lg:w-2/3">
         <div className="card bg-white shadow-2xl rounded-2xl">
           <div className="card-body p-8">
-            <h2 className="card-title text-3xl mb-6 font-bold text-black">Edit Volunteer Profile</h2>
-            
+            <h2 className="card-title text-3xl mb-6 font-bold text-black">
+              Edit Volunteer Profile
+            </h2>
+
             {saveMessage && (
-              <div className={`alert mb-6 ${saveMessage.type === "success" ? "alert-success" : "alert-error"}`}>
+              <div
+                className={`alert mb-6 ${
+                  saveMessage.type === "success"
+                    ? "alert-success"
+                    : "alert-error"
+                }`}
+              >
                 <span>{saveMessage.text}</span>
               </div>
             )}
@@ -167,12 +224,19 @@ const VolunteerAccount = () => {
               className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
               placeholder="Enter your age"
               value={formData.age ?? ""}
-              onChange={(e) => handleInputChange("age", e.target.value === "" ? undefined : Number(e.target.value))}
+              onChange={(e) =>
+                handleInputChange(
+                  "age",
+                  e.target.value === "" ? undefined : Number(e.target.value)
+                )
+              }
             />
 
             {/* Country */}
             <label className="label">
-              <span className="label-text font-medium text-gray-700">Country</span>
+              <span className="label-text font-medium text-gray-700">
+                Country
+              </span>
             </label>
             <input
               type="text"
@@ -184,7 +248,9 @@ const VolunteerAccount = () => {
 
             {/* Continent */}
             <label className="label">
-              <span className="label-text font-medium text-gray-700">Continent</span>
+              <span className="label-text font-medium text-gray-700">
+                Continent
+              </span>
             </label>
             <input
               type="text"
@@ -196,7 +262,9 @@ const VolunteerAccount = () => {
 
             {/* Gender */}
             <label className="label">
-              <span className="label-text font-medium text-gray-700">Gender</span>
+              <span className="label-text font-medium text-gray-700">
+                Gender
+              </span>
             </label>
             <div className="relative mb-4">
               <details className="dropdown dropdown-top w-full">
@@ -208,14 +276,25 @@ const VolunteerAccount = () => {
                 <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
                   {genderOptions.map((gender) => (
                     <li key={gender}>
-                      <label 
+                      <label
                         className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                        onClick={() => handleInputChange("gender", gender.toLowerCase())}
+                        onClick={() =>
+                          handleInputChange("gender", gender.toLowerCase())
+                        }
                       >
                         <span className="flex-1">{gender}</span>
                         {formData.gender === gender.toLowerCase() && (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         )}
                       </label>
@@ -227,7 +306,9 @@ const VolunteerAccount = () => {
 
             {/* Education */}
             <label className="label">
-              <span className="label-text font-medium text-gray-700">Education</span>
+              <span className="label-text font-medium text-gray-700">
+                Education
+              </span>
             </label>
             <div className="relative mb-4">
               <details className="dropdown dropdown-top w-full">
@@ -239,14 +320,23 @@ const VolunteerAccount = () => {
                 <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
                   {educationOptions.map((edu) => (
                     <li key={edu}>
-                      <label 
+                      <label
                         className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
                         onClick={() => handleInputChange("educations", [edu])}
                       >
                         <span className="flex-1">{edu}</span>
                         {formData.educations[0] === edu && (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         )}
                       </label>
@@ -255,17 +345,19 @@ const VolunteerAccount = () => {
                 </ul>
               </details>
             </div>
-            
+
             {/* Skills */}
             <label className="label">
-              <span className="label-text font-medium text-gray-700">Skills</span>
+              <span className="label-text font-medium text-gray-700">
+                Skills
+              </span>
             </label>
             <div className="relative mb-4">
               <details className="dropdown dropdown-top w-full">
                 <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
                   <span className="flex-1 text-left">
-                    {formData.skills.length > 0 
-                      ? formData.skills.join(", ") 
+                    {formData.skills.length > 0
+                      ? formData.skills.join(", ")
                       : "Select skills"}
                   </span>
                 </summary>
@@ -275,8 +367,17 @@ const VolunteerAccount = () => {
                       <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
                         <span className="flex-1">{skill}</span>
                         {formData.skills.includes(skill) && (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         )}
                         <input
@@ -284,7 +385,10 @@ const VolunteerAccount = () => {
                           checked={formData.skills.includes(skill)}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              handleInputChange("skills", [...formData.skills, skill]);
+                              handleInputChange("skills", [
+                                ...formData.skills,
+                                skill,
+                              ]);
                             } else {
                               handleInputChange(
                                 "skills",
@@ -300,17 +404,19 @@ const VolunteerAccount = () => {
                 </ul>
               </details>
             </div>
-            
+
             {/* Languages */}
             <label className="label">
-              <span className="label-text font-medium text-gray-700">Languages</span>
+              <span className="label-text font-medium text-gray-700">
+                Languages
+              </span>
             </label>
             <div className="relative mb-6">
               <details className="dropdown dropdown-top w-full">
                 <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
                   <span className="flex-1 text-left">
-                    {formData.languages.length > 0 
-                      ? formData.languages.join(", ") 
+                    {formData.languages.length > 0
+                      ? formData.languages.join(", ")
                       : "Select languages"}
                   </span>
                 </summary>
@@ -320,8 +426,17 @@ const VolunteerAccount = () => {
                       <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
                         <span className="flex-1">{lang}</span>
                         {formData.languages.includes(lang) && (
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
                           </svg>
                         )}
                         <input
@@ -329,7 +444,10 @@ const VolunteerAccount = () => {
                           checked={formData.languages.includes(lang)}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              handleInputChange("languages", [...formData.languages, lang]);
+                              handleInputChange("languages", [
+                                ...formData.languages,
+                                lang,
+                              ]);
                             } else {
                               handleInputChange(
                                 "languages",
