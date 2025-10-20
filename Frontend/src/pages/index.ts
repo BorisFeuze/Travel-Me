@@ -9,9 +9,15 @@ import DetailJob from "./DetailJob";
 import UserAccount from "./UserAccount";
 import CountryLists from "./CountyLists";
 
+import VolunteerAccount from "./VolunteerAccount";
+import HostAccount from "./HostAccount";
+
 export {
   Home,
   Login,
+  VolunteerAccount,
+  HostAccount
+
   NotFound,
   Chat,
   Registration,
@@ -21,3 +27,4 @@ export {
   UserAccount,
   CountryLists,
 };
+

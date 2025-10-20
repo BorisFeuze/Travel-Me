@@ -47,12 +47,12 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { location, userProfileId, pictureGallery, description, needs, languages }
+    body: { location, userProfileId, pictureGallery, description, needs, languages },
+    jobOffer
   } = req;
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
 
-  const jobOffer = await JobOffer.findById(id);
   if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: { status: 404 } });
 
   jobOffer.location = location;

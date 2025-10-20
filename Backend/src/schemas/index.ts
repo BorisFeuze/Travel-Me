@@ -4,3 +4,4 @@ export * from './userProfile.ts';
 export * from './completionsSchemas.ts';
 export * from './auth.ts';
 export * from './jobOffer.ts';
+export * from './ChatUsers.ts';

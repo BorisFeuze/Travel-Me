@@ -1,5 +1,5 @@
 
-const UserAccount = () => {
+const HostAccount = () => {
   return (
     <div>
       <h1>User Account Page</h1>
@@ -7,6 +7,6 @@ const UserAccount = () => {
   );
 };
 
-export default UserAccount;
+export default HostAccount;
 
 

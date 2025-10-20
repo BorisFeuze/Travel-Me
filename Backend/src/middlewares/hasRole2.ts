@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
-import { User, UserProfile } from '#models';
+import { JobOffer } from '#models';
 
-const hasRole = (...AllowRoles: string[]): RequestHandler => {
+const hasRole2 = (...AllowRoles: string[]): RequestHandler => {
   return async (request, response, next) => {
     if (!request.user) {
       next(new Error('unauthorized', { cause: { status: 401 } }));
@@ -10,22 +10,23 @@ const hasRole = (...AllowRoles: string[]): RequestHandler => {
     // console.log(request.user);
     const { id } = request.params;
     const { roles: userRoles, id: userId } = request.user;
-    let userProfile: InstanceType<typeof UserProfile> | null = null;
+    let jobOffer: InstanceType<typeof JobOffer> | null = null;
 
     if (id) {
-      userProfile = await UserProfile.findById(id);
-      if (!userProfile) {
-        next(new Error('post not found', { cause: { status: 404 } }));
+      jobOffer = await JobOffer.findById(id);
+
+      if (!jobOffer) {
+        next(new Error('jobOffer not found', { cause: { status: 404 } }));
         return;
       }
 
-      request.userProfile = userProfile;
+      request.jobOffer = jobOffer;
     }
-    // console.log(userCard);
-    if (userRoles.includes('admin')) {
+    // console.log(jobOffer);
+    else if (userRoles.includes('admin')) {
       next();
     } else if (AllowRoles.includes('self')) {
-      if (userId !== userProfile?.userId.toString()) {
+      if (userId !== jobOffer!.userProfileId.toString()) {
         next(new Error('Not authorized', { cause: { status: 403 } }));
         return;
       }
@@ -45,4 +46,4 @@ const hasRole = (...AllowRoles: string[]): RequestHandler => {
   };
 };
 
-export default hasRole;
+export default hasRole2;
