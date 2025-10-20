@@ -222,23 +222,22 @@ const Register = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="host"
-              checked={roles.includes("host")}
-              onChange={(e) => {
-                setForm((prev) => ({
-                  ...prev,
-                  roles: e.target.checked
-                    ? [...prev.roles, "host"]
-                    : prev.roles.filter((role) => role !== "host"),
-                }));
-              }}
-            />
-            <label htmlFor="host" className="text-black">
-              Host
-            </label>
-          </div>
+  <input
+    type="checkbox"
+    id="host"
+    checked={roles.includes("host")}
+    onChange={(e) => {
+      setForm((prev) => ({
+        ...prev,
+        roles: e.target.checked ? ["host"] : ["volunteer"],
+      }));
+    }}
+  />
+  <label htmlFor="host" className="text-black">
+    Host
+  </label>
+</div>
+
 
           <small className="text-black">
             Already have an account?{" "}

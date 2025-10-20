@@ -1,12 +1,433 @@
+import { useState, useEffect, type ChangeEvent } from "react";
+import { addUserDetails, getUserDetails } from "@/data";
 
 const HostAccount = () => {
+  type VolunteerFormData = UserProfileFormData & Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
+
+  const [formData, setFormData] = useState<VolunteerFormData>({
+    pictureURL: "",
+    userId: "",
+    age: undefined,
+    continent: "",
+    country: "",
+    gender: "",
+    skills: [],
+    languages: [],
+    educations: [],
+    firstName: "Leon",
+    lastName: "Rabl",
+    email: "leon-rabl@web.de",
+    phoneNumber: 17631330089,
+  });
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  const skillOptions = ["Cooking", "Teaching", "Building", "Gardening", "First Aid"];
+  const languageOptions = ["English", "Spanish", "German", "French", "Portuguese"];
+  const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
+  const genderOptions = ["Female", "Male", "Other"];
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const user = await getUserDetails();
+        if (user) {
+          setFormData(prev => ({ ...prev, ...user }));
+          setPreviewUrl(user.pictureURL || null);
+        }
+      } catch (err) {
+        console.error("Failed to load user data", err);
+      }
+    };
+    loadUser();
+  }, []);
+
+  const handleInputChange = <K extends keyof VolunteerFormData>(
+    field: K,
+    value: VolunteerFormData[K]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const data = new FormData();
+      data.append("userId", formData.userId);
+      data.append("firstName", formData.firstName);
+      data.append("lastName", formData.lastName);
+      data.append("email", formData.email);
+      data.append("phoneNumber", String(formData.phoneNumber));
+      data.append("age", formData.age?.toString() || "");
+      data.append("continent", formData.continent);
+      data.append("country", formData.country);
+      data.append("gender", formData.gender);
+      data.append("skills", JSON.stringify(formData.skills));
+      data.append("languages", JSON.stringify(formData.languages));
+      data.append("educations", JSON.stringify(formData.educations));
+
+      if (selectedFile) {
+        data.append("picture", selectedFile);
+      }
+
+      await addUserDetails(formData);
+      setSaveMessage({ text: "Changes saved successfully!", type: "success" });
+    } catch (err) {
+      console.error(err);
+      setSaveMessage({ text: "Error while saving changes.", type: "error" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
-    <div>
-      <h1>User Account Page</h1>
+  <div className=" min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
+
+    <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
+      
+      {/* Left Side: Profile Picture */}
+      <div className="w-full lg:w-1/3 flex flex-col items-center gap-6 bg-white rounded-2xl shadow-xl p-6">
+        <div className="avatar mb-4">
+          <div className="w-44 h-44 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center transition-transform duration-300 hover:scale-105">
+            {previewUrl ? (
+              <img src={previewUrl} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <div className="flex items-center justify-center w-full h-full">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-1/2 h-1/2 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+                </svg>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <label className="btn btn-neutral btn-outline w-40 bg-black text-white transition">
+          Add Picture
+          <input type="file" accept="image/*" className="hidden" onChange={handlePictureUpload} />
+        </label>
+
+        <div className="bg-purple-50/70 backdrop-blur-sm p-4 rounded-xl w-full text-center flex flex-col gap-1">
+          <h2 className="text-xl font-semibold">{formData.firstName} {formData.lastName}</h2>
+          
+          <div className="flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            </svg>
+            <p className="text-gray-600">{formData.email}</p>
+          </div>
+
+          <div className="flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+            </svg>
+            <p className="text-gray-600">{formData.phoneNumber}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side: Form */}
+      <div className="w-full lg:w-2/3">
+        <div className="card bg-white shadow-2xl rounded-2xl">
+          <div className="card-body p-8">
+            <h2 className="card-title text-3xl mb-6 font-bold text-black">Edit Host Profile</h2>
+            
+            {saveMessage && (
+              <div className={`alert mb-6 ${saveMessage.type === "success" ? "alert-success" : "alert-error"}`}>
+                <span>{saveMessage.text}</span>
+              </div>
+            )}
+
+            {/* Age */}
+            <label className="label">
+              <span className="label-text font-medium text-gray-700">Age</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+              placeholder="Enter your age"
+              value={formData.age ?? ""}
+              onChange={(e) => handleInputChange("age", e.target.value === "" ? undefined : Number(e.target.value))}
+            />
+
+            {/* Country */}
+            <label className="label">
+              <span className="label-text font-medium text-gray-700">Country</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+              placeholder="Enter your country"
+              value={formData.country}
+              onChange={(e) => handleInputChange("country", e.target.value)}
+            />
+
+            {/* Continent */}
+            <label className="label">
+              <span className="label-text font-medium text-gray-700">Continent</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+              placeholder="Enter your continent"
+              value={formData.continent}
+              onChange={(e) => handleInputChange("continent", e.target.value)}
+            />
+
+            {/* Gender */}
+            <label className="label">
+              <span className="label-text font-medium text-gray-700">Gender</span>
+            </label>
+            <div className="relative mb-4">
+              <details className="dropdown dropdown-top w-full">
+                <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
+                  <span className="flex-1 text-left">
+                    {formData.gender || "Select gender"}
+                  </span>
+                </summary>
+                <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
+                  {genderOptions.map((gender) => (
+                    <li key={gender}>
+                      <label 
+                        className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
+                        onClick={() => handleInputChange("gender", gender.toLowerCase())}
+                      >
+                        <span className="flex-1">{gender}</span>
+                        {formData.gender === gender.toLowerCase() && (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </div>
+
+            {/* Education */}
+            <label className="label">
+              <span className="label-text font-medium text-gray-700">Education</span>
+            </label>
+            <div className="relative mb-4">
+              <details className="dropdown dropdown-top w-full">
+                <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
+                  <span className="flex-1 text-left">
+                    {formData.educations[0] || "Select education"}
+                  </span>
+                </summary>
+                <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
+                  {educationOptions.map((edu) => (
+                    <li key={edu}>
+                      <label 
+                        className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
+                        onClick={() => handleInputChange("educations", [edu])}
+                      >
+                        <span className="flex-1">{edu}</span>
+                        {formData.educations[0] === edu && (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </div>
+            
+            {/* Skills */}
+            <label className="label">
+              <span className="label-text font-medium text-gray-700">Skills</span>
+            </label>
+            <div className="relative mb-4">
+              <details className="dropdown dropdown-top w-full">
+                <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
+                  <span className="flex-1 text-left">
+                    {formData.skills.length > 0 
+                      ? formData.skills.join(", ") 
+                      : "Select skills"}
+                  </span>
+                </summary>
+                <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
+                  {skillOptions.map((skill) => (
+                    <li key={skill}>
+                      <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                        <span className="flex-1">{skill}</span>
+                        {formData.skills.includes(skill) && (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        <input
+                          type="checkbox"
+                          checked={formData.skills.includes(skill)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              handleInputChange("skills", [...formData.skills, skill]);
+                            } else {
+                              handleInputChange(
+                                "skills",
+                                formData.skills.filter((s) => s !== skill)
+                              );
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </div>
+            
+            {/* Languages */}
+            <label className="label">
+              <span className="label-text font-medium text-gray-700">Languages</span>
+            </label>
+            <div className="relative mb-6">
+              <details className="dropdown dropdown-top w-full">
+                <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
+                  <span className="flex-1 text-left">
+                    {formData.languages.length > 0 
+                      ? formData.languages.join(", ") 
+                      : "Select languages"}
+                  </span>
+                </summary>
+                <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
+                  {languageOptions.map((lang) => (
+                    <li key={lang}>
+                      <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                        <span className="flex-1">{lang}</span>
+                        {formData.languages.includes(lang) && (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        <input
+                          type="checkbox"
+                          checked={formData.languages.includes(lang)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              handleInputChange("languages", [...formData.languages, lang]);
+                            } else {
+                              handleInputChange(
+                                "languages",
+                                formData.languages.filter((l) => l !== lang)
+                              );
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </div>
+
+            <button
+              className="btn bg-black hover:bg-black-700 text-white w-full py-3 rounded-xl transition shadow-lg"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+
+    {/* Job Offers */}
+<div className="mt-10">
+  <h2 className="text-3xl font-bold mb-6 text-gray-800">Job Offers</h2>
+
+  {(() => {
+    const jobOffers = [
+      {
+        id: "1",
+        title: "Gardening in Germany",
+        image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=400",
+      },
+      {
+        id: "2",
+        title: "Cooking Italie",
+        image: "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?w=400",
+      },
+    ];
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {/* Card list */}
+            {jobOffers.map((job) => (
+              <div
+                key={job.id}
+                className="card bg-white shadow-md hover:shadow-xl rounded-2xl overflow-hidden cursor-pointer transition-transform duration-300 hover:-translate-y-1"
+                onClick={() => (window.location.href = `/job/${job.id}`)}
+              >
+                <figure className="relative w-full h-48 overflow-hidden">
+                  <img
+                    src={job.image}
+                    alt={job.title}
+                    className="object-cover w-full h-full"
+                  />
+                </figure>
+                <div className="card-body p-4">
+                  <h3 className="card-title text-lg font-semibold text-gray-800">
+                    {job.title}
+                  </h3>
+                </div>
+              </div>
+            ))}
+
+            {/* plus card */}
+            <div
+              onClick={() => (window.location.href = "/create-job")}
+              className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-[4/3]"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-16 h-16 text-gray-400"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              <p className="mt-2 text-gray-500 font-medium">Add Job Offer</p>
+            </div>
+
+      </div>
+    );
+  })()}
+</div>
+
+
+  </div>
   );
 };
 
 export default HostAccount;
-
-
