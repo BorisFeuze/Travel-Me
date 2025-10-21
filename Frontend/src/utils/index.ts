@@ -1,2 +1,2 @@
 export * from "./fetchregulator";
-export * from "./typecolors";
+export * from "./geo";

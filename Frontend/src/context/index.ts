@@ -1,45 +1,12 @@
-import { createContext, use } from "react";
-import AuthProvider from "./AuthProvider";
-import PokemonProvider from "./PokemonProvider";
-import BattleProvider from "./BattleProvider";
+import { createContext, use } from 'react';
+import AuthProvider from './AuthProvider';
 
-const AuthorizContext = createContext<AuthorizContextType | undefined>(
-  undefined
-);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-const useAuthor = () => {
-  const context = use(AuthorizContext);
-  if (!context)
-    throw new Error("useAuth must be used within an AuthContextProvider");
-  return context;
+const useAuth = (): AuthContextType => {
+	const context = use(AuthContext);
+	if (!context) throw new Error('useAuth must be used within an AuthProvider');
+	return context;
 };
 
-const PokemonContext = createContext<PokemonContextType | undefined>(undefined);
-
-const usePokemon = () => {
-  const context = use(PokemonContext);
-  if (!context)
-    throw new Error("useAuth must be used within an AuthContextProvider");
-  return context;
-};
-
-const BattleContext = createContext<BattleContextType | undefined>(undefined);
-
-const useBattle = () => {
-  const context = use(BattleContext);
-  if (!context)
-    throw new Error("useAuth must be used within an AuthContextProvider");
-  return context;
-};
-
-export {
-  useAuthor,
-  AuthProvider,
-  AuthorizContext,
-  usePokemon,
-  PokemonContext,
-  PokemonProvider,
-  useBattle,
-  BattleProvider,
-  BattleContext,
-};
+export { AuthContext, AuthProvider, useAuth };

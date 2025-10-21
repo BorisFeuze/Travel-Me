@@ -1,93 +1,34 @@
-import { VITE_APP_USER_API_URL } from "@/config";
+import { authServiceURL } from "@/utils";
 
-const baseURL: string = `${VITE_APP_USER_API_URL}/users`;
-
-export const getUsers = async (): Promise<User[]> => {
-  const res = await fetch(baseURL, {
-    credentials: "include",
-  });
-  if (!res.ok) {
-    const errorData = await res.json();
-    if (!errorData.error) {
-      throw new Error("An error occurred while fetching the posts");
-    }
-    throw new Error(errorData.error);
-  }
-  const data: User[] = await res.json();
-  // console.log(data);
-  return data;
-};
-
-export const creatUser = async (formData: Omit<User, "_id">): Promise<User> => {
-  const res = await fetch(baseURL, {
+export const addUserDetails = async (formData: UserProfileFormData) => {
+  const res = await fetch(`${authServiceURL}/userProfiles`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
-    credentials: "include",
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    if (!errorData.error) {
-      throw new Error("An error occurred while creating the post");
-    }
-    throw new Error(errorData.error);
-  }
-  const data: User = await res.json();
+
+  if (!res.ok) throw new Error("Failed to save volunteer details");
+  const data = await res.json();
+  console.log(data);
   return data;
 };
 
-export const getSingleUser = async (id: string): Promise<User> => {
-  const res = await fetch(`${baseURL}/${id}`, {
+export const getUserDetails = async (): Promise<UserProfileFormData | null> => {
+  const res = await fetch(`${authServiceURL}/userProfiles/me`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
-  if (!res.ok) {
-    const errorData = await res.json();
-    if (!errorData.error) {
-      throw new Error("An error occurred while fetching the post");
-    }
-    throw new Error(errorData.error);
-  }
-  const data: User = await res.json();
-  return data;
-};
 
-export const updateUser = async (
-  id: string,
-  formData: Omit<User, "_id">
-): Promise<User> => {
-  const res = await fetch(`${baseURL}/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-    credentials: "include",
-  });
-  if (!res.ok) {
-    const errorData = await res.json();
-    if (!errorData.error) {
-      throw new Error("An error occurred while creating the post");
-    }
-    throw new Error(errorData.error);
+  if (res.status === 401) {
+    console.warn("Unauthorized – user not logged in.");
+    return null;
   }
-  const data: User = await res.json();
-  return data;
-};
 
-export const deleteUser = async (id: string): Promise<SuccessRes> => {
-  const res = await fetch(`${baseURL}/${id}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
   if (!res.ok) {
-    const errorData = await res.json();
-    if (!errorData.error) {
-      throw new Error("An error occurred while creating the post");
-    }
-    throw new Error(errorData.error);
+    throw new Error(`Failed to fetch user details: ${res.statusText}`);
   }
-  const data = (await res.json()) as { message: string };
+
+  const data: UserProfileFormData = await res.json();
   return data;
 };

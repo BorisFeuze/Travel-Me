@@ -1,4 +1,6 @@
-export * from './userCard.ts';
+export * from './userProfile.ts';
 export * from './users.ts';
 export * from './completions.ts';
 export * from './auth.controller.ts';
+export * from './jobOffer.ts';
+export * from './chatsUsers.ts';

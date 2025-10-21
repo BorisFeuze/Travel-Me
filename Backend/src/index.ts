@@ -3,10 +3,17 @@ import express from 'express';
 import '#db';
 import cookieParser from 'cookie-parser';
 import { errorHandler, notFoundHandler } from '#middlewares';
-import { usersRouter, userCardsRouter, completionsRouter, authRouter } from '#routes';
+import {
+  usersRouter,
+  userProfilesRouter,
+  /* completionsRouter,*/ authRouter,
+  jobOffersRouter,
+  chatUsersRouter
+} from '#routes';
 import { CLIENT_BASE_URL } from '#config';
 
 const app = express();
+
 const port = process.env.PORT || 8000;
 
 app.use(
@@ -18,13 +25,17 @@ app.use(
 );
 app.use(express.json(), cookieParser());
 
+app.use('/chats', chatUsersRouter);
+
 app.use('/users', usersRouter);
 
-app.use('/usercards', userCardsRouter);
+app.use('/userProfiles', userProfilesRouter);
+
+app.use('/jobOffers', jobOffersRouter);
 
 app.use('/auth', authRouter);
 
-app.use('/ai', completionsRouter);
+// app.use('/ai', completionsRouter);
 
 app.use('/*splat', notFoundHandler);
 app.use(errorHandler);

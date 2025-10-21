@@ -14,6 +14,10 @@ const querySchema = z.strictObject({
   userId: z
     .string()
     .refine(val => isValidObjectId(val), 'Invalid user ID')
+    .optional(),
+  userProfileId: z
+    .string()
+    .refine(val => isValidObjectId(val), 'Invalid user ID')
     .optional()
 });
 
@@ -21,4 +25,15 @@ const paramSchema = z.strictObject({
   id: stringIdSchema
 });
 
-export { dbEntrySchema, paramSchema, querySchema };
+const userSocketMapSchema = z.strictObject({
+  userId: z
+    .string()
+    .refine(val => isValidObjectId(val), 'Invalid user ID')
+    .optional(),
+  receiverId: z
+    .string()
+    .refine(val => isValidObjectId(val), 'Invalid user ID')
+    .optional()
+});
+
+export { dbEntrySchema, paramSchema, querySchema, userSocketMapSchema };

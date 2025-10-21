@@ -6,31 +6,33 @@ import { type z } from 'zod/v4';
 
 type UserInputDTO = z.infer<typeof userInputSchema>;
 type UserDTO = z.infer<typeof userSchema>;
+type GetUsersType = SuccessMsg & { users: UserDTO[] };
+type UserType = SuccessMsg & { user: UserDTO };
 
 export const getUsers: RequestHandler<{}, UserDTO[]> = async (_req, res) => {
-  const users = await User.find().lean();
+  const users = await User.find().lean().select('-password');
   res.json(users);
 };
 
-export const createUser: RequestHandler<{}, UserDTO, UserInputDTO> = async (req, res) => {
-  const newUser = await User.create<UserInputDTO>(req.body);
-  res.status(201).json(newUser);
+export const createUser: RequestHandler<{}, UserType, UserInputDTO> = async (req, res) => {
+  const user = await User.create<UserInputDTO>(req.body);
+  res.status(201).json({ message: 'user created', user });
 };
 
-export const getSingleUser: RequestHandler<{ id: string }, UserDTO> = async (req, res) => {
+export const getSingleUser: RequestHandler<{ id: string }, UserType> = async (req, res) => {
   const {
     params: { id }
   } = req;
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
-  const user = await User.findById(id).lean();
+  const user = await User.findById(id).lean().select('-password');
   if (!user) throw new Error(`User with id of ${id} doesn't exist`, { cause: 404 });
-  res.send(user);
+  res.send({ message: ' searched user', user });
 };
 
-export const updateUser: RequestHandler<{ id: string }, UserDTO, UserInputDTO> = async (req, res) => {
+export const updateUser: RequestHandler<{ id: string }, UserType, UserInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { firstName, lastName, email, password, roles }
+    body: { firstName, lastName, email, password, roles, phoneNumber }
   } = req;
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
@@ -41,12 +43,13 @@ export const updateUser: RequestHandler<{ id: string }, UserDTO, UserInputDTO> =
   user.firstName = firstName;
   user.lastName = lastName;
   user.email = email;
+  user.phoneNumber = phoneNumber;
   user.password = password;
-  user.roles.push(roles);
+  user.roles = roles || [];
 
-  const updatedUser = await user.save();
+  await user.save();
 
-  res.json(updatedUser);
+  res.json({ message: 'updated user', user });
 };
 
 export const deleteUser: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {

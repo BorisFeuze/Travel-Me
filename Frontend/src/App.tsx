@@ -1,30 +1,43 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import RootLayout from "@/layouts/RootLayout";
-import Home from "@/pages/Home";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import Battle from "@/pages/Battle";
-import LeaderBoard from "@/pages/LeaderBoard";
-import NotFound from "@/pages/NotFound";
-import AuthLayout from "@/layouts/AuthLayout";
+import {
+  Home,
+  Login,
+  NotFound,
+  Chat,
+  Registration,
+  CreateJob,
+  DetailCountry,
+  CountryLists,
+  DetailJob,
+  VolunteerAccount,
+  HostAccount
+} from "./pages";
+import RootLayout from "./layouts/RootLayout";
+import AuthLayout from "./layouts/AuthLayout";
 
-const App = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<RootLayout />}>
-        <Route element={<AuthLayout />}>
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RootLayout />}>
           <Route index element={<Home />} />
-          <Route path="battle" element={<Battle />} />
-          <Route path="leaderboard" element={<LeaderBoard />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Registration />} />
+          <Route path="job/:id" element={<DetailJob />} />
+          <Route path="country/:name" element={<DetailCountry />} />
+          <Route path="countrylist" element={<CountryLists />} />
+
+          <Route element={<AuthLayout />}>
+            <Route path="chat" element={<Chat />} />
+            <Route path="volunteerAccount" element={<VolunteerAccount />} />
+            <Route path="hostAccount" element={<HostAccount />} />
+            <Route path="create-job" element={<CreateJob />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Route>
-
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-
-        <Route path="*" element={<NotFound />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>
-);
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
 export default App;

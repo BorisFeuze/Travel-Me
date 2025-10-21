@@ -23,7 +23,7 @@ const me = async () => {
   if (!res.ok) throw new Error("Something went wrong!");
 
   const data = await res.json();
-  return data; // Returns user profile
+  return data;
 };
 
 const logout = async () => {

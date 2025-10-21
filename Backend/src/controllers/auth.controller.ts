@@ -4,12 +4,12 @@ import { randomUUID } from 'node:crypto';
 import type { RequestHandler } from 'express';
 import { User, RefreshToken } from '#models';
 import { ACCESS_JWT_SECRET, ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL, SALT_ROUNDS } from '#config';
-import type { RegisterInputDTO, LoginInputDTO, UserProfileSchemaDTO, UserAuthInputDTO } from '../types/types.ts';
+import type { RegisterInputDTO, LoginInputDTO, UserProfileAuthSchemaDTO, UserAuthInputDTO } from '../types/types.ts';
 
-type MeType = SuccessMsg & { user: UserProfileSchemaDTO };
+type MeType = SuccessMsg & { user: UserProfileAuthSchemaDTO };
 
 export const register: RequestHandler<{}, SuccessMsg, RegisterInputDTO> = async (req, res) => {
-  const { firstName, lastName, email, password, roles } = req.body;
+  const { firstName, lastName, email, password, roles, phoneNumber } = req.body;
 
   //check if user has that email already
   const userExists = await User.exists({ email });
@@ -22,6 +22,7 @@ export const register: RequestHandler<{}, SuccessMsg, RegisterInputDTO> = async 
     firstName,
     lastName,
     email,
+    phoneNumber,
     password: hashedPW,
     roles
   });
@@ -55,11 +56,14 @@ export const register: RequestHandler<{}, SuccessMsg, RegisterInputDTO> = async 
 export const login: RequestHandler<{}, SuccessMsg, LoginInputDTO> = async (req, res) => {
   // TODO: Implement user login
   const { email, password } = req.body;
+  // console.log(email, password);
   // Check if the user exists in the database
   const user = await User.findOne({ email }).lean();
+  // console.log(user);
   if (!user) throw new Error('invalid email or the password is incorrect', { cause: { status: 401 } });
   // Compare the password from the request with the hash in your db
   const ok = await bcrypt.compare(password, user.password);
+  // console.log(ok);
   if (!ok) throw new Error('invalid email or the password is incorrect', { cause: { status: 401 } });
   // Send an Error "Incorrect credentials" if either no user is found (invalid email) or the password is incorrect
 
