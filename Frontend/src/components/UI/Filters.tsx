@@ -45,16 +45,9 @@ const SKILLS = [
 const Filters = () => {
   return (
     <div className="flex items-center p-4 bg-white rounded shadow">
-      <form>
-        <input
-          className="btn"
-          type="checkbox"
-          name="frameworks"
-          aria-label="Continents filter"
-        />
-
+      <form className="flex flex-wrap">
         <details className="dropdown">
-          <summary className="btn m-1">open or close</summary>
+          <summary className="btn m-1">Countinents</summary>
           <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
             <li>
               <a>Item 1</a>
@@ -65,19 +58,41 @@ const Filters = () => {
           </ul>
         </details>
 
-        <input
-          className="btn"
-          type="checkbox"
-          name="frameworks"
-          aria-label="Counteries filter"
-        />
-        <input
-          className="btn"
-          type="checkbox"
-          name="frameworks"
-          aria-label="skills filter"
-        />
-        <input className="btn btn-square" type="reset" value="×" />
+        <details className="dropdown">
+          <summary className="btn m-1">countries</summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li>
+              <a>Item 1</a>
+            </li>
+            <li>
+              <a>Item 2</a>
+            </li>
+          </ul>
+        </details>
+
+        <details className="dropdown">
+          <summary className="btn m-1">places</summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li>
+              <a>Item 1</a>
+            </li>
+            <li>
+              <a>Item 2</a>
+            </li>
+          </ul>
+        </details>
+
+        <details className="dropdown">
+          <summary className="btn m-1">jobs</summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+            <li>
+              <a>Item 1</a>
+            </li>
+            <li>
+              <a>Item 2</a>
+            </li>
+          </ul>
+        </details>
       </form>
     </div>
   );

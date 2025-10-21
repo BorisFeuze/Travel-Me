@@ -1,6 +1,6 @@
 declare global {
   type User = {
-    _id: string;
+    _id?: string;
     firstName: string;
     lastName: string;
     phoneNumber?: number;

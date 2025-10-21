@@ -5,6 +5,8 @@ import {
   Heroheader,
   Features,
   TopHosts,
+  Continents,
+  JobByContinent,
   Countries,
   Requiredskills,
   Joinus,
@@ -47,6 +49,9 @@ const Home = () => {
 
       {/* Top hosts Scroller */}
       <TopHosts />
+
+      {/* Display Continents */}
+      <Continents />
 
       {/* Countries Grid */}
       <Countries />
