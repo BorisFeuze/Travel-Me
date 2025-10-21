@@ -10,22 +10,22 @@ type Card = {
 const Features = () => {
   const cards: Card[] = [
     {
-      title: "Virable Jobs",
-      desc: "Curated roles with visa/relocation flags and async-friendly teams.",
+      title: "Find the right fit",
+      desc: "Match the right skills with the right needs, using data-driven suggestions",
       img: feature3,
-      cta: { label: "Browse jobs", href: "/jobs" },
+      cta: { label: "Find fit jobs", href: "/jobs" },
     },
     {
-      title: "Through Working Instead Pay",
+      title: "Through Working Instead of Pay",
       desc: "Find verified spaces, amenities, and day-pass options wherever you land.",
       img: feature3,
-      cta: { label: "Find spaces", href: "/coworking" },
+      cta: { label: "Find nice spaces", href: "/host" },
     },
     {
-      title: "Visa & Rules",
-      desc: "Up-to-date entry requirements and documents for stress-free trips.",
+      title: "Reduce conflicts",
+      desc: "Provide AI-powered personality compatibility insights and communication tips",
       img: feature3,
-      cta: { label: "Check rules", href: "/visa" },
+      cta: { label: "Learn culture", href: "/localtips" },
     },
   ];
 
