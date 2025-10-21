@@ -26,7 +26,7 @@ export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputD
     body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations }
   } = req;
 
-  console.log(req.body);
+  // console.log(req.body);
   let userProfile: UserProfileDTO;
   const userProfiles = await UserProfile.find();
   const isProfile = userProfiles.some(c => c.userId.toString() === userId.toString());

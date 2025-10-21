@@ -38,8 +38,7 @@ export const register: RequestHandler<{}, SuccessMsg, RegisterInputDTO> = async 
     subject: user._id.toString()
   };
   const accessToken = jwt.sign(payload, secret, tokenOptions);
-
-  console.log(accessToken);
+  // console.log(accessToken);
   //add access token to cookie
   const isProduction = process.env.NODE_env === 'production';
   const cookieOptions = {
