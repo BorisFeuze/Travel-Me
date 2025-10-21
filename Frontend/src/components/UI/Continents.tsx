@@ -133,7 +133,7 @@ const Continent = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {CONTINENTS.map(({ key, label, img, anchor }) => {
           const total = counts.get(key) ?? 0;
-          if (total === 0) return null; //  skip continents with no offers
+          // if (total === 0) return null; //  skip continents with no offers
 
           const Card = (
             <div
