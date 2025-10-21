@@ -13,7 +13,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setCheckSession(true);
   };
 
-  const handleRegister = async (formState: RegisterData) => {
+  const handleRegister = async (formState: Omit<RegisterData, "_id">) => {
     await register(formState);
     setSignedIn(true);
     setCheckSession(true);

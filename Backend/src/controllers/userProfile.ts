@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { UserProfile } from '#models';
 import { type z } from 'zod/v4';
 import type { userProfileInputSchema, userProfileSchema } from '#schemas';
@@ -12,7 +12,7 @@ type UserProfileType = SuccessMsg & { userProfile: UserProfileDTO };
 export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async (req, res) => {
   const userId = req.sanitQuery?.userId;
 
-  let userProfiles: UserProfileDTO[];
+  let userProfiles;
   if (userId) {
     userProfiles = await UserProfile.find({ userId: userId }).lean();
   } else {
@@ -25,11 +25,13 @@ export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputD
   const {
     body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations }
   } = req;
+
+  console.log(req.body);
   let userProfile: UserProfileDTO;
   const userProfiles = await UserProfile.find();
   const isProfile = userProfiles.some(c => c.userId.toString() === userId.toString());
   if (!isProfile) {
-    userProfile = await UserProfile.create<UserProfileInputDTO>({
+    userProfile = await UserProfile.create({
       pictureURL,
       userId,
       age,
@@ -71,7 +73,7 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
   if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
 
   userProfile.pictureURL = pictureURL;
-  userProfile.userId = userId;
+  userProfile.userId = userId as Types.ObjectId;
   userProfile.age = age;
   userProfile.continent = continent;
   userProfile.country = country;

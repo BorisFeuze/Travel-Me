@@ -1,7 +1,9 @@
 import { authServiceURL } from "@/utils";
 
+const baseURL: string = `${authServiceURL}/auth`;
+
 const login = async (formData: LoginData): Promise<SuccessRes> => {
-  const res = await fetch(`${authServiceURL}/auth/login`, {
+  const res = await fetch(`${baseURL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,18 +18,19 @@ const login = async (formData: LoginData): Promise<SuccessRes> => {
 };
 
 const me = async () => {
-  const res = await fetch(`${authServiceURL}/auth/me`, {
+  const res = await fetch(`${baseURL}/me`, {
     method: "GET",
   });
 
   if (!res.ok) throw new Error("Something went wrong!");
 
   const data = await res.json();
+  // console.log(data);
   return data;
 };
 
 const logout = async () => {
-  const res = await fetch(`${authServiceURL}/auth/logout`, {
+  const res = await fetch(`${baseURL}/logout`, {
     method: "DELETE",
   });
 
@@ -37,8 +40,10 @@ const logout = async () => {
   return data;
 };
 
-const register = async (formData: RegisterData): Promise<SuccessRes> => {
-  const res = await fetch(`${authServiceURL}/auth/register`, {
+const register = async (
+  formData: Omit<RegisterData, "_id">
+): Promise<SuccessRes> => {
+  const res = await fetch(`${baseURL}/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

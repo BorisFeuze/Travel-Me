@@ -8,7 +8,7 @@ const HostAccount = () => {
   const { user } = useAuth();
   // console.log(user);
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: "",
+    pictureURL: null,
     userId: "",
     age: undefined,
     continent: "",
@@ -44,20 +44,20 @@ const HostAccount = () => {
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const user = await getUserDetails();
-        if (user) {
-          setFormData((prev) => ({ ...prev, ...user }));
-          setPreviewUrl(user.pictureURL || null);
-        }
-      } catch (err) {
-        console.error("Failed to load user data", err);
-      }
-    };
-    loadUser();
-  }, []);
+  // useEffect(() => {
+  //   const loadUser = async () => {
+  //     try {
+  //       const currUser = await getUserDetails(user!._id);
+  //       if (currUser) {
+  //         setFormData((prev) => ({ ...prev, ...currUser }));
+  //         setPreviewUrl(currUser?.pictureURL || null);
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to load user data", err);
+  //     }
+  //   };
+  //   loadUser();
+  // }, []);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -67,15 +67,27 @@ const HostAccount = () => {
   };
 
   const handlePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setSelectedFile(file);
+    // const file = e.target.files?.[0];
+    // if (!file) return;
+    // setSelectedFile(file);
+    // const reader = new FileReader();
+    // reader.onloadend = () => {
+    //   setPreviewUrl(reader.result as string);
+    // };
+    // reader.readAsDataURL(file);
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    const imagefiles = e.target.files;
+    console.log(imagefiles);
+    if (!imagefiles) return;
+    setPreviewUrl(URL.createObjectURL(imagefiles[0]));
+    setSelectedFile(imagefiles[0]);
+
+    console.log(previewUrl);
+
+    setFormData((prev) => {
+      if (e.target.type === "file" && imagefiles)
+        return { ...prev, pictureURL: imagefiles[0] };
+    });
   };
 
   const handleSave = async () => {
@@ -107,8 +119,9 @@ const HostAccount = () => {
       if (selectedFile) {
         data.append("picture", selectedFile);
       }
-      console.log(data);
+
       await addUserDetails(formData);
+
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
       console.error(err);

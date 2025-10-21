@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context";
 
-
 const Register = () => {
   const [
     {
@@ -16,16 +15,16 @@ const Register = () => {
       roles,
     },
     setForm,
-  ] = useState<RegisterData>({
+  ] = useState<Omit<RegisterData, "_id">>({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    phoneNumber: 0,
+    phoneNumber: undefined,
     confirmPassword: "",
     roles: ["volunteer"],
   });
-  
+
   const { handleRegister } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -83,9 +82,7 @@ const Register = () => {
   };
 
   return (
-    <div
-      className="top-0 left-0 w-full h-full bg-cover bg-center z-0"
-    >
+    <div className="top-0 left-0 w-full h-full bg-cover bg-center z-0">
       <div className="relative z-10 flex items-start justify-center min-h-screen mt-20">
         <form
           className="my-5 md:w-1/4 h-[40rem] flex flex-col gap-3 bg-white/30 backdrop-blur-sm border-amber-300 border-2 p-6 rounded-xl shadow-lg items-center justify-start"
@@ -222,22 +219,21 @@ const Register = () => {
           </div>
 
           <div className="flex items-center gap-2">
-  <input
-    type="checkbox"
-    id="host"
-    checked={roles.includes("host")}
-    onChange={(e) => {
-      setForm((prev) => ({
-        ...prev,
-        roles: e.target.checked ? ["host"] : ["volunteer"],
-      }));
-    }}
-  />
-  <label htmlFor="host" className="text-black">
-    Host
-  </label>
-</div>
-
+            <input
+              type="checkbox"
+              id="host"
+              checked={roles.includes("host")}
+              onChange={(e) => {
+                setForm((prev) => ({
+                  ...prev,
+                  roles: e.target.checked ? ["host"] : ["volunteer"],
+                }));
+              }}
+            />
+            <label htmlFor="host" className="text-black">
+              Host
+            </label>
+          </div>
 
           <small className="text-black">
             Already have an account?{" "}

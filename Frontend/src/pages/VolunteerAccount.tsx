@@ -46,10 +46,10 @@ const VolunteerAccount = () => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const user = await getUserDetails();
-        if (user) {
-          setFormData((prev) => ({ ...prev, ...user }));
-          setPreviewUrl(user.pictureURL || null);
+        const currUser = await getUserDetails(user!._id);
+        if (currUser) {
+          setFormData((prev) => ({ ...prev, ...currUser }));
+          setPreviewUrl(currUser?.pictureURL || null);
         }
       } catch (err) {
         console.error("Failed to load user data", err);
@@ -105,7 +105,9 @@ const VolunteerAccount = () => {
         data.append("picture", selectedFile);
       }
       console.log(formData);
-      // await addUserDetails(formData);
+
+      await addUserDetails(formData);
+
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
       console.error(err);

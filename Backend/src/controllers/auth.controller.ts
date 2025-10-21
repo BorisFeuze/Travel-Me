@@ -38,6 +38,8 @@ export const register: RequestHandler<{}, SuccessMsg, RegisterInputDTO> = async 
     subject: user._id.toString()
   };
   const accessToken = jwt.sign(payload, secret, tokenOptions);
+
+  console.log(accessToken);
   //add access token to cookie
   const isProduction = process.env.NODE_env === 'production';
   const cookieOptions = {
@@ -76,7 +78,10 @@ export const login: RequestHandler<{}, SuccessMsg, LoginInputDTO> = async (req, 
 
   // Issue an access and a refresh token and put them in cookies
   const payload = { roles: user.roles };
+
+  // console.log(payload);
   const secret = ACCESS_JWT_SECRET;
+  // console.log(secret);
   const tokenOptions = {
     expiresIn: ACCESS_TOKEN_TTL,
     subject: user._id.toString()
