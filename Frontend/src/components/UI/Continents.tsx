@@ -152,7 +152,7 @@ const Continent = ({
             >
               {img && (
                 <div
-                  className="absolute inset-0 bg-cover bg-center"
+                  className="absolute inset-0 bg-cover bg-center "
                   style={{ backgroundImage: `url(${img})` }}
                 />
               )}
