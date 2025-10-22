@@ -1,7 +1,9 @@
-import { authServiceURL } from "@/utils";
+import { VITE_APP_USER_API_URL } from "@/config";
+
+const baseURL: string = `${VITE_APP_USER_API_URL}/userProfiles`;
 
 export const addUserDetails = async (formData: UserProfileFormData) => {
-  const res = await fetch(`${authServiceURL}/userProfiles`, {
+  const res = await fetch(baseURL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -13,8 +15,10 @@ export const addUserDetails = async (formData: UserProfileFormData) => {
   return data;
 };
 
-export const getUserDetails = async (): Promise<UserProfileFormData | null> => {
-  const res = await fetch(`${authServiceURL}/userProfiles/me`, {
+export const getUserDetails = async (
+  id: string
+): Promise<UserProfileFormData | null> => {
+  const res = await fetch(`${baseURL}?userId=${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
