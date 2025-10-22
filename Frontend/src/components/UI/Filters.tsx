@@ -276,9 +276,7 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() =>
-            onChange?.({ continent, country, place, skills })
-          }
+          onClick={() => onChange?.({ continent, country, place, skills })}
         >
           Apply filters
         </button>

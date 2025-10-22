@@ -1,5 +1,6 @@
 import { UsersAPI, type User } from "@/library/usersMock";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const initials = (u: User) =>
   `${u.firstName?.[0] ?? ""}${u.lastName?.[0] ?? ""}`.toUpperCase();
@@ -44,9 +45,10 @@ const TopHosts = () => {
       </div>
       <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 justify-items-center">
         {displayedHosts.map((h) => (
-          <div
+          <Link
             key={h.id}
-            className="snap-start shrink-0 w-40 rounded-2xl border p-4 text-center shadow-sm"
+            to={`/host/${h.id}`}
+            className="snap-start shrink-0 w-40 rounded-2xl border p-4 text-center shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           >
             <div className="mx-auto mb-2 grid h-16 w-16 place-items-center rounded-full border bg-slate-50 text-sm font-semibold">
               {h.pictureURL ? (
@@ -63,7 +65,7 @@ const TopHosts = () => {
             <div className="text-xs text-slate-500">
               {h.city}, {h.country}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
