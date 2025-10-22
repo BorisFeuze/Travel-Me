@@ -10,25 +10,29 @@ const filter = ({ mimetype }: Part) => {
 const maxFileSize = 10 * 1024 * 1024;
 
 const formMiddleWare: RequestHandler = (request, response, next) => {
-  const form = formidable({ filter, maxFileSize });
+  if (request.headers['content-type']?.includes('multipart/form-data')) {
+    const form = formidable({ multiples: true, filter, maxFileSize });
 
-  form.parse(request, (error, fields, files) => {
-    if (error) {
-      next(error);
-      return;
-    }
+    form.parse(request, (error, fields, files) => {
+      if (error) {
+        next(error);
+        return;
+      }
 
-    // console.log(fields);
+      console.log(fields);
 
-    // console.log(files);
+      console.log(files);
 
-    if (!files || !files.pictureURL) throw new Error('Please upload a file', { cause: { status: 400 } });
+      if (!files || !files.pictureURL) throw new Error('Please upload a file', { cause: { status: 400 } });
 
-    request.body = fields;
-    request.pictureURL = files.pictureURL[0];
+      request.body = fields;
+      request.pictureURL = files.pictureURL[0];
 
-    next();
-  });
+      next();
+    });
+  } else {
+    next(new Error('Expected multipart/form-data', { cause: { status: 400 } }));
+  }
 };
 
 export default formMiddleWare;

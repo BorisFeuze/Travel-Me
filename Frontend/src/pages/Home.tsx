@@ -6,7 +6,6 @@ import {
   Features,
   TopHosts,
   Continents,
-  JobByContinent,
   Countries,
   Requiredskills,
   Joinus,

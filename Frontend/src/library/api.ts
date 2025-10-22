@@ -20,4 +20,4 @@ const JobOffersAPI = {
 //   },
 // };
 
-export default { JobOffersAPI };
+export default { JobOffersAPI /*HostAPI*/ };

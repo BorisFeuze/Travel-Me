@@ -13,7 +13,7 @@ const cloudUploader: RequestHandler = async (request, response, next) => {
 
   const results = await cloudinary.uploader.upload(filepath);
 
-  // console.log(results);
+  // console.log(results.secure_url);
 
   request.body.pictureURL = results.secure_url;
 
