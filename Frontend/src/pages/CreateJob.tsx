@@ -33,12 +33,12 @@ const CreateJob = () => {
   const needsOptions = ["Cooking", "Teaching", "Building", "Gardening", "First Aid"];
   const languageOptions = ["English", "Spanish", "German", "French", "Portuguese"];
 
-  // --- Input Handling ---
+  // input handling 
   const handleInputChange = <K extends keyof JobFormData>(field: K, value: JobFormData[K]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // --- Picture Upload ---
+  // Picture upload 
   const handlePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const files = Array.from(e.target.files);
@@ -64,7 +64,7 @@ const CreateJob = () => {
   const nextImage = () => setCurrentIndex(prev => (previewUrls.length > 1 ? (prev + 1) % previewUrls.length : prev));
   const prevImage = () => setCurrentIndex(prev => (previewUrls.length > 1 ? (prev === 0 ? previewUrls.length - 1 : prev - 1) : prev));
 
-  // --- Multi-Select Dropdown ---
+  // for dropdown menu
   const toggleSelection = (field: "needs" | "languages", value: string) => {
     setFormData(prev => {
       const list = prev[field];
@@ -88,7 +88,7 @@ const CreateJob = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // --- Save Job Offer ---
+  // Save the job offer
   const handleSave = async () => {
     if (!formData.location || !formData.description) {
       setSaveMessage({ text: "Please fill all required fields.", type: "error" });
@@ -131,11 +131,11 @@ const CreateJob = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 flex flex-col lg:flex-row gap-8">
 
-      {/* --- Picture Gallery --- */}
+      {/* Picture gallery */}
       <div className="w-full lg:w-1/3 flex flex-col items-center">
         <div className="w-full bg-white shadow-2xl rounded-2xl p-4 flex flex-col items-center justify-between" style={{ minHeight: "600px" }}>
 
-          {/* Main Image */}
+          {/* main Image */}
           <div className="relative w-full h-80 bg-white rounded-xl overflow-hidden flex items-center justify-center">
             {previewUrls.length > 0 ? (
               <>
@@ -152,7 +152,7 @@ const CreateJob = () => {
             )}
           </div>
 
-          {/* Thumbnails */}
+          {/* thumbnails */}
           {previewUrls.length > 0 && (
             <div className="flex gap-2 mt-4 flex-wrap justify-center">
               {previewUrls.map((url, idx) => (
@@ -174,7 +174,7 @@ const CreateJob = () => {
             </div>
           )}
 
-          {/* Upload Button */}
+          {/* upload button */}
           <label className="btn bg-black text-white border-none hover:shadow-lg transition w-40 mt-6">
             Add Pictures
             <input type="file" multiple accept="image/*" className="hidden" onChange={handlePictureUpload} />
@@ -182,56 +182,96 @@ const CreateJob = () => {
         </div>
       </div>
 
-      {/* --- Form --- */}
+      {/* form*/}
       <div className="w-full lg:w-2/3">
         <div className="card bg-white shadow-2xl rounded-2xl p-6 pb-3" style={{ minHeight: "600px" }}>
           <h2 className="text-3xl mb-6 font-bold text-black">Create Job Offer</h2>
 
-          {/* Location */}
+          {/* location */}
           <label className="label"><span className="label-text font-medium text-gray-700">Location</span></label>
           <input type="text" className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition" placeholder="Enter location" value={formData.location} onChange={e => handleInputChange("location", e.target.value)} />
 
-          {/* Description */}
+          {/* description */}
           <label className="label"><span className="label-text font-medium text-gray-700">Description</span></label>
           <textarea className="textarea textarea-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition" placeholder="Enter job description" value={formData.description} onChange={e => handleInputChange("description", e.target.value)} />
 
-          {/* Needs */}
-          <label className="label"><span className="label-text font-medium text-gray-700">Needs</span></label>
-          <details ref={el => dropdownRefs.current[0] = el} className="dropdown dropdown-top w-full mb-4" onClick={() => handleDropdownToggle(0)}>
-            <summary className="select select-bordered w-full shadow-sm cursor-pointer flex items-center justify-between">
-              <span>{formData.needs.length > 0 ? formData.needs.join(", ") : "Select needs"}</span>
+          {/* needs */}
+          <label className="label">
+            <span className="label-text font-medium text-gray-700">Needs</span>
+          </label>
+          <div className="relative mb-4">
+            <details
+              ref={el => dropdownRefs.current[0] = el}
+              className="dropdown dropdown-top w-full"
+              onClick={() => handleDropdownToggle(0)}
+            >
+              <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
+                <span className="flex-1 text-left">
+                  {formData.needs.length > 0 ? formData.needs.join(", ") : "Select needs"}
+                </span>
+              </summary>
+              <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
+                {needsOptions.map((need) => (
+                  <li key={need}>
+                    <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                      <span className="flex-1">{need}</span>
+                      {formData.needs.includes(need) && (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                      <input
+                        type="checkbox"
+                        checked={formData.needs.includes(need)}
+                        onChange={() => toggleSelection("needs", need)}
+                        className="hidden"
+                      />
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </div>
+
+          {/* languages */}
+          <label className="label">
+          <span className="label-text font-medium text-gray-700">Languages</span>
+        </label>
+        <div className="relative mb-6">
+          <details
+            ref={el => dropdownRefs.current[1] = el}
+            className="dropdown dropdown-top w-full"
+            onClick={() => handleDropdownToggle(1)}
+          >
+            <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
+              <span className="flex-1 text-left">
+                {formData.languages.length > 0 ? formData.languages.join(", ") : "Select languages"}
+              </span>
             </summary>
-            <ul className="menu p-2 bg-white shadow rounded-box w-full">
-              {needsOptions.map((need, idx) => (
-                <li key={idx} className="cursor-pointer hover:bg-gray-100">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" checked={formData.needs.includes(need)} onChange={() => toggleSelection("needs", need)} />
-                    {need}
+            <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
+              {languageOptions.map((lang) => (
+                <li key={lang}>
+                  <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                    <span className="flex-1">{lang}</span>
+                    {formData.languages.includes(lang) && (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <input
+                      type="checkbox"
+                      checked={formData.languages.includes(lang)}
+                      onChange={() => toggleSelection("languages", lang)}
+                      className="hidden"
+                    />
                   </label>
                 </li>
               ))}
             </ul>
           </details>
+        </div>
 
-          {/* Languages */}
-          <label className="label"><span className="label-text font-medium text-gray-700">Languages</span></label>
-          <details ref={el => dropdownRefs.current[1] = el} className="dropdown dropdown-top w-full mb-6" onClick={() => handleDropdownToggle(1)}>
-            <summary className="select select-bordered w-full shadow-sm cursor-pointer flex items-center justify-between">
-              <span>{formData.languages.length > 0 ? formData.languages.join(", ") : "Select languages"}</span>
-            </summary>
-            <ul className="menu p-2 bg-white shadow rounded-box w-full">
-              {languageOptions.map((lang, idx) => (
-                <li key={idx} className="cursor-pointer hover:bg-gray-100">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" checked={formData.languages.includes(lang)} onChange={() => toggleSelection("languages", lang)} />
-                    {lang}
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </details>
-
-          {/* Save Button */}
+          {/* save Button */}
           <button className={`btn w-full ${isSaving ? "loading" : ""} bg-black text-white border-none hover:shadow-lg transition`} onClick={handleSave} disabled={isSaving}>
             Save Job Offer
           </button>
