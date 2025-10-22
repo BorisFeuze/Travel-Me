@@ -4,7 +4,7 @@ import { UserProfile } from '#models';
 import { type z } from 'zod/v4';
 import type { userProfileInputSchema, userProfileSchema } from '#schemas';
 
-type UserProfileInputDTO = z.infer<typeof userProfileInputSchema>;
+type UserProfileInputDTO = z.input<typeof userProfileInputSchema>;
 type UserProfileDTO = z.infer<typeof userProfileSchema>;
 type GetUserProfilesType = SuccessMsg & { userProfiles: UserProfileDTO[] };
 type UserProfileType = SuccessMsg & { userProfile: UserProfileDTO };
@@ -72,12 +72,12 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
 
-  userProfile.pictureURL = pictureURL;
-  userProfile.userId = userId as Types.ObjectId;
-  userProfile.age = age;
-  userProfile.continent = continent;
-  userProfile.country = country;
-  userProfile.gender = gender;
+  userProfile.pictureURL = pictureURL as string;
+  userProfile.userId = userId as unknown as Types.ObjectId;
+  userProfile.age = age as number;
+  userProfile.continent = continent as string;
+  userProfile.country = country as string;
+  userProfile.gender = gender as string;
   userProfile.skills = skills || [];
   userProfile.languages = languages || [];
   userProfile.educations = educations || [];
