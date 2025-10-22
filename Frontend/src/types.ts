@@ -40,6 +40,18 @@ declare global {
     educations: string[];
   };
 
+  type JobOfferFormData = {               
+  location: string;
+  userProfileId: string;       
+  pictureGallery: string[];    
+  description: string;
+  needs?: string[];           
+  languages: string[];
+  createdAt?: string;         
+  updatedAt?: string;
+};
+
+
   type SuccessRes = { message: string };
 }
 

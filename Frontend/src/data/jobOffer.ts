@@ -1,0 +1,52 @@
+import { VITE_APP_USER_API_URL } from "@/config";
+
+const baseURL: string = `${VITE_APP_USER_API_URL}`;
+
+export const addJobOffer = async (formData: JobOfferFormData) => {
+  const res = await fetch(`${baseURL}/userProfiles`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
+  
+  if (!res.ok) throw new Error("Failed to save volunteer details");
+  const data = await res.json();
+  console.log(data);
+  return data;
+};
+
+export const getJobOffer = async (
+  id: string
+): Promise<UserProfileFormData | null> => {
+  const res = await fetch(`${baseURL}/userProfiles?userId=${id}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (res.status === 401) {
+    console.warn("Unauthorized – user not logged in.");
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch user details: ${res.statusText}`);
+  }
+
+  const data: UserProfileFormData = await res.json();
+  return data;
+};
+
+export const updateJobOffer = async (
+  id: string,
+  formData: UserProfileFormData
+) => {
+  const res = await fetch(`${baseURL}/userProfiles/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
+  if (!res.ok) throw new Error("Failed to update volunteer details");
+  const data = await res.json();
+  console.log(data);
+  return data;
+};
