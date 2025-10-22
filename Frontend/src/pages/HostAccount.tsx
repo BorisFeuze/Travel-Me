@@ -2,7 +2,7 @@ import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import { addUserDetails, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
-import { validateDiaryForm } from "@/utils";
+//import { validateDiaryForm } from "@/utils";
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const HostAccount = () => {
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
   console.log(user);
-  const [errors, setErrors] = useState({});
+  //const [errors, setErrors] = useState({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -136,9 +136,9 @@ const HostAccount = () => {
 
       // console.log(data);
 
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
+      // for (let [key, value] of data.entries()) {
+      //   console.log(key, value);
+      // }
 
       const updatedUser = await addUserDetails(data);
 
