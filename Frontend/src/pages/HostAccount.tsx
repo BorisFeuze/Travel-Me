@@ -10,7 +10,7 @@ const HostAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  console.log(user);
+  // console.log(user);
   const [errors, setErrors] = useState({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -101,10 +101,10 @@ const HostAccount = () => {
   };
 
   const handleSave = async () => {
-    const valErrors = validateDiaryForm(formData);
-    setErrors(valErrors);
-    if (Object.keys(valErrors).length !== 0)
-      throw new Error("Missing required fields");
+    // const valErrors = validateDiaryForm(formData);
+    // setErrors(valErrors);
+    // if (Object.keys(valErrors).length !== 0)
+    //   throw new Error("Missing required fields");
 
     setIsSaving(true);
     setSaveMessage(null);
@@ -134,7 +134,7 @@ const HostAccount = () => {
         data.append("pictureURL", selectedFile);
       }
 
-      // console.log(data);
+      console.log(data);
 
       for (let [key, value] of data.entries()) {
         console.log(key, value);
@@ -160,9 +160,9 @@ const HostAccount = () => {
         <div className="w-full lg:w-1/3 flex flex-col items-center gap-6 bg-white rounded-2xl shadow-xl p-6">
           <div className="avatar mb-4">
             <div className="w-44 h-44 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center transition-transform duration-300 hover:scale-105">
-              {imagePreview ? (
+              {previewUrl ? (
                 <img
-                  src={imagePreview}
+                  src={previewUrl}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />

@@ -1,6 +1,6 @@
 import { VITE_APP_USER_API_URL } from "@/config";
 
-const baseURL: string = `${VITE_APP_USER_API_URL}`;
+const baseURL: string = `${VITE_APP_USER_API_URL}/userProfiles`;
 
 export const addUserDetails = async (formData: FormData) => {
   const res = await fetch(baseURL, {
@@ -17,7 +17,7 @@ export const addUserDetails = async (formData: FormData) => {
 export const getUserDetails = async (
   id: string
 ): Promise<UserProfileFormData | null> => {
-  const res = await fetch(`${baseURL}/userProfiles?userId=${id}`, {
+  const res = await fetch(`${baseURL}?userId=${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
