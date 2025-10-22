@@ -1,11 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
 import JobOffersAPI from "@/library/api";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { continentFromLocation, type ContinentKey } from "@/utils/geo";
 
 type JobOffer = {
   _id: string;
-  location: string; // "Freiburg, Germany"
+  location: string; // "Freiburg, Germany, Europe"
   userProfileId: string; // ref to userProfile
   pictureGallery?: string[]; // images
   description: string;
@@ -29,7 +29,7 @@ const SAMPLE_OFFERS: JobOffer[] = [
     _id: "mock_1",
     location: "Freiburg, Germany",
     userProfileId: "h_1",
-    pictureGallery: [],
+    pictureGallery: ["https://via.placeholder.com/300x200?text=Garden+Work"],
     description: "Help with garden and light renovation tasks.",
     needs: ["Gardening", "Renovation", "Painting"],
     languages: ["German", "English"],
@@ -38,10 +38,37 @@ const SAMPLE_OFFERS: JobOffer[] = [
     _id: "mock_2",
     location: "Rome, Italy",
     userProfileId: "h_3",
-    pictureGallery: [],
+    pictureGallery: ["https://via.placeholder.com/300x200?text=Hostel+Work"],
     description: "Assist with hostel reception and cooking.",
     needs: ["Hostel work", "Cooking"],
     languages: ["Italian", "English"],
+  },
+  {
+    _id: "mock_3",
+    location: "Bangkok, Thailand",
+    userProfileId: "h_4",
+    pictureGallery: ["https://via.placeholder.com/300x200?text=Teaching"],
+    description: "Teach English and help with farm work.",
+    needs: ["Teaching", "Farming"],
+    languages: ["English", "Thai"],
+  },
+  {
+    _id: "mock_4",
+    location: "São Paulo, Brazil",
+    userProfileId: "h_5",
+    pictureGallery: ["https://via.placeholder.com/300x200?text=Eco+Farm"],
+    description: "Work on sustainable eco-farm project.",
+    needs: ["Farming", "Construction"],
+    languages: ["Portuguese", "English"],
+  },
+  {
+    _id: "mock_5",
+    location: "Cape Town, South Africa",
+    userProfileId: "h_6",
+    pictureGallery: ["https://via.placeholder.com/300x200?text=Wildlife"],
+    description: "Wildlife conservation and research assistance.",
+    needs: ["Research", "Animal Care"],
+    languages: ["English", "Afrikaans"],
   },
 ];
 
@@ -62,7 +89,9 @@ const JobByContinent = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await JobOffersAPI.fetchJobOffers();
+        const response = await JobOffersAPI.JobOffersAPI.fetchJobOffers();
+        // Backend returns {message: '...', jobOffers: [...]}
+        const data = response?.jobOffers || response;
         setOffers(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error("Failed to load job offers from API:", e);
@@ -76,8 +105,21 @@ const JobByContinent = () => {
     })();
   }, []);
 
+  // group offers by detected continent
   const grouped = useMemo(() => groupByContinent(offers), [offers]);
-  const continents = CONTINENT_ORDER.filter((c) => grouped[c]?.length);
+
+  // read optional ?continent=Europe query param and show only that continent when present
+  const [searchParams] = useSearchParams();
+  const selectedRaw = searchParams.get("continent");
+  const selected = selectedRaw ? decodeURIComponent(selectedRaw) : null;
+
+  const continents = useMemo(() => {
+    const available = CONTINENT_ORDER.filter((c) => grouped[c]?.length);
+    if (selected && available.includes(selected as ContinentKey)) {
+      return [selected as ContinentKey];
+    }
+    return available;
+  }, [grouped, selected]);
 
   if (loading)
     return <div className="mx-auto max-w-6xl px-4 py-10">Loading…</div>;

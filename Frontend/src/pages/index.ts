@@ -8,6 +8,7 @@ import DetailCountry from "./DetailCountry";
 import DetailJob from "./DetailJob";
 
 import CountryLists from "./CountyLists";
+import Opportunities from "./Opportunities";
 
 import VolunteerAccount from "./VolunteerAccount";
 import HostAccount from "./HostAccount";
@@ -24,4 +25,5 @@ export {
   DetailCountry,
   DetailJob,
   CountryLists,
+  Opportunities,
 };
