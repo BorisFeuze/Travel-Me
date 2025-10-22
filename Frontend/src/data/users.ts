@@ -2,14 +2,13 @@ import { VITE_APP_USER_API_URL } from "@/config";
 
 const baseURL: string = `${VITE_APP_USER_API_URL}`;
 
-export const addUserDetails = async (formData: UserProfileFormData) => {
-  const res = await fetch(`${baseURL}/userProfiles`, {
+export const addUserDetails = async (formData: FormData) => {
+  const res = await fetch(baseURL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
+    body: formData,
   });
-  
-  if (!res.ok) throw new Error("Failed to save volunteer details");
+
+  if (!res.ok) throw new Error("Failed to save host details");
   const data = await res.json();
   console.log(data);
   return data;
