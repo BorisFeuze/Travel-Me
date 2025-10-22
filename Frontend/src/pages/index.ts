@@ -12,6 +12,7 @@ import Opportunities from "./Opportunities";
 
 import VolunteerAccount from "./VolunteerAccount";
 import HostAccount from "./HostAccount";
+import DisplayHost from "./DisplayHost";
 
 export {
   Home,
@@ -26,4 +27,5 @@ export {
   DetailJob,
   CountryLists,
   Opportunities,
+  DisplayHost,
 };

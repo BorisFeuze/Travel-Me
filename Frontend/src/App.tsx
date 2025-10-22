@@ -12,6 +12,7 @@ import {
   VolunteerAccount,
   HostAccount,
   Opportunities,
+  DisplayHost,
 } from "./pages";
 import RootLayout from "./layouts/RootLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -25,6 +26,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Registration />} />
           <Route path="opportunities" element={<Opportunities />} />
+          <Route path="host/:id" element={<DisplayHost />} />
           <Route path="job/:id" element={<DetailJob />} />
           <Route path="country/:name" element={<DetailCountry />} />
           <Route path="countrylist" element={<CountryLists />} />

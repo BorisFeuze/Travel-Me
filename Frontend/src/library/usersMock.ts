@@ -9,6 +9,7 @@ export type User = {
   continent: string;
   country: string;
   city: string;
+  // addressLine?: string; // full address like "Via..., Milano"
   gender: Gender;
   phone: string;
   email: string;
