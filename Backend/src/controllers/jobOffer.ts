@@ -22,11 +22,11 @@ export const getJobOffers: RequestHandler<{}, GetJobOffersType> = async (req, re
 };
 
 export const createJobOffer: RequestHandler<{}, JobOfferType, JobOfferInputDTO> = async (req, res) => {
-  const { location, userProfileId, pictureGallery, description, needs, languages } = req.body;
+  const { location, userProfileId, pictureURL, description, needs, languages } = req.body;
   const jobOffer = await JobOffer.create<JobOfferInputDTO>({
     location,
     userProfileId,
-    pictureGallery,
+    pictureURL,
     description,
     needs,
     languages
@@ -47,7 +47,7 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { location, userProfileId, pictureGallery, description, needs, languages },
+    body: { location, userProfileId, pictureURL, description, needs, languages },
     jobOffer
   } = req;
 
@@ -57,7 +57,7 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
 
   jobOffer.location = location;
   jobOffer.userProfileId = userProfileId as Types.ObjectId;
-  jobOffer.pictureGallery = pictureGallery || [];
+  jobOffer.pictureURL = pictureURL || [];
   jobOffer.description = description;
   jobOffer.needs = needs || [];
   jobOffer.languages = languages || [];

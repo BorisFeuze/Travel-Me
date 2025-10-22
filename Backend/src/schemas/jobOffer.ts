@@ -2,6 +2,11 @@ import { z } from 'zod/v4';
 import { dbEntrySchema } from './shared.ts';
 import { Types, isValidObjectId } from 'mongoose';
 
+const coercedString = (val: string | [string]) => {
+  if (Array.isArray(val)) return val[0];
+  return val;
+};
+
 export const genderSchema = z.strictObject({
   male: z.boolean().default(false),
   female: z.boolean().default(false),
@@ -9,18 +14,21 @@ export const genderSchema = z.strictObject({
 });
 
 export const jobOfferInputSchema = z.strictObject({
-  location: z.string(),
-  userProfileId: z.union([
-    z
-      .string('userProfileId must be a string')
-      .min(1, 'userProfileId is required')
-      .refine(val => {
-        return isValidObjectId(val);
-      }, 'Invalid userProfile ID'),
-    z.instanceof(Types.ObjectId)
-  ]),
-  pictureGallery: z.array(z.string().default('')),
-  description: z.string(),
+  location: z.preprocess(coercedString, z.string()),
+  userProfileId: z.preprocess(
+    coercedString,
+    z.union([
+      z
+        .string('userProfileId must be a string')
+        .min(1, 'userProfileId is required')
+        .refine(val => {
+          return isValidObjectId(val);
+        }, 'Invalid userProfile ID'),
+      z.instanceof(Types.ObjectId)
+    ])
+  ),
+  pictureURL: z.array(z.string().default('')),
+  description: z.preprocess(coercedString, z.string()),
   needs: z.array(z.string().default('')),
   languages: z.array(z.string().default(''))
 });

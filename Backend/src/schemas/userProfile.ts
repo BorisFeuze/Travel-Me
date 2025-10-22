@@ -13,14 +13,16 @@ const coercedNumber = (val: number | [number]) => {
 };
 
 export const userProfileInputSchema = z.strictObject({
-  pictureURL: z
-    .url({
-      protocol: /^https?$/,
-      hostname: z.regexes.domain
-    })
-    .default(
-      'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'
-    ),
+  pictureURL: z.array(
+    z
+      .url({
+        protocol: /^https?$/,
+        hostname: z.regexes.domain
+      })
+      .default(
+        'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'
+      )
+  ),
   userId: z.preprocess(
     coercedString,
     z.union([

@@ -56,7 +56,7 @@ const HostAccount = () => {
 
         if (currentUser) {
           const dataCurrentUser = currentUser.userProfiles[0];
-          const currentnUserProfil = dataCurrentUser.pictureURL;
+          const currentnUserProfil = dataCurrentUser.pictureURL[0];
           console.log(currentnUserProfil);
           setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
           setPreviewUrl(currentnUserProfil || null);
@@ -101,10 +101,10 @@ const HostAccount = () => {
   };
 
   const handleSave = async () => {
-    // const valErrors = validateDiaryForm(formData);
-    // setErrors(valErrors);
-    // if (Object.keys(valErrors).length !== 0)
-    //   throw new Error("Missing required fields");
+    const valErrors = validateDiaryForm(formData);
+    setErrors(valErrors);
+    if (Object.keys(valErrors).length !== 0)
+      throw new Error("Missing required fields");
 
     setIsSaving(true);
     setSaveMessage(null);
