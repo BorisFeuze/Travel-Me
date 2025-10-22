@@ -27,4 +27,4 @@ const HostAPI = {
   },
 };
 
-export default { JobOffersAPI, HostAPI };
+export default { JobOffersAPI /*HostAPI*/ };

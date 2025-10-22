@@ -31,11 +31,11 @@ const Heroheader: React.FC<HeroheaderProps> = ({
   const contentAlignment = isCenter
     ? "text-center items-center"
     : "text-left items-start";
-  const textContainerWidth = media.type === "image" ? "md:w-1/2" : "w-full";
+  const textContainerWidth = media.type === "image" ? "md:w-1/1" : "w-full";
 
   return (
     <section
-      className={`hero min-h-screen bg-cover bg-center ${className}`}
+      className={`hero min-h-[70vh] bg-cover bg-center ${className}`}
       style={{
         backgroundImage: `url(${bgImageUrl})`,
       }}
@@ -63,7 +63,7 @@ const Heroheader: React.FC<HeroheaderProps> = ({
               </p>
             )}
 
-            <h1 className="mb-10 text-4xl md:text-8xl font-extrabold leading-tight text-[#C6F36B] hero-header-title">
+            <h1 className="mb-10 text-4xl md:text-[4rem] font-extrabold leading-tight text-[#C6F36B] hero-header-title">
               {title}
             </h1>
 

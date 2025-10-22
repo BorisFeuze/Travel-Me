@@ -1,14 +1,27 @@
 import { useState, useEffect, type ChangeEvent } from "react";
+import { useNavigate } from "react-router";
 import { addUserDetails, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
+import { validateDiaryForm } from "@/utils";
 
 const HostAccount = () => {
+  const navigate = useNavigate();
+
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  // console.log(user);
+  console.log(user);
+  const [errors, setErrors] = useState({});
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
+
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: null,
+    pictureURL: undefined,
     userId: "",
     age: undefined,
     continent: "",
@@ -18,14 +31,6 @@ const HostAccount = () => {
     languages: [],
     educations: [],
   });
-
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{
-    text: string;
-    type: "success" | "error";
-  } | null>(null);
 
   const skillOptions = [
     "Cooking",
@@ -44,20 +49,24 @@ const HostAccount = () => {
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
-  // useEffect(() => {
-  //   const loadUser = async () => {
-  //     try {
-  //       const currUser = await getUserDetails(user!._id);
-  //       if (currUser) {
-  //         setFormData((prev) => ({ ...prev, ...currUser }));
-  //         setPreviewUrl(currUser?.pictureURL || null);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to load user data", err);
-  //     }
-  //   };
-  //   loadUser();
-  // }, []);
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const currentUser = await getUserDetails(user!._id ?? "");
+
+        if (currentUser) {
+          const dataCurrentUser = currentUser.userProfiles[0];
+          const currentnUserProfil = dataCurrentUser.pictureURL;
+          console.log(currentnUserProfil);
+          setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
+          setPreviewUrl(currentnUserProfil || null);
+        }
+      } catch (err) {
+        console.error("Failed to load user data", err);
+      }
+    };
+    loadUser();
+  }, []);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -67,34 +76,41 @@ const HostAccount = () => {
   };
 
   const handlePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (!file) return;
-    // setSelectedFile(file);
-    // const reader = new FileReader();
-    // reader.onloadend = () => {
-    //   setPreviewUrl(reader.result as string);
-    // };
-    // reader.readAsDataURL(file);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    console.log(selectedFile);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
 
-    const imagefiles = e.target.files;
-    console.log(imagefiles);
-    if (!imagefiles) return;
-    setPreviewUrl(URL.createObjectURL(imagefiles[0]));
-    setSelectedFile(imagefiles[0]);
+    // const imagefiles = e.target.files;
+    // console.log(imagefiles);
+    // if (!imagefiles) return;
+    // setPreviewUrl(URL.createObjectURL(imagefiles[0]));
+    // setSelectedFile(imagefiles[0]);
 
-    console.log(previewUrl);
+    // console.log(selectedFile);
 
-    setFormData((prev) => {
-      if (e.target.type === "file" && imagefiles)
-        return { ...prev, pictureURL: imagefiles[0] };
-    });
+    // setFormData((prev) => {
+    //   if (e.target.type === "file" && imagefiles)
+    //     return { ...prev, pictureURL: imagefiles[0] };
+    // });
   };
 
   const handleSave = async () => {
+    // const valErrors = validateDiaryForm(formData);
+    // setErrors(valErrors);
+    // if (Object.keys(valErrors).length !== 0)
+    //   throw new Error("Missing required fields");
+
     setIsSaving(true);
     setSaveMessage(null);
 
     formData.userId = user!._id;
+    formData.pictureURL = selectedFile;
     // formData.firstName = user!.firstName;
     // formData.lastName = user!.lastName;
     // formData.email = user!.email;
@@ -102,7 +118,7 @@ const HostAccount = () => {
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
-      // data.append("firstName", formData.firstName);
+      data.append("pictureURL", formData.pictureURL);
       // data.append("lastName", formData.lastName);
       // data.append("email", formData.email);
       // data.append("phoneNumber", String(formData.phoneNumber));
@@ -114,13 +130,19 @@ const HostAccount = () => {
       data.append("languages", JSON.stringify(formData.languages));
       data.append("educations", JSON.stringify(formData.educations));
 
-      console.log(formData);
-
       if (selectedFile) {
-        data.append("picture", selectedFile);
+        data.append("pictureURL", selectedFile);
       }
 
-      await addUserDetails(formData);
+      // console.log(data);
+
+      for (let [key, value] of data.entries()) {
+        console.log(key, value);
+      }
+
+      const updatedUser = await addUserDetails(data);
+
+      console.log(updatedUser);
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
@@ -132,7 +154,7 @@ const HostAccount = () => {
   };
 
   return (
-    <div className=" min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
       <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
         {/* Left Side: Profile Picture */}
         <div className="w-full lg:w-1/3 flex flex-col items-center gap-6 bg-white rounded-2xl shadow-xl p-6">
@@ -163,6 +185,7 @@ const HostAccount = () => {
             Add Picture
             <input
               type="file"
+              name="picture"
               accept="image/*"
               className="hidden"
               onChange={handlePictureUpload}
@@ -541,7 +564,7 @@ const HostAccount = () => {
 
               {/* plus card */}
               <div
-                onClick={() => (window.location.href = "/create-job")}
+                onClick={() => navigate("/create-job")}
                 className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-[4/3]"
               >
                 <svg

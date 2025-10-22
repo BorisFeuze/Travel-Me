@@ -114,178 +114,158 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
   };
 
   return (
-    <section className="w-full bg-base-100/80 backdrop-blur rounded-2xl shadow-sm p-4 md:p-6">
-      {/* Row: selects */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        {/* Continent */}
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text font-medium">Continent</span>
-            {continent && (
-              <button
-                type="button"
-                className="link link-primary text-sm"
-                onClick={() => setContinent(undefined)}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-          <select
-            className="select select-bordered w-full"
-            value={continent ?? ""}
-            onChange={(e) =>
-              setContinent(
-                (e.target.value || undefined) as FiltersState["continent"]
-              )
-            }
-          >
-            <option value="">All continents</option>
-            {CONTINENTS.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </label>
+  <section className="w-full">
+ 
+    <div className="mx-auto max-w-6xl rounded-[999px] bg-white border shadow-md backdrop-blur px-2 mt-10">
+      <div className="flex flex-col md:flex-row md:items-stretch">
+   
+        <div className="flex-1 px-4 py-3">
+          <div className="text-xs font-semibold text-gray-700">Where</div>
 
-        {/* Country (depends on continent) */}
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text font-medium">Country</span>
-            {country && (
-              <button
-                type="button"
-                className="link link-primary text-sm"
-                onClick={() => setCountry(undefined)}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-          <select
-            className="select select-bordered w-full"
-            value={country ?? ""}
-            onChange={(e) => setCountry(e.target.value || undefined)}
-            disabled={!continent}
-          >
-            <option value="">
-              {continent ? "All countries" : "Select continent first"}
-            </option>
-            {countryOptions.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        {/* Place (depends on country) */}
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text font-medium">Place</span>
-            {place && (
-              <button
-                type="button"
-                className="link link-primary text-sm"
-                onClick={() => setPlace(undefined)}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-          <select
-            className="select select-bordered w-full"
-            value={place ?? ""}
-            onChange={(e) => setPlace(e.target.value || undefined)}
-            disabled={!country}
-          >
-            <option value="">
-              {country ? "All places" : "Select country first"}
-            </option>
-            {placeOptions.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        {/* Skills (multi-select as checkboxes → rendered as chips below) */}
-        <label className="form-control w-full">
-          <div className="label">
-            <span className="label-text font-medium">Skills</span>
-            {skills.length > 0 && (
-              <button
-                type="button"
-                className="link link-primary text-sm"
-                onClick={() => setSkills([])}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn w-full">
-              {skills.length ? `${skills.length} selected` : "Select skills"}
-            </div>
-            <ul
-              tabIndex={0}
-              className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-64 max-h-72 overflow-auto"
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+    
+            <select
+              className="bg-transparent outline-none text-sm text-gray-900 min-w-[140px]"
+              value={continent ?? ""}
+              onChange={(e) =>
+                setContinent(
+                  (e.target.value || undefined) as FiltersState["continent"]
+                )
+              }
+              aria-label="Continent"
             >
-              {SKILLS.map((s) => (
-                <li key={s}>
-                  <label className="label cursor-pointer justify-start gap-3">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-sm"
-                      checked={skills.includes(s)}
-                      onChange={() => toggleSkill(s)}
-                    />
-                    <span className="label-text">{s}</span>
-                  </label>
-                </li>
+              <option value="">All the continents</option>
+              {CONTINENTS.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
-            </ul>
+            </select>
+   
+            <span className="hidden sm:inline-block h-5 w-px bg-gray-200 mx-1" />
+
+     
+            <select
+              className="bg-transparent outline-none text-sm text-gray-900 min-w-[140px] disabled:text-gray-400"
+              value={country ?? ""}
+              onChange={(e) => setCountry(e.target.value || undefined)}
+              disabled={!continent}
+              aria-label="Country"
+            >
+              <option value="">
+                {continent ? "All the continents" : "Choose the continent"}
+              </option>
+              {countryOptions.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+
+            <span className="hidden sm:inline-block h-5 w-px bg-gray-200 mx-1" />
+
+  
+            <select
+              className="bg-transparent outline-none text-sm text-gray-900 min-w-[140px] disabled:text-gray-400"
+              value={place ?? ""}
+              onChange={(e) => setPlace(e.target.value || undefined)}
+              disabled={!country}
+              aria-label="Place"
+            >
+              <option value="">
+                {country ? "All countries" : "Choose the country"}
+              </option>
+              {placeOptions.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
           </div>
-        </label>
-      </div>
-
-      {/* Selected skill chips */}
-      {skills.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {skills.map((s) => (
-            <span key={s} className="badge badge-outline gap-1">
-              {s}
-              <button
-                type="button"
-                className="ml-1 opacity-70 hover:opacity-100"
-                onClick={() => toggleSkill(s)}
-                aria-label={`Remove ${s}`}
-                title="Remove"
-              >
-                ✕
-              </button>
-            </span>
-          ))}
         </div>
-      )}
 
-      {/* Action row */}
-      <div className="mt-4 flex items-center gap-2">
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => onChange?.({ continent, country, place, skills })}
-        >
-          Apply filters
-        </button>
-        <button type="button" className="btn btn-ghost" onClick={clearAll}>
-          Clear all
-        </button>
+
+        <div className="hidden md:flex items-center">
+          <div className="h-8 w-px bg-gray-200" />
+        </div>
+
+
+        <div className="flex-1 px-4 py-3">
+          <div className="text-xs font-semibold text-gray-700">Skills</div>
+
+          <div className="mt-1">
+            <div className="dropdown">
+              <button
+                tabIndex={0}
+                type="button"
+                className="text-sm text-gray-700 hover:text-gray-900 outline-none"
+              >
+                {skills.length ? `${skills.length} selected` : "Select the skills"}
+              </button>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[5] menu p-2 shadow bg-white border rounded-xl w-64 max-h-72 overflow-auto"
+              >
+                {SKILLS.map((s) => (
+                  <li key={s}>
+                    <label className="label cursor-pointer justify-start gap-3 py-1">
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-sm"
+                        checked={skills.includes(s)}
+                        onChange={() => toggleSkill(s)}
+                      />
+                      <span className="label-text text-sm">{s}</span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Pulsante tondo di ricerca */}
+        <div className="flex items-center justify-end px-2 py-2 md:py-0">
+          <button
+            type="button"
+            onClick={() => onChange?.({ continent, country, place, skills })}
+            aria-label="Cerca"
+            className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition focus:outline-none focus:ring-2 focus:ring-gray-300"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden>
+              <path d="M10 4a6 6 0 104.472 10.026l4.751 4.751 1.414-1.414-4.751-4.751A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z" />
+            </svg>
+          </button>
+        </div>
       </div>
-    </section>
-  );
-};
+    </div>
 
+    {/* Chips skills selezionate + Clear all opzionale */}
+    {skills.length > 0 && (
+      <div className="max-w-6xl mx-auto mt-2 flex flex-wrap gap-2 px-2">
+        {skills.map((s) => (
+          <span key={s} className="badge badge-outline gap-1">
+            {s}
+            <button
+              type="button"
+              className="ml-1 opacity-70 hover:opacity-100"
+              onClick={() => toggleSkill(s)}
+              aria-label={`Remove ${s}`}
+              title="Remove"
+            >
+              ✕
+            </button>
+          </span>
+        ))}
+      </div>
+    )}
+
+    <div className="max-w-6xl mx-auto mt-2 px-2">
+      <button type="button" className="text-sm text-gray-500 hover:underline" onClick={clearAll}>
+        Clear all
+      </button>
+    </div>
+  </section>
+);
+};
 export default Filters;
