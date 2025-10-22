@@ -1,10 +1,10 @@
 import type { RequestHandler } from 'express';
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { UserProfile } from '#models';
 import { type z } from 'zod/v4';
 import type { userProfileInputSchema, userProfileSchema } from '#schemas';
 
-type UserProfileInputDTO = z.infer<typeof userProfileInputSchema>;
+type UserProfileInputDTO = z.input<typeof userProfileInputSchema>;
 type UserProfileDTO = z.infer<typeof userProfileSchema>;
 type GetUserProfilesType = SuccessMsg & { userProfiles: UserProfileDTO[] };
 type UserProfileType = SuccessMsg & { userProfile: UserProfileDTO };
@@ -12,7 +12,7 @@ type UserProfileType = SuccessMsg & { userProfile: UserProfileDTO };
 export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async (req, res) => {
   const userId = req.sanitQuery?.userId;
 
-  let userProfiles: UserProfileDTO[];
+  let userProfiles;
   if (userId) {
     userProfiles = await UserProfile.find({ userId: userId }).lean();
   } else {
@@ -25,11 +25,13 @@ export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputD
   const {
     body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations }
   } = req;
+
+  // console.log(req.body);
   let userProfile: UserProfileDTO;
   const userProfiles = await UserProfile.find();
   const isProfile = userProfiles.some(c => c.userId.toString() === userId.toString());
   if (!isProfile) {
-    userProfile = await UserProfile.create<UserProfileInputDTO>({
+    userProfile = await UserProfile.create({
       pictureURL,
       userId,
       age,
@@ -70,12 +72,12 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
 
-  userProfile.pictureURL = pictureURL;
-  userProfile.userId = userId;
-  userProfile.age = age;
-  userProfile.continent = continent;
-  userProfile.country = country;
-  userProfile.gender = gender;
+  userProfile.pictureURL = pictureURL as string;
+  userProfile.userId = userId as unknown as Types.ObjectId;
+  userProfile.age = age as number;
+  userProfile.continent = continent as string;
+  userProfile.country = country as string;
+  userProfile.gender = gender as string;
   userProfile.skills = skills || [];
   userProfile.languages = languages || [];
   userProfile.educations = educations || [];

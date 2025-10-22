@@ -25,6 +25,7 @@ const me = async () => {
   if (!res.ok) throw new Error("Something went wrong!");
 
   const data = await res.json();
+  // console.log(data);
   return data;
 };
 
@@ -39,7 +40,9 @@ const logout = async () => {
   return data;
 };
 
-const register = async (formData: RegisterData): Promise<SuccessRes> => {
+const register = async (
+  formData: Omit<RegisterData, "_id">
+): Promise<SuccessRes> => {
   const res = await fetch(`${baseURL}/register`, {
     method: "POST",
     headers: {

@@ -7,6 +7,8 @@ const authenticate =
   (req, _res, next) => {
     const { accessToken } = req.cookies;
 
+    // console.log(accessToken);
+
     if (!accessToken) {
       if (strictLevel === 'strict') {
         throw new Error('Access token is required', { cause: { status: 401 } });

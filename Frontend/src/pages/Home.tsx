@@ -5,6 +5,8 @@ import {
   Heroheader,
   Features,
   TopHosts,
+  Continents,
+  JobByContinent,
   Countries,
   Requiredskills,
   Joinus,
@@ -31,11 +33,10 @@ const Home = () => {
 
       {/* HERO */}
       <Heroheader
-        eyebrow=" Explore the World"
-        title="Welcome to Travel Me"
+        eyebrow="Travele & Work"
+        title="Explore the World by Travel-Me"
         // subtitle="Discover your next adventure during working hours!"
-        primaryCta={{ label: "Let's Go", href: "/signup" }}
-        // secondaryCta={{ label: "Live Demo", href: "/demo" }}
+        primaryCta={{ label: "Explore now", href: "/countrylist" }}
         align="center"
         bgImageUrl={heroBg} // ← pass the imported URL
         overlayOpacity={0.45}
@@ -47,6 +48,9 @@ const Home = () => {
 
       {/* Top hosts Scroller */}
       <TopHosts />
+
+      {/* Display Continents */}
+      <Continents />
 
       {/* Countries Grid */}
       <Countries />

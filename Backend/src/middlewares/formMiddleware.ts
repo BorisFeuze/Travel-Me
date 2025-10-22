@@ -2,8 +2,7 @@ import formidable, { type Part } from 'formidable';
 import type { RequestHandler } from 'express';
 
 const filter = ({ mimetype }: Part) => {
-  if (!mimetype || !mimetype.includes('image'))
-    throw new Error('Only images are allowed', { cause: { status: 400 } });
+  if (!mimetype || !mimetype.includes('image')) throw new Error('Only images are allowed', { cause: { status: 400 } });
   return true;
 };
 
@@ -19,10 +18,14 @@ const formMiddleWare: RequestHandler = (request, response, next) => {
       return;
     }
 
-    if (!files || !files.image) throw new Error('Please upload a file', { cause: { status: 400 } });
+    // console.log(fields);
+
+    // console.log(files);
+
+    if (!files || !files.pictureURL) throw new Error('Please upload a file', { cause: { status: 400 } });
 
     request.body = fields;
-    request.image = files.image[0];
+    request.pictureURL = files.pictureURL[0];
 
     next();
   });
