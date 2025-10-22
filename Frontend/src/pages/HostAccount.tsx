@@ -83,7 +83,6 @@ const HostAccount = () => {
   const handleSave = async () => {
     setIsSaving(true);
     setSaveMessage(null);
-
   formData.userId = user!._id;
   // formData.pictureURL = selectedFile;
 
