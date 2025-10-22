@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { UsersAPI, type SkillsStat } from "@/library";
 import Link from "@mui/material/Link";
-import renovation from "@/assets/images/renovation.jpg";
-import cooking from "@/assets/images/cooking.jpg";
-import gardening from "@/assets/images/gardening.jpg";
-import farming from "@/assets/images/farming.jpg";
-import painting from "@/assets/images/painting.jpg";
+import renovation from "@/assets/images/skills/renovation.jpg";
+import baking from "@/assets/images/skills/baking.jpg";
+import surfcoaching from "@/assets/images/skills/surfcoaching.jpg";
+import cooking from "@/assets/images/skills/cooking.jpg";
+import gardening from "@/assets/images/skills/gardening.jpg";
+import farming from "@/assets/images/skills/farming.jpg";
+import painting from "@/assets/images/skills/painting.jpg";
 
 const skillBG: Record<string, string> = {
   Renovation: renovation,
+  "Surf Coaching": surfcoaching,
+  Baking: baking,
   Cooking: cooking,
   Gardening: gardening,
   Farming: farming,
@@ -56,21 +60,26 @@ const Requiredskills = () => {
 
       <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 justify-items-center">
         {skills.map((s) => (
-          <div key={s.skill} className="card bg-base-100 w-96 shadow-sm">
+          <div
+            key={s.skill}
+            className="card bg-base-100 w-auto h-64 gap-4 shadow-sm"
+          >
             <figure>
               <img src={skillBG[s.skill]} alt={s.skill} />
             </figure>
             <div className="card-body">
               <h2 className="card-title">
                 {s.skill}
-                <div className="badge badge-secondary">{s.count} hosts</div>
+                <div className="badge badge-secondary absolute right-4 bottom-4 tooltip tooltip-left ">
+                  {s.count} hosts
+                </div>
               </h2>
               <div className="card-actions justify-end">
-                {s.hostIds.map((id) => (
+                {/* {s.hostIds.map((id) => (
                   <div key={id} className="badge badge-outline">
                     {id}
                   </div>
-                ))}
+                ))} */}
               </div>
             </div>
           </div>

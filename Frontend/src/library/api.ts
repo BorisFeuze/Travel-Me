@@ -10,4 +10,14 @@ const JobOffersAPI = {
   },
 };
 
-export default JobOffersAPI;
+// const HostAPI = {
+//   fetchHosts: async () => {
+//     const response = await fetch(`${API_URL}/hosts`); // which endpoint?
+//     if (!response.ok) {
+//       throw new Error("Failed to fetch hosts");
+//     }
+//     return response.json();
+//   },
+// };
+
+export default { JobOffersAPI, HostAPI };
