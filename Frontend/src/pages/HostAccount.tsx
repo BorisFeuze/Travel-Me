@@ -1,14 +1,24 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { addUserDetails, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
+import { validateDiaryForm } from "@/utils";
 
 const HostAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  // console.log(user);
+  console.log(user);
+  const [errors, setErrors] = useState({});
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
+
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: null,
+    pictureURL: undefined,
     userId: "",
     age: undefined,
     continent: "",
@@ -18,14 +28,6 @@ const HostAccount = () => {
     languages: [],
     educations: [],
   });
-
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{
-    text: string;
-    type: "success" | "error";
-  } | null>(null);
 
   const skillOptions = [
     "Cooking",
@@ -44,20 +46,24 @@ const HostAccount = () => {
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
-  // useEffect(() => {
-  //   const loadUser = async () => {
-  //     try {
-  //       const currUser = await getUserDetails(user!._id);
-  //       if (currUser) {
-  //         setFormData((prev) => ({ ...prev, ...currUser }));
-  //         setPreviewUrl(currUser?.pictureURL || null);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to load user data", err);
-  //     }
-  //   };
-  //   loadUser();
-  // }, []);
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const currentUser = await getUserDetails(user!._id ?? "");
+
+        if (currentUser) {
+          const dataCurrentUser = currentUser.userProfiles[0];
+          const currentnUserProfil = dataCurrentUser.pictureURL;
+          console.log(currentnUserProfil);
+          setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
+          setPreviewUrl(currentnUserProfil || null);
+        }
+      } catch (err) {
+        console.error("Failed to load user data", err);
+      }
+    };
+    loadUser();
+  }, []);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -67,34 +73,41 @@ const HostAccount = () => {
   };
 
   const handlePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (!file) return;
-    // setSelectedFile(file);
-    // const reader = new FileReader();
-    // reader.onloadend = () => {
-    //   setPreviewUrl(reader.result as string);
-    // };
-    // reader.readAsDataURL(file);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    console.log(selectedFile);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
 
-    const imagefiles = e.target.files;
-    console.log(imagefiles);
-    if (!imagefiles) return;
-    setPreviewUrl(URL.createObjectURL(imagefiles[0]));
-    setSelectedFile(imagefiles[0]);
+    // const imagefiles = e.target.files;
+    // console.log(imagefiles);
+    // if (!imagefiles) return;
+    // setPreviewUrl(URL.createObjectURL(imagefiles[0]));
+    // setSelectedFile(imagefiles[0]);
 
-    console.log(previewUrl);
+    // console.log(selectedFile);
 
-    setFormData((prev) => {
-      if (e.target.type === "file" && imagefiles)
-        return { ...prev, pictureURL: imagefiles[0] };
-    });
+    // setFormData((prev) => {
+    //   if (e.target.type === "file" && imagefiles)
+    //     return { ...prev, pictureURL: imagefiles[0] };
+    // });
   };
 
   const handleSave = async () => {
+    const valErrors = validateDiaryForm(formData);
+    setErrors(valErrors);
+    if (Object.keys(valErrors).length !== 0)
+      throw new Error("Missing required fields");
+
     setIsSaving(true);
     setSaveMessage(null);
 
     formData.userId = user!._id;
+    formData.pictureURL = selectedFile;
     // formData.firstName = user!.firstName;
     // formData.lastName = user!.lastName;
     // formData.email = user!.email;
@@ -102,7 +115,7 @@ const HostAccount = () => {
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
-      // data.append("firstName", formData.firstName);
+      data.append("pictureURL", formData.pictureURL);
       // data.append("lastName", formData.lastName);
       // data.append("email", formData.email);
       // data.append("phoneNumber", String(formData.phoneNumber));
@@ -114,13 +127,19 @@ const HostAccount = () => {
       data.append("languages", JSON.stringify(formData.languages));
       data.append("educations", JSON.stringify(formData.educations));
 
-      console.log(formData);
-
       if (selectedFile) {
-        data.append("picture", selectedFile);
+        data.append("pictureURL", selectedFile);
       }
 
-      await addUserDetails(formData);
+      // console.log(data);
+
+      for (let [key, value] of data.entries()) {
+        console.log(key, value);
+      }
+
+      const updatedUser = await addUserDetails(data);
+
+      console.log(updatedUser);
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {

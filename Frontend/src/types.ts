@@ -1,3 +1,5 @@
+import type { Url } from "url";
+
 declare global {
   type User = {
     _id?: string;
@@ -27,7 +29,7 @@ declare global {
   };
 
   type UserProfileFormData = {
-    pictureURL?: string;
+    pictureURL?: Url;
     userId: string;
     age?: number;
     continent: string;

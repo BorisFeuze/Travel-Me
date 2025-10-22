@@ -1,6 +1,7 @@
 import { Chat, User } from '#models';
 import type { RequestHandler } from 'express';
 import { io, userSocketMap } from '#utils';
+import { v2 as cloudinary } from 'cloudinary';
 
 type unseenMessagesType = {
   'user._id'?: number;

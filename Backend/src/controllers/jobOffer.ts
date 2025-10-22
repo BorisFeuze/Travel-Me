@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { JobOffer } from '#models';
 import { jobOfferInputSchema, jobOfferSchema } from '#schemas';
 import { type z } from 'zod/v4';
@@ -56,7 +56,7 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
   if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: { status: 404 } });
 
   jobOffer.location = location;
-  jobOffer.userProfileId = userProfileId;
+  jobOffer.userProfileId = userProfileId as Types.ObjectId;
   jobOffer.pictureGallery = pictureGallery || [];
   jobOffer.description = description;
   jobOffer.needs = needs || [];
