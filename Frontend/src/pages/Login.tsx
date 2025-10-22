@@ -40,55 +40,58 @@ const Login = () => {
   };
 
   return (
-    <div className="top-0 left-0 w-full h-full bg-cover bg-center z-0">
-      <div className="relative z-10 flex items-start justify-center min-h-screen mt-20">
-        <form
-          className="my-5 md:w-1/4 h-[35rem] flex flex-col gap-3 bg-white/30 backdrop-blur-sm border-amber-300 border-2 p-6 rounded-xl shadow-lg items-center justify-start"
-          onSubmit={handleSubmit}
-        >
-          <div className="text-[1.6rem] font-bold mb-6 mt-[3rem] uppercase text-blue-700">
-            <h1>Log in</h1>
-          </div>
+  <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 flex items-center justify-center p-6">
+    <form
+      className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-4"
+      onSubmit={handleSubmit}
+    >
+      <h1 className="text-3xl font-bold text-center text-black mb-6 uppercase">
+        Log in
+      </h1>
 
-          <label className="input input-bordered flex items-center gap-2 bg-white w-full">
-            <input
-              name="email"
-              value={email}
-              onChange={handleChange}
-              type="email"
-              className="grow text-black text-[0.9rem]"
-              placeholder="E-mail"
-            />
-          </label>
+      <label className="flex flex-col gap-1">
+        <span className="text-gray-700 font-medium">Email</span>
+        <input
+          name="email"
+          value={email}
+          onChange={handleChange}
+          type="email"
+          placeholder="Enter your email"
+          className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+        />
+      </label>
 
-          <label className="input input-bordered flex items-center gap-2 bg-white w-full">
-            <input
-              name="password"
-              value={password}
-              onChange={handleChange}
-              type="password"
-              className="grow text-black text-[0.9rem]"
-              placeholder="Password"
-            />
-          </label>
+      <label className="flex flex-col gap-1">
+        <span className="text-gray-700 font-medium">Password</span>
+        <input
+          name="password"
+          value={password}
+          onChange={handleChange}
+          type="password"
+          placeholder="Enter your password"
+          className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+        />
+      </label>
 
-          <small className="text-black">
-            Don&apos;t have an account?{" "}
-            <Link to="/register" className="text-primary hover:underline">
-              Register!
-            </Link>
-          </small>
+      <small className="text-gray-600 text-center">
+        Don&apos;t have an account?{" "}
+        <Link to="/register" className="text-primary hover:underline">
+          Register!
+        </Link>
+      </small>
 
-          <button
-            className="btn btn-primary bg-amber-300 w-full text-black hover:bg-white mt-4 border-2 text-[1.1rem] rounded-3xl"
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Login"}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+      <button
+        type="submit"
+        className="btn btn-primary w-full bg-black text-white mt-4 border-2 text-[1.1rem] rounded-3xl"
+        disabled={loading}
+      >
+        {loading ? "Loading..." : "Login"}
+      </button>
+    </form>
+  </div>
+);
+
+
 };
 
 export default Login;

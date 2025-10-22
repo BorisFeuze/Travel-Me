@@ -8,7 +8,7 @@ export const addUserDetails = async (formData: UserProfileFormData) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
   });
-
+  
   if (!res.ok) throw new Error("Failed to save volunteer details");
   const data = await res.json();
   console.log(data);
@@ -21,7 +21,6 @@ export const getUserDetails = async (
   const res = await fetch(`${baseURL}/userProfiles?userId=${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
   });
 
   if (res.status === 401) {
