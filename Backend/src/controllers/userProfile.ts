@@ -18,7 +18,7 @@ export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async
   } else {
     userProfiles = await UserProfile.find().lean().populate('userId', '-password');
   }
-  res.json({ message: 'List of UserProfiles', userProfiles });
+  res.json({ userProfiles });
 };
 
 export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputDTO> = async (req, res) => {

@@ -1,7 +1,9 @@
 import { authServiceURL } from "@/utils";
 
+const baseURL: string = `${authServiceURL}/auth`;
+
 const login = async (formData: LoginData): Promise<SuccessRes> => {
-  const res = await fetch(`${authServiceURL}/auth/login`, {
+  const res = await fetch(`${baseURL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,7 +18,7 @@ const login = async (formData: LoginData): Promise<SuccessRes> => {
 };
 
 const me = async () => {
-  const res = await fetch(`${authServiceURL}/auth/me`, {
+  const res = await fetch(`${baseURL}/me`, {
     method: "GET",
   });
 
@@ -27,7 +29,7 @@ const me = async () => {
 };
 
 const logout = async () => {
-  const res = await fetch(`${authServiceURL}/auth/logout`, {
+  const res = await fetch(`${baseURL}/logout`, {
     method: "DELETE",
   });
 
@@ -38,7 +40,7 @@ const logout = async () => {
 };
 
 const register = async (formData: RegisterData): Promise<SuccessRes> => {
-  const res = await fetch(`${authServiceURL}/auth/register`, {
+  const res = await fetch(`${baseURL}/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
