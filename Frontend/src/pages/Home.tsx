@@ -27,8 +27,8 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* NAV placeholder */}
-      {/*Filters*/}
-      <Filters />
+      
+      
 
       {/* HERO */}
       <Heroheader
@@ -45,6 +45,9 @@ const Home = () => {
 
       {/* add main Features Section */}
       <Features />
+      
+{/*Filters*/}
+      <Filters />
 
       {/* Top hosts Scroller */}
       <TopHosts />
