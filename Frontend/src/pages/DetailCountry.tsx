@@ -347,7 +347,7 @@ export default function DetailCountry() {
               ))}
               {topFilteredHosts.length === 0 && (
                 <div className="col-span-full text-sm text-gray-500">
-                  Nessun host per i filtri selezionati.
+                  Any host for the filters selected.
                 </div>
               )}
             </div>
@@ -391,7 +391,7 @@ export default function DetailCountry() {
               ))}
               {visibleRest.length === 0 && (
                 <div className="text-sm text-gray-500">
-                  Nessun altro host trovato.
+                  No more host founded.
                 </div>
               )}
             </div>
