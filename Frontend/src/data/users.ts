@@ -5,8 +5,7 @@ const baseURL: string = `${VITE_APP_USER_API_URL}`;
 export const addUserDetails = async (formData: UserProfileFormData) => {
   const res = await fetch(`${baseURL}/userProfiles`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
+    body: formData,
   });
 
   if (!res.ok) throw new Error("Failed to save volunteer details");
@@ -21,7 +20,6 @@ export const getUserDetails = async (
   const res = await fetch(`${baseURL}/userProfiles?userId=${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
   });
 
   if (res.status === 401) {

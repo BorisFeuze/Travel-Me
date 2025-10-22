@@ -1,14 +1,18 @@
 import { useState, useEffect, type ChangeEvent } from "react";
+import { useNavigate } from "react-router";
 import { addUserDetails, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
 
 const HostAccount = () => {
+
+  const navigate = useNavigate()
+
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  // console.log(user);
+ 
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: null,
+    pictureURL: "",
     userId: "",
     age: undefined,
     continent: "",
@@ -19,7 +23,7 @@ const HostAccount = () => {
     educations: [],
   });
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
@@ -44,20 +48,20 @@ const HostAccount = () => {
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
-  // useEffect(() => {
-  //   const loadUser = async () => {
-  //     try {
-  //       const currUser = await getUserDetails(user!._id);
-  //       if (currUser) {
-  //         setFormData((prev) => ({ ...prev, ...currUser }));
-  //         setPreviewUrl(currUser?.pictureURL || null);
-  //       }
-  //     } catch (err) {
-  //       console.error("Failed to load user data", err);
-  //     }
-  //   };
-  //   loadUser();
-  // }, []);
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await getUserDetails();
+        if (userData) {
+          setFormData((prev) => ({ ...prev, ...userData }));
+          setImagePreview(userData.pictureURL || "");
+        }
+      } catch (err) {
+        console.error("Failed to load user data", err);
+      }
+    };
+    loadUser();
+  }, [user]);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -67,45 +71,25 @@ const HostAccount = () => {
   };
 
   const handlePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    // const file = e.target.files?.[0];
-    // if (!file) return;
-    // setSelectedFile(file);
-    // const reader = new FileReader();
-    // reader.onloadend = () => {
-    //   setPreviewUrl(reader.result as string);
-    // };
-    // reader.readAsDataURL(file);
-
-    const imagefiles = e.target.files;
-    console.log(imagefiles);
-    if (!imagefiles) return;
-    setPreviewUrl(URL.createObjectURL(imagefiles[0]));
-    setSelectedFile(imagefiles[0]);
-
-    console.log(previewUrl);
-
-    setFormData((prev) => {
-      if (e.target.type === "file" && imagefiles)
-        return { ...prev, pictureURL: imagefiles[0] };
-    });
+    const imageFiles = e.target.files;
+    if (e.target.name === "picture" && imageFiles) {
+      setImagePreview(URL.createObjectURL(imageFiles[0]));
+    }
+    if (imageFiles) {
+      setSelectedFile(imageFiles[0]);
+    }
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     setSaveMessage(null);
 
-    formData.userId = user!._id;
-    // formData.firstName = user!.firstName;
-    // formData.lastName = user!.lastName;
-    // formData.email = user!.email;
-    // formData.phoneNumber = user!.phoneNumber;
+  formData.userId = user!._id;
+  // formData.pictureURL = selectedFile;
+
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
-      // data.append("firstName", formData.firstName);
-      // data.append("lastName", formData.lastName);
-      // data.append("email", formData.email);
-      // data.append("phoneNumber", String(formData.phoneNumber));
       data.append("age", formData.age?.toString() || "");
       data.append("continent", formData.continent);
       data.append("country", formData.country);
@@ -114,14 +98,17 @@ const HostAccount = () => {
       data.append("languages", JSON.stringify(formData.languages));
       data.append("educations", JSON.stringify(formData.educations));
 
-      console.log(formData);
+      //console.log(formData);
 
       if (selectedFile) {
         data.append("picture", selectedFile);
       }
 
-      await addUserDetails(formData);
-
+      // for (let [key, value] of data.entries()) {
+      //   console.log(key, value);
+      //   }
+      console.log(data);
+      await addUserDetails(data);
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
       console.error(err);
@@ -132,15 +119,15 @@ const HostAccount = () => {
   };
 
   return (
-    <div className=" min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
       <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
         {/* Left Side: Profile Picture */}
         <div className="w-full lg:w-1/3 flex flex-col items-center gap-6 bg-white rounded-2xl shadow-xl p-6">
           <div className="avatar mb-4">
             <div className="w-44 h-44 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center transition-transform duration-300 hover:scale-105">
-              {previewUrl ? (
+              {imagePreview ? ( 
                 <img
-                  src={previewUrl}
+                  src={imagePreview}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
@@ -163,6 +150,7 @@ const HostAccount = () => {
             Add Picture
             <input
               type="file"
+              name="picture" 
               accept="image/*"
               className="hidden"
               onChange={handlePictureUpload}
@@ -541,7 +529,7 @@ const HostAccount = () => {
 
               {/* plus card */}
               <div
-                onClick={() => (window.location.href = "/create-job")}
+                onClick={() => navigate("/create-job")}
                 className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-[4/3]"
               >
                 <svg
@@ -560,6 +548,7 @@ const HostAccount = () => {
                 </svg>
                 <p className="mt-2 text-gray-500 font-medium">Add Job Offer</p>
               </div>
+
             </div>
           );
         })()}
