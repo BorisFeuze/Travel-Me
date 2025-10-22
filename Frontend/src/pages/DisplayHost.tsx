@@ -55,12 +55,12 @@ const DisplayHost = () => {
     `${host.city ?? ""}${host.city ? ", " : ""}${host.country ?? ""}`;
 
   return (
-    <div className="bg-green-50 rounded-2xl shadow-sm p-6 md:p-8">
+    <div className="bg-base-100 rounded-2xl shadow-sm p-6 md:p-8">
       {/* Header: 2 cols */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 items-center mb-6">
         {/* Left: avatar + greeting */}
         <div className="flex items-center gap-4">
-          <div className="h-28 w-28 rounded-2xl border bg-slate-50 flex items-center justify-center overflow-hidden">
+          <div className="h-80 w-80 rounded-2xl border bg-slate-100 flex items-center justify-center overflow-hidden">
             {host.pictureURL ? (
               <img
                 src={host.pictureURL}
