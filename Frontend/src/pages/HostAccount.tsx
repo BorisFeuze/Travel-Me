@@ -10,9 +10,17 @@ const HostAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
- 
+
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
+
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: "",
+    pictureURL: selectedFile,
     userId: "",
     age: undefined,
     continent: "",
@@ -23,13 +31,7 @@ const HostAccount = () => {
     educations: [],
   });
 
-  const [imagePreview, setImagePreview] = useState<string>("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{
-    text: string;
-    type: "success" | "error";
-  } | null>(null);
+  
 
   const skillOptions = [
     "Cooking",
@@ -103,9 +105,9 @@ const HostAccount = () => {
         data.append("picture", selectedFile);
       }
 
-      // for (let [key, value] of data.entries()) {
-      //   console.log(key, value);
-      //   }
+      for (let [key, value] of data.entries()) {
+      console.log(key, value);
+      }
       console.log(data);
       await addUserDetails(data);
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
