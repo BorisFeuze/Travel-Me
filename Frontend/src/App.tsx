@@ -11,7 +11,7 @@ import {
   DetailJob,
   VolunteerAccount,
   HostAccount,
-  Opportunities
+  Opportunities,
 } from "./pages";
 import RootLayout from "./layouts/RootLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -28,6 +28,7 @@ function App() {
           <Route path="job/:id" element={<DetailJob />} />
           <Route path="country/:name" element={<DetailCountry />} />
           <Route path="countrylist" element={<CountryLists />} />
+          <Route path="countrydetails" element={<DetailCountry />} />
 
           <Route element={<AuthLayout />}>
             <Route path="chat" element={<Chat />} />

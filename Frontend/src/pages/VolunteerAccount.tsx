@@ -1,5 +1,5 @@
 import { useState, useEffect, type ChangeEvent } from "react";
-import { addUserDetails, getUserDetails } from "@/data";
+import { addUserDetails, getUserDetails, updateUserDetails } from "@/data";
 import { useAuth } from "@/context";
 
 const VolunteerAccount = () => {
@@ -20,6 +20,8 @@ const VolunteerAccount = () => {
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [profileExists, setProfileExists] = useState(false);
+  const [currentUserProfile, setCurrentUserProfile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{
     text: string;
@@ -46,15 +48,31 @@ const VolunteerAccount = () => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const currUser = await getUserDetails(user!._id);
-        if (currUser) {
-          setFormData((prev) => ({ ...prev, ...currUser }));
-          setPreviewUrl(currUser?.pictureURL || null);
+        const userData = await getUserDetails(user!._id);
+
+        setCurrentUserProfile(userData);
+        console.log(userData);
+        if (userData) {
+          console.log("Existing user profile found:", userData);
+          setProfileExists(true);
+          // salva anche userId o _id per usarlo nei PUT
+          setFormData((prev) => ({
+            ...prev,
+            ...userData,
+            userId: userData.userId || prev.userId,
+          }));
+
+          // mostra l'immagine profilo se esiste
+          setPreviewUrl(userData.pictureURL || null);
+        } else {
+          setProfileExists(false);
+          console.log("No existing profile found — new user");
         }
       } catch (err) {
-        console.error("Failed to load user data", err);
+        console.error("❌ Failed to load user data:", err);
       }
     };
+
     loadUser();
   }, []);
 
@@ -80,7 +98,7 @@ const VolunteerAccount = () => {
   };
 
   const handleSave = async () => {
-    setIsSaving(true);
+    if (!user?._id) setIsSaving(true);
     setSaveMessage(null);
 
     formData.userId = user!._id;
@@ -104,10 +122,20 @@ const VolunteerAccount = () => {
       if (selectedFile) {
         data.append("picture", selectedFile);
       }
-      console.log(formData);
+      console.log("🟢 Sending data:", Object.fromEntries(data));
+      console.log("Profile exists?", profileExists);
 
-      await addUserDetails(formData);
-
+      if (!profileExists) {
+        // PUT — update existing profile
+        const currentuser = currentUserProfile?.userProfiles?.[0]?._id;
+        if (!currentuser) throw new Error("No profile ID found for update");
+        await updateUserDetails(currentuser, formData);
+      } else {
+        // POST — create new profile
+        const newProfile = await addUserDetails(formData);
+        setProfileExists(true); // <--- aggiungi questo
+        setCurrentUserProfile(newProfile); // <--- opzionale, salva il profilo appena creato
+      }
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
       console.error(err);

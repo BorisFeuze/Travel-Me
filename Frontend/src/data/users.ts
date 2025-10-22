@@ -1,6 +1,6 @@
 import { VITE_APP_USER_API_URL } from "@/config";
 
-const baseURL: string = `${VITE_APP_USER_API_URL}/userProfiles`;
+const baseURL: string = `${VITE_APP_USER_API_URL}`;
 
 export const addUserDetails = async (formData: FormData) => {
   const res = await fetch(baseURL, {
@@ -17,7 +17,7 @@ export const addUserDetails = async (formData: FormData) => {
 export const getUserDetails = async (
   id: string
 ): Promise<UserProfileFormData | null> => {
-  const res = await fetch(`${baseURL}?userId=${id}`, {
+  const res = await fetch(`${baseURL}/userProfiles?userId=${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
@@ -32,5 +32,20 @@ export const getUserDetails = async (
   }
 
   const data: UserProfileFormData = await res.json();
+  return data;
+};
+
+export const updateUserDetails = async (
+  id: string,
+  formData: UserProfileFormData
+) => {
+  const res = await fetch(`${baseURL}/userProfiles/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
+  if (!res.ok) throw new Error("Failed to update volunteer details");
+  const data = await res.json();
+  console.log(data);
   return data;
 };

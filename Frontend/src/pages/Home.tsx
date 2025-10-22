@@ -6,7 +6,6 @@ import {
   Features,
   TopHosts,
   Continents,
-  JobByContinent,
   Countries,
   Requiredskills,
   Joinus,
@@ -36,7 +35,8 @@ const Home = () => {
         eyebrow="Travele & Work"
         title="Explore the World by Travel-Me"
         // subtitle="Discover your next adventure during working hours!"
-        primaryCta={{ label: "Explore now", href: "/countrylist" }}
+        // primaryCta={{ label: "Explore now", href: "/countrylist" }}
+        primaryCta={{ label: "Explore now", href: "/countrydetails" }}
         align="center"
         bgImageUrl={heroBg} // ← pass the imported URL
         overlayOpacity={0.45}
