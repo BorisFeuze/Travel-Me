@@ -49,4 +49,5 @@ Starter code for authentication/authorization module at WBS Coding School
   - `data`: Functions that request data to external APIs
   - `TailwindCSS` and `DaisyUI` are configured for styles <3
 
-  - npm install @mui/material @emotion/react @emotion/styled
+  - `npm install @mui/material @emotion/react @emotion/styled`
+  - `npm install @mui/icons-material`
