@@ -10,8 +10,10 @@ import Requiredskills from "./Requiredskills";
 import Joinus from "./Joinus";
 import Footer from "./Footer";
 import JobByContinent from "./JobByContinent";
+import JobCard from "./JobCard"
 
 export {
+  JobCard,
   Navbar,
   Searchbar,
   Filters,
