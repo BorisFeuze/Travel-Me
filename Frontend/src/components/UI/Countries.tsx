@@ -21,7 +21,7 @@ export default function Countries({ hosts, limit = 4 }: CountriesProps) {
   }, [base, limit]);
 
   return (
-    <section id="countrylist" className="mx-auto max-w-6xl px-4 py-10">
+    <section id="countrylist" className="mx-auto max-w-6xl px-4 py-20">
       <div className="mb-4 flex items-end justify-between">
         <h2 className="text-xl font-semibold">Our Top Countries</h2>
         <Link
