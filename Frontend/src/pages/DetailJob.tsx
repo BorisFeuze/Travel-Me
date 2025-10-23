@@ -19,7 +19,7 @@ const DetailJob = () => {
         const response = await getJobOffers(user._id);
         if (!response) throw new Error("No job offers found");
 
-        // Zugriff auf das Array jobOffers
+      
         const jobData = response.jobOffers.find((j: JobFormData) => j._id === id);
         if (!jobData) {
           setError("Job offer not found.");

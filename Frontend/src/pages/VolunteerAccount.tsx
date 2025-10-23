@@ -236,7 +236,7 @@ const VolunteerAccount = () => {
           <div className="card bg-white shadow-2xl rounded-2xl">
             <div className="card-body p-8">
               <h2 className="card-title text-3xl mb-6 font-bold text-black">
-                Edit Host Profile
+                Edit Volunteer Profile
               </h2>
 
               {saveMessage && (
