@@ -2,6 +2,11 @@ import { VITE_APP_USER_API_URL } from "@/config";
 
 const baseURL: string = `${VITE_APP_USER_API_URL}/jobOffers`;
 
+type JobOffersResponse = {
+  message: string;
+  jobOffers: JobFormData[];
+};
+
 export const addJobOffers = async (formData: FormData) => {
   const res = await fetch(baseURL, {
     method: "POST",
@@ -14,24 +19,29 @@ export const addJobOffers = async (formData: FormData) => {
   return data;
 };
 
-export const getJobOffers = async (id: string): Promise<JobFormData | null> => {
-  const res = await fetch(`${baseURL}?userId=${id}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
 
-  if (res.status === 401) {
-    console.warn("Unauthorized – user not logged in.");
+export const getJobOffers = async (userId: string): Promise<JobOffersResponse | null> => {
+  try {
+    const res = await fetch(`${baseURL}?userId=${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+
+    if (res.status === 401) {
+      console.warn("Unauthorized – user not logged in.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch job offers: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching job offers:", error);
     return null;
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch user details: ${res.statusText}`);
-  }
-
-  const data: JobFormData = await res.json();
-  return data;
-};
 
 export const updateJobOffers = async (id: string, formData: FormData) => {
   const res = await fetch(`${baseURL}/${id}`, {
