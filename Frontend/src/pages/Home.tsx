@@ -11,6 +11,7 @@ import {
   Joinus,
   Footer,
 } from "@/components/UI";
+import DetailCountry from "./DetailCountry";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -27,8 +28,6 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* NAV placeholder */}
-      
-      
 
       {/* HERO */}
       <Heroheader
@@ -36,7 +35,7 @@ const Home = () => {
         title="Explore the World by Travel-Me"
         // subtitle="Discover your next adventure during working hours!"
         // primaryCta={{ label: "Explore now", href: "/countrylist" }}
-        primaryCta={{ label: "Explore now", href: "/countrydetails" }}
+        primaryCta={{ label: "Explore now" }}
         align="center"
         bgImageUrl={heroBg} // ← pass the imported URL
         overlayOpacity={0.45}
@@ -45,19 +44,21 @@ const Home = () => {
 
       {/* add main Features Section */}
       <Features />
-      
-{/*Filters*/}
+
+      {/*Filters*/}
       <Filters />
 
       {/* Top hosts Scroller */}
       <TopHosts />
 
-      {/* Display Continents */}
-      <Continents />
+      {/*Detail Country*/}
+      <DetailCountry />
 
       {/* Countries Grid */}
       <Countries />
 
+      {/* Display Continents */}
+      <Continents />
       {/* Required skills/WORK TAGS */}
       <Requiredskills />
 

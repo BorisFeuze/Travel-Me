@@ -1,9 +1,11 @@
 import { Link } from "react-router";
 import { useAuth } from "@/context";
 import Searchbar from "./Searchbar";
-import logo from "../../assets/images/pngwing.com.png"; // :nach_links_zeigen: importa il tuo logo
+import logo from "../../assets/images/pngwing.com.png"; // 👈 importa il tuo logo
+
 const Navbar = () => {
   const { signedIn, handleSignOut, user } = useAuth();
+
   return (
     <header className="fixed top-0 left-0 w-full z-50">
       <div
@@ -30,6 +32,7 @@ const Navbar = () => {
             Contact
           </Link>
         </nav>
+
         <Link
           to="/"
           className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
@@ -40,11 +43,13 @@ const Navbar = () => {
             className="h-10 sm:h-12 w-auto object-contain"
           />
         </Link>
+
         <div className="flex items-center gap-2 sm:gap-3 ml-auto">
           {/* Searchbar
           <div className="hidden md:block w-40 lg:w-64">
             <Searchbar />
           </div> */}
+
           {signedIn ? (
             <>
               <Link
@@ -53,6 +58,7 @@ const Navbar = () => {
               >
                 Chat
               </Link>
+
               {user?.roles?.[0] === "host" ? (
                 <Link
                   to="/hostAccount"
@@ -68,6 +74,7 @@ const Navbar = () => {
                   Profile
                 </Link>
               )}
+
               <button
                 onClick={handleSignOut}
                 className="px-4 sm:px-5 py-2 text-sm font-semibold rounded-full
@@ -76,6 +83,7 @@ const Navbar = () => {
               >
                 Sign Out
               </button>
+
               {user?.photoURL && (
                 <img
                   src={user.photoURL}

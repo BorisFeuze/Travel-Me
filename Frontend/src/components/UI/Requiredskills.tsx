@@ -52,13 +52,15 @@ const Requiredskills = () => {
   return (
     <section id="RequiredSkills" className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-4 flex items-end justify-between">
-        <h2 className="text-xl font-semibold">Popular Required Works</h2>
+        <h1 className="text-4xl md:text-[1-1rem] font-extrabold leading-tight text-gray-800 hero-header-title  rounded-2xl p-2 mt-16 mb-10">
+          🌎 Popular required works
+        </h1>
         <Link href="/" className="text-sm text-slate-600 hover:text-slate-900">
           See more
         </Link>
       </div>
 
-      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 justify-items-center">
+      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-20 justify-items-center">
         {skills.map((s) => (
           <div
             key={s.skill}
