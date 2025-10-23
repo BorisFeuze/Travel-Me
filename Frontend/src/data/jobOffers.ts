@@ -43,10 +43,7 @@ export const getJobOffers = async (userId: string): Promise<JobOffersResponse | 
   }
 };
 
-export const updateJobOffers = async (
-  id: string,
-  formData: FormData
-) => {
+export const updateJobOffers = async (id: string, formData: FormData) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "PUT",
     body: formData,

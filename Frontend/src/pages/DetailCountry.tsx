@@ -227,15 +227,15 @@ export default function DetailCountry() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-[85vh] bg-white text-gray-900">
       {/* Header */}
-      <div className="max-w-6xl mx-auto px-4 pt-4">
-        <div className="rounded-2xl border bg-gray-50 px-4 py-2 text-sm text-gray-600 shadow-sm inline-block">
-          detail country page
-        </div>
+      <div className="max-w-6xl mx-auto pt-20">
+        <h1 className="text-4xl md:text-[1-4rem] font-extrabold leading-tight text-gray-800 hero-header-title  rounded-2xl p-2">
+          ✈️ Begin your next journey here
+        </h1>
       </div>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 gap-6 px-4 pb-12 pt-4">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 gap-6 pb-30 pt-10">
         {/* FILTRI (select sincronizzati coi click) */}
         <div className="flex flex-wrap items-center gap-3">
           <Select
