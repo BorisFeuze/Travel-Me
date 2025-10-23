@@ -31,9 +31,9 @@ function App() {
           <Route path="country/:name" element={<DetailCountry />} />
           <Route path="countrylist" element={<CountryLists />} />
           <Route path="countrydetails" element={<DetailCountry />} />
+          <Route path="chat" element={<Chat />} />
 
           <Route element={<AuthLayout />}>
-            <Route path="chat" element={<Chat />} />
             <Route path="volunteerAccount" element={<VolunteerAccount />} />
             <Route path="hostAccount" element={<HostAccount />} />
             <Route path="create-job" element={<CreateJob />} />

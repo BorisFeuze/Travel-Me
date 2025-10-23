@@ -49,6 +49,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     handleSignOut,
     handleSignIn,
     handleRegister,
+    checkSession,
+    setCheckSession,
   };
 
   return <AuthContext value={value}>{children}</AuthContext>;

@@ -2,9 +2,12 @@ import { z } from 'zod/v4';
 import { dbEntrySchema } from './shared.ts';
 import { Types, isValidObjectId } from 'mongoose';
 
-const coercedString = (val: string | [string]) => {
-  if (Array.isArray(val)) return val[0];
-  return val;
+const coercedString = (val: string | string[]) => {
+  if (Array.isArray(val)) {
+    for (const a of val) return a;
+  } else {
+    return val;
+  }
 };
 
 export const genderSchema = z.strictObject({
@@ -30,7 +33,7 @@ export const jobOfferInputSchema = z.strictObject({
   pictureURL: z.array(z.string().default('')),
   description: z.preprocess(coercedString, z.string()),
   needs: z.array(z.string().default('')),
-  languages: z.array(z.string().default(''))
+  languages: z.array(z.preprocess(coercedString, z.string().default('')))
 });
 
 export const jobOfferSchema = z.strictObject({
