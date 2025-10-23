@@ -17,6 +17,7 @@ export const genderSchema = z.strictObject({
 });
 
 export const jobOfferInputSchema = z.strictObject({
+  title: z.preprocess(coercedString, z.string()),
   location: z.preprocess(coercedString, z.string()),
   userProfileId: z.preprocess(
     coercedString,

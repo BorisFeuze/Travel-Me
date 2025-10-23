@@ -2,6 +2,11 @@ import { VITE_APP_USER_API_URL } from "@/config";
 
 const baseURL: string = `${VITE_APP_USER_API_URL}/jobOffers`;
 
+type JobOffersResponse = {
+  message: string;
+  jobOffers: JobFormData[];
+};
+
 export const addJobOffers = async (formData: FormData) => {
   const res = await fetch(baseURL, {
     method: "POST",
@@ -26,7 +31,7 @@ export const getJobOffers = async (id: string): Promise<JobFormData | null> => {
   }
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch user details: ${res.statusText}`);
+    throw new Error(`Failed to fetch job offers: ${res.statusText}`);
   }
 
   const data: JobFormData = await res.json();

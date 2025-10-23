@@ -35,7 +35,7 @@ const Heroheader: React.FC<HeroheaderProps> = ({
 
   return (
     <section
-      className={`hero min-h-[70vh] bg-cover bg-center ${className}`}
+      className={`hero min-h-[80vh] bg-cover bg-center ${className}`}
       style={{
         backgroundImage: `url(${bgImageUrl})`,
       }}

@@ -6,6 +6,8 @@ const CreateJob = () => {
   const { user } = useAuth();
 
   const [formData, setFormData] = useState<JobFormData>({
+    _id: "",
+    title: "",
     location: "",
     userProfileId: user?._id || "",
     pictureURL: [],
@@ -133,17 +135,20 @@ const CreateJob = () => {
 
     try {
       const data = new FormData();
+      data.append("title", formData.title);
       data.append("userProfileId", formData.userProfileId);
       data.append("location", formData.location);
       data.append("description", formData.description);
       formData.needs.forEach((need) => data.append("needs", need));
-      formData.needs.forEach((lang) => data.append("languages", lang));
+      formData.languages.forEach((lang) => data.append("languages", lang));
       formData.pictureURL.forEach((file) => data.append("pictureURL", file));
 
       await addJobOffers(data);
 
       setSaveMessage({ text: "Job offer created!", type: "success" });
       setFormData({
+        _id: "",
+        title: "",
         location: "",
         userProfileId: user?._id || "",
         pictureURL: [],
@@ -244,6 +249,18 @@ const CreateJob = () => {
           <h2 className="text-3xl mb-6 font-bold text-black">
             Create Job Offer
           </h2>
+
+          {/* title */}
+          <label className="label">
+            <span className="label-text font-medium text-gray-700">Title</span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            placeholder="Enter title"
+            value={formData.title}
+            onChange={(e) => handleInputChange("title", e.target.value)}
+          />
 
           {/* location */}
           <label className="label">
