@@ -22,8 +22,9 @@ export const getJobOffers: RequestHandler<{}, GetJobOffersType> = async (req, re
 };
 
 export const createJobOffer: RequestHandler<{}, JobOfferType, JobOfferInputDTO> = async (req, res) => {
-  const { location, userProfileId, pictureURL, description, needs, languages } = req.body;
+  const { title, location, userProfileId, pictureURL, description, needs, languages } = req.body;
   const jobOffer = await JobOffer.create<JobOfferInputDTO>({
+    title,
     location,
     userProfileId,
     pictureURL,
@@ -47,7 +48,7 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { location, userProfileId, pictureURL, description, needs, languages },
+    body: { title, location, userProfileId, pictureURL, description, needs, languages },
     jobOffer
   } = req;
 
@@ -55,6 +56,7 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
 
   if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: { status: 404 } });
 
+  jobOffer.title = title;
   jobOffer.location = location;
   jobOffer.userProfileId = userProfileId as Types.ObjectId;
   jobOffer.pictureURL = pictureURL || [];

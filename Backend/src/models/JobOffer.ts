@@ -2,6 +2,7 @@ import { model, Schema } from 'mongoose';
 
 const jobOfferSchema = new Schema(
   {
+    title: { type: String, required: [true, 'Title is required'] },
     location: { type: String, required: [true, 'Location is required'] },
     userProfileId: { type: Schema.Types.ObjectId, ref: 'userProfile', required: true, unique: true },
     pictureURL: { type: [String] },

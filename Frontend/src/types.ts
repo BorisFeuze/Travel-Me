@@ -2,7 +2,7 @@ import type { Url } from "url";
 
 declare global {
   type User = {
-    _id?: string;
+    _id: string;
     firstName: string;
     lastName: string;
     phoneNumber?: number;
@@ -40,7 +40,9 @@ declare global {
     educations: string[];
   };
 
-  type JobFormData = {               
+  type JobFormData = {   
+  _id: string;
+  title: string;           
   location: string;
   userProfileId: string;       
   pictureURL: File[];    

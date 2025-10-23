@@ -1,8 +1,14 @@
 import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
-import { addUserDetails, getUserDetails } from "@/data";
+import {
+  addUserDetails,
+  getUserDetails,
+  getJobOffers,
+  updateUserDetails,
+} from "@/data";
 import { useAuth } from "@/context";
-//import { validateDiaryForm } from "@/utils";
+import { JobCard } from "@/components/UI";
+// import { validateDiaryForm } from "@/utils";
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -10,11 +16,16 @@ const HostAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  // console.log(user);
+
   const [errors, setErrors] = useState({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [jobOffers, setJobOffers] = useState<JobCardData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
   const [saveMessage, setSaveMessage] = useState<{
     text: string;
     type: "success" | "error";
@@ -49,17 +60,36 @@ const HostAccount = () => {
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
+  //for dropedown closing
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      if (!target.closest(".dropdown")) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     const loadUser = async () => {
       try {
         const currentUser = await getUserDetails(user!._id ?? "");
 
         if (currentUser) {
-          const dataCurrentUser = currentUser.userProfiles[0];
-          const currentnUserProfil = dataCurrentUser.pictureURL[0];
+          const dataCurrentUser = currentUser.userProfiles?.[0];
+          const currentnUserProfil = dataCurrentUser?.pictureURL?.[0];
           console.log(currentnUserProfil);
           setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
           setPreviewUrl(currentnUserProfil || null);
+          if (dataCurrentUser?._id) setProfileId(dataCurrentUser._id);
         }
       } catch (err) {
         console.error("Failed to load user data", err);
@@ -67,6 +97,44 @@ const HostAccount = () => {
     };
     loadUser();
   }, []);
+
+  //Load job offers
+  useEffect(() => {
+    if (!user) return;
+
+    const loadJobOffers = async () => {
+      setLoading(true);
+      try {
+        const data = await getJobOffers(user._id);
+
+        if (data && Array.isArray(data.jobOffers)) {
+          const filteredJobs = data.jobOffers.filter(
+            (job: JobFormData) => job.userProfileId === user._id
+          );
+
+          const mappedJobs: JobCardData[] = filteredJobs.map(
+            (job: JobFormData) => ({
+              _id: job._id,
+              title: job.title,
+              location: job.location,
+              image:
+                typeof job.pictureURL?.[0] === "string"
+                  ? job.pictureURL[0]
+                  : undefined,
+            })
+          );
+
+          setJobOffers(mappedJobs);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadJobOffers();
+  }, [user]);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -85,43 +153,31 @@ const HostAccount = () => {
       setPreviewUrl(reader.result as string);
     };
     reader.readAsDataURL(file);
-
-    // const imagefiles = e.target.files;
-    // console.log(imagefiles);
-    // if (!imagefiles) return;
-    // setPreviewUrl(URL.createObjectURL(imagefiles[0]));
-    // setSelectedFile(imagefiles[0]);
-
-    // console.log(selectedFile);
-
-    // setFormData((prev) => {
-    //   if (e.target.type === "file" && imagefiles)
-    //     return { ...prev, pictureURL: imagefiles[0] };
-    // });
   };
 
   const handleSave = async () => {
-    const valErrors = validateDiaryForm(formData);
-    setErrors(valErrors);
-    if (Object.keys(valErrors).length !== 0)
-      throw new Error("Missing required fields");
+    if (!formData.continent || !formData.country || !formData.gender) {
+      setSaveMessage({
+        text: "Please fill all required fields.",
+        type: "error",
+      });
+      return;
+    }
 
     setIsSaving(true);
     setSaveMessage(null);
 
     formData.userId = user!._id;
-    formData.pictureURL = selectedFile;
-    // formData.firstName = user!.firstName;
-    // formData.lastName = user!.lastName;
-    // formData.email = user!.email;
-    // formData.phoneNumber = user!.phoneNumber;
+    formData.pictureURL = selectedFile ?? undefined;
+
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
-      data.append("pictureURL", formData.pictureURL);
-      // data.append("lastName", formData.lastName);
-      // data.append("email", formData.email);
-      // data.append("phoneNumber", String(formData.phoneNumber));
+
+      if (formData.pictureURL instanceof File) {
+        data.append("pictureURL", formData.pictureURL);
+      }
+
       data.append("age", formData.age?.toString() || "");
       data.append("continent", formData.continent);
       data.append("country", formData.country);
@@ -130,19 +186,22 @@ const HostAccount = () => {
       data.append("languages", JSON.stringify(formData.languages));
       data.append("educations", JSON.stringify(formData.educations));
 
-      if (selectedFile) {
-        data.append("pictureURL", selectedFile);
-      }
-
       console.log(data);
 
-      // for (let [key, value] of data.entries()) {
-      //   console.log(key, value);
-      // }
+      let updatedUser;
+      if (profileId) {
+        updatedUser = await updateUserDetails(profileId, data);
+      } else {
+        updatedUser = await addUserDetails(data);
 
-      const updatedUser = await addUserDetails(data);
+        if (updatedUser?.userProfile?._id) {
+          setProfileId(updatedUser.userProfile._id);
+        }
+      }
 
-      console.log(updatedUser);
+      // const updatedUser = await addUserDetails(data);
+
+      // console.log(updatedUser);
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
@@ -309,7 +368,16 @@ const HostAccount = () => {
                 </span>
               </label>
               <div className="relative mb-4">
-                <details className="dropdown dropdown-top w-full">
+                <details
+                  className="dropdown dropdown-top w-full"
+                  open={openDropdown === "gender"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenDropdown(
+                      openDropdown === "gender" ? null : "gender"
+                    );
+                  }}
+                >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
                     <span className="flex-1 text-left">
                       {formData.gender || "Select gender"}
@@ -320,9 +388,10 @@ const HostAccount = () => {
                       <li key={gender}>
                         <label
                           className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={() =>
-                            handleInputChange("gender", gender.toLowerCase())
-                          }
+                          onClick={() => {
+                            handleInputChange("gender", gender.toLowerCase());
+                            setOpenDropdown(null);
+                          }}
                         >
                           <span className="flex-1">{gender}</span>
                           {formData.gender === gender.toLowerCase() && (
@@ -353,7 +422,16 @@ const HostAccount = () => {
                 </span>
               </label>
               <div className="relative mb-4">
-                <details className="dropdown dropdown-top w-full">
+                <details
+                  className="dropdown dropdown-top w-full"
+                  open={openDropdown === "education"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenDropdown(
+                      openDropdown === "education" ? null : "education"
+                    );
+                  }}
+                >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
                     <span className="flex-1 text-left">
                       {formData.educations[0] || "Select education"}
@@ -364,7 +442,10 @@ const HostAccount = () => {
                       <li key={edu}>
                         <label
                           className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={() => handleInputChange("educations", [edu])}
+                          onClick={() => {
+                            handleInputChange("educations", [edu]);
+                            setOpenDropdown(null);
+                          }}
                         >
                           <span className="flex-1">{edu}</span>
                           {formData.educations[0] === edu && (
@@ -395,7 +476,16 @@ const HostAccount = () => {
                 </span>
               </label>
               <div className="relative mb-4">
-                <details className="dropdown dropdown-top w-full">
+                <details
+                  className="dropdown dropdown-top w-full"
+                  open={openDropdown === "skills"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenDropdown(
+                      openDropdown === "skills" ? null : "skills"
+                    );
+                  }}
+                >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
                     <span className="flex-1 text-left">
                       {formData.skills.length > 0
@@ -406,9 +496,19 @@ const HostAccount = () => {
                   <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
                     {skillOptions.map((skill) => (
                       <li key={skill}>
-                        <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                        <label
+                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
+                          onClick={() => {
+                            handleInputChange(
+                              "skills",
+                              formData.skills.includes(skill.toLowerCase())
+                                ? formData.skills.filter((s) => s !== skill.toLowerCase())
+                                : [...formData.skills, skill.toLowerCase()]
+                            );
+                          }}
+                        >
                           <span className="flex-1">{skill}</span>
-                          {formData.skills.includes(skill) && (
+                          {formData.skills.includes(skill.toLowerCase()) && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-5 w-5"
@@ -453,8 +553,17 @@ const HostAccount = () => {
                   Languages
                 </span>
               </label>
-              <div className="relative mb-6">
-                <details className="dropdown dropdown-top w-full">
+              <div className="relative mb-4">
+                <details
+                  className="dropdown dropdown-top w-full"
+                  open={openDropdown === "languages"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpenDropdown(
+                      openDropdown === "languages" ? null : "languages"
+                    );
+                  }}
+                >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
                     <span className="flex-1 text-left">
                       {formData.languages.length > 0
@@ -465,9 +574,19 @@ const HostAccount = () => {
                   <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
                     {languageOptions.map((lang) => (
                       <li key={lang}>
-                        <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                        <label
+                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
+                          onClick={() => {
+                            handleInputChange(
+                              "languages",
+                              formData.languages.includes(lang.toLowerCase())
+                                ? formData.languages.filter((l) => l !== lang.toLowerCase())
+                                : [...formData.languages, lang.toLowerCase()]
+                            );
+                          }}
+                        >
                           <span className="flex-1">{lang}</span>
-                          {formData.languages.includes(lang) && (
+                          {formData.languages.includes(lang.toLowerCase()) && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-5 w-5"
@@ -481,24 +600,6 @@ const HostAccount = () => {
                               />
                             </svg>
                           )}
-                          <input
-                            type="checkbox"
-                            checked={formData.languages.includes(lang)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                handleInputChange("languages", [
-                                  ...formData.languages,
-                                  lang,
-                                ]);
-                              } else {
-                                handleInputChange(
-                                  "languages",
-                                  formData.languages.filter((l) => l !== lang)
-                                );
-                              }
-                            }}
-                            className="hidden"
-                          />
                         </label>
                       </li>
                     ))}
@@ -518,74 +619,43 @@ const HostAccount = () => {
         </div>
       </div>
 
-      {/* Job Offers */}
-      <div className="mt-10">
-        <h2 className="text-3xl font-bold mb-6 text-gray-800">Job Offers</h2>
+      <div>
+        {/* Job Offers */}
+        <h2 className="text-xl font-semibold mt-8 mb-4">Your Job Offers</h2>
 
-        {(() => {
-          const jobOffers = [
-            {
-              id: "1",
-              title: "Gardening in Germany",
-              image:
-                "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=400",
-            },
-            {
-              id: "2",
-              title: "Cooking Italie",
-              image:
-                "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?w=400",
-            },
-          ];
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          {jobOffers.map((job) => (
+            <JobCard
+              key={job._id}
+              _id={job._id}
+              title={job.title}
+              location={job.location}
+              image={job.image}
+            />
+          ))}
 
-          return (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Card list */}
-              {jobOffers.map((job) => (
-                <div
-                  key={job.id}
-                  className="card bg-white shadow-md hover:shadow-xl rounded-2xl overflow-hidden cursor-pointer transition-transform duration-300 hover:-translate-y-1"
-                  onClick={() => (window.location.href = `/job/${job.id}`)}
-                >
-                  <figure className="relative w-full h-48 overflow-hidden">
-                    <img
-                      src={job.image}
-                      alt={job.title}
-                      className="object-cover w-full h-full"
-                    />
-                  </figure>
-                  <div className="card-body p-4">
-                    <h3 className="card-title text-lg font-semibold text-gray-800">
-                      {job.title}
-                    </h3>
-                  </div>
-                </div>
-              ))}
-
-              {/* plus card */}
-              <div
-                onClick={() => navigate("/create-job")}
-                className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-[4/3]"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-16 h-16 text-gray-400"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4.5v15m7.5-7.5h-15"
-                  />
-                </svg>
-                <p className="mt-2 text-gray-500 font-medium">Add Job Offer</p>
-              </div>
-            </div>
-          );
-        })()}
+          {/* Plus Card */}
+          <div
+            onClick={() => navigate("/create-job")}
+            className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-[4/3]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-16 h-16 text-gray-400"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+            <p className="mt-2 text-gray-500 font-medium">Add Job Offer</p>
+          </div>
+        </div>
       </div>
     </div>
   );
