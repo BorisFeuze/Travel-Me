@@ -1,13 +1,23 @@
 import { useState, useEffect, type ChangeEvent } from "react";
-import { addUserDetails, getUserDetails, updateUserDetails } from "@/data";
+import { addUserDetails, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
+//import { validateDiaryForm } from "@/utils";
 
 const VolunteerAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
+  const [errors, setErrors] = useState({});
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
+
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: "",
+    pictureURL: undefined,
     userId: "",
     age: undefined,
     continent: "",
@@ -17,16 +27,6 @@ const VolunteerAccount = () => {
     languages: [],
     educations: [],
   });
-
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [profileExists, setProfileExists] = useState(false);
-  const [currentUserProfile, setCurrentUserProfile] = useState(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<{
-    text: string;
-    type: "success" | "error";
-  } | null>(null);
 
   const skillOptions = [
     "Cooking",
@@ -48,28 +48,23 @@ const VolunteerAccount = () => {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await getUserDetails(user!._id);
+        const userData = await getUserDetails(user!._id ?? "");
 
-        setCurrentUserProfile(userData);
-        console.log(userData);
+        // setCurrentUserProfile(userData);
+        // console.log(userData);
         if (userData) {
-          console.log("Existing user profile found:", userData);
-          setProfileExists(true);
+          const userDataCurrent = currentUser.userProfiles[0];
+          const currentProfile = userDataCurrent.pictureURL[0];
+          console.log(currentProfile);
           // salva anche userId o _id per usarlo nei PUT
           setFormData((prev) => ({
             ...prev,
-            ...userData,
-            userId: userData.userId || prev.userId,
+            ...userDataCurrent,
           }));
-
-          // mostra l'immagine profilo se esiste
-          setPreviewUrl(userData.pictureURL || null);
-        } else {
-          setProfileExists(false);
-          console.log("No existing profile found — new user");
+          setPreviewUrl(currentProfile || null);
         }
       } catch (err) {
-        console.error("❌ Failed to load user data:", err);
+        console.error("Failed to load user data", err);
       }
     };
 
@@ -87,26 +82,32 @@ const VolunteerAccount = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     setSelectedFile(file);
-
+    console.log(selectedFile);
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreviewUrl(reader.result as string);
     };
     reader.readAsDataURL(file);
-
-    console.log(selectedFile);
   };
 
   const handleSave = async () => {
-    if (!user?._id) setIsSaving(true);
+    const valErrors = validateDiaryForm(formData);
+    setErrors(valErrors);
+    if (Object.keys(valErrors).length !== 0)
+      throw new Error("Missing required fields");
+
+    setIsSaving(true);
     setSaveMessage(null);
+    // if (!user?._id) setIsSaving(true);
+    // setSaveMessage(null);
 
     formData.userId = user!._id;
-    // formData.pictureURL = selectedFile;
+    formData.pictureURL = selectedFile;
 
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
+      data.append("pictureURL", formData.pictureURL);
       // data.append("firstName", formData.firstName);
       // data.append("lastName", formData.lastName);
       // data.append("email", formData.email);
@@ -122,20 +123,12 @@ const VolunteerAccount = () => {
       if (selectedFile) {
         data.append("picture", selectedFile);
       }
-      console.log("🟢 Sending data:", Object.fromEntries(data));
-      console.log("Profile exists?", profileExists);
+      console.log(data);
 
-      if (!profileExists) {
-        // PUT — update existing profile
-        const currentuser = currentUserProfile?.userProfiles?.[0]?._id;
-        if (!currentuser) throw new Error("No profile ID found for update");
-        await updateUserDetails(currentuser, formData);
-      } else {
-        // POST — create new profile
-        const newProfile = await addUserDetails(formData);
-        setProfileExists(true); // <--- aggiungi questo
-        setCurrentUserProfile(newProfile); // <--- opzionale, salva il profilo appena creato
-      }
+      const updatedUser = await addUserDetails(data);
+
+      console.log(updatedUser);
+
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
       console.error(err);
