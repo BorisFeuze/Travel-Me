@@ -14,9 +14,7 @@ export const addJobOffers = async (formData: FormData) => {
   return data;
 };
 
-export const getJobOffers = async (
-  id: string
-): Promise<JobOfferFormData | null> => {
+export const getJobOffers = async (id: string): Promise<JobFormData | null> => {
   const res = await fetch(`${baseURL}?userId=${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -31,14 +29,11 @@ export const getJobOffers = async (
     throw new Error(`Failed to fetch user details: ${res.statusText}`);
   }
 
-  const data: JobOfferFormData = await res.json();
+  const data: JobFormData = await res.json();
   return data;
 };
 
-export const updateJobOffers = async (
-  id: string,
-  formData: FormData
-) => {
+export const updateJobOffers = async (id: string, formData: FormData) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "PUT",
     body: formData,

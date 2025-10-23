@@ -36,7 +36,7 @@ const TopHosts = () => {
   }
 
   return (
-    <section id="TopHosts" className="mx-auto max-w-6xl px-4 py-10">
+    <section id="TopHosts" className="mx-auto max-w-6xl px-4 pt-20 pb-10">
       <div className="mb-4 flex items-end justify-between">
         <h2 className="text-xl font-semibold">Top Hosts</h2>
         <a className="text-sm text-slate-600 hover:text-slate-900" href="#">
