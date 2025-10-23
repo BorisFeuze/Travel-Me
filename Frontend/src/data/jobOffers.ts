@@ -19,12 +19,14 @@ export const addJobOffers = async (formData: FormData) => {
   return data;
 };
 
+
 export const getJobOffers = async (userId: string): Promise<JobOffersResponse | null> => {
   try {
     const res = await fetch(`${baseURL}?userId=${userId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
+
 
     if (res.status === 401) {
       console.warn("Unauthorized – user not logged in.");
@@ -40,8 +42,6 @@ export const getJobOffers = async (userId: string): Promise<JobOffersResponse | 
   } catch (error) {
     console.error("Error fetching job offers:", error);
     return null;
-  }
-};
 
 export const updateJobOffers = async (id: string, formData: FormData) => {
   const res = await fetch(`${baseURL}/${id}`, {
