@@ -37,12 +37,11 @@ export const getUserDetails = async (
 
 export const updateUserDetails = async (
   id: string,
-  formData: UserProfileFormData
+  formData: FormData
 ) => {
-  const res = await fetch(`${baseURL}/userProfiles/${id}`, {
+  const res = await fetch(`${baseURL}${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
+    body: formData,
   });
   if (!res.ok) throw new Error("Failed to update volunteer details");
   const data = await res.json();

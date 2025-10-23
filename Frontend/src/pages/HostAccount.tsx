@@ -2,7 +2,7 @@ import { useState, useEffect, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import { addUserDetails, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
-import { validateDiaryForm } from "@/utils";
+//import { validateDiaryForm } from "@/utils";
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -136,9 +136,9 @@ const HostAccount = () => {
 
       console.log(data);
 
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
+      // for (let [key, value] of data.entries()) {
+      //   console.log(key, value);
+      // }
 
       const updatedUser = await addUserDetails(data);
 

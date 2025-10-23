@@ -11,16 +11,13 @@ import { userProfileInputSchema, querySchema, paramSchema } from '#schemas';
 
 const userProfilesRouter = Router();
 
-userProfilesRouter
-  .route('/')
-  .get(validateZod(querySchema, 'query'), getAllUserProfiles)
-  .post(
-    formMiddleWare,
-    cloudUploader,
-    authenticate('strict'),
-    validateZod(userProfileInputSchema, 'body'),
-    createUserProfile
-  );
+userProfilesRouter.route('/').get(validateZod(querySchema, 'query'), getAllUserProfiles).post(
+  formMiddleWare,
+  cloudUploader,
+  authenticate('strict'),
+  validateZod(userProfileInputSchema, 'body'),
+  createUserProfile
+);
 userProfilesRouter.use('/:id', validateZod(paramSchema, 'params'));
 userProfilesRouter
   .route('/:id')
