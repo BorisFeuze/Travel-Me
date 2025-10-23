@@ -18,7 +18,7 @@ export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async
   } else {
     userProfiles = await UserProfile.find().lean().populate('userId', '-password');
   }
-  res.json({ userProfiles });
+  res.json({ message: 'userProfile created', userProfiles });
 };
 
 export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputDTO> = async (req, res) => {
@@ -72,7 +72,7 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
 
-  userProfile.pictureURL = pictureURL as string;
+  userProfile.pictureURL = pictureURL as string[];
   userProfile.userId = userId as unknown as Types.ObjectId;
   userProfile.age = age as number;
   userProfile.continent = continent as string;

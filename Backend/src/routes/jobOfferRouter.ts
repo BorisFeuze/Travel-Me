@@ -5,17 +5,14 @@ import { jobOfferInputSchema, paramSchema } from '#schemas';
 
 const jobOffersRouter = Router();
 
-jobOffersRouter
-  .route('/')
-  .get(getJobOffers)
-  .post(
-    formMiddleWare,
-    cloudUploader,
-    authenticate('strict'),
-    /*hasRole2('self', 'admin'),*/ 
-    validateZod(jobOfferInputSchema, 'body'),
-    createJobOffer
-  );
+jobOffersRouter.route('/').get(getJobOffers).post(
+  formMiddleWare,
+  cloudUploader,
+  authenticate('strict'),
+  /*hasRole2('self', 'admin'),*/
+  validateZod(jobOfferInputSchema, 'body'),
+  createJobOffer
+);
 jobOffersRouter.use('/:id', validateZod(paramSchema, 'params'));
 jobOffersRouter
   .route('/:id')
@@ -23,10 +20,11 @@ jobOffersRouter
   .put(
     formMiddleWare,
     cloudUploader,
-    authenticate('strict'), 
-    hasRole2('self', 'admin'), 
-    validateZod(jobOfferInputSchema, 'body'), 
-    updateJobOffer)
+    authenticate('strict'),
+    hasRole2('self', 'admin'),
+    validateZod(jobOfferInputSchema, 'body'),
+    updateJobOffer
+  )
   .delete(authenticate('strict'), hasRole2('self', 'admin'), deleteJobOffer);
 
 export default jobOffersRouter;

@@ -9,13 +9,21 @@ cloudinary.config({
 });
 
 const cloudUploader: RequestHandler = async (request, response, next) => {
-  const filepath = request.pictureURL!.filepath;
+  let uploadedFiles = [];
 
-  const results = await cloudinary.uploader.upload(filepath);
+  const fileArray = request.pictureURL;
 
-  // console.log(results.secure_url);
+  if (!fileArray) throw new Error('please upload the pictures', { cause: { status: 400 } });
 
-  request.body.pictureURL = results.secure_url;
+  for (const file of fileArray) {
+    const results = await cloudinary.uploader.upload(file.filepath);
+
+    uploadedFiles.push(results.secure_url);
+
+    // console.log(uploadedFiles);
+  }
+
+  request.body.pictureURL = uploadedFiles;
 
   next();
 };
