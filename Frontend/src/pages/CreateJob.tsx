@@ -97,8 +97,8 @@ const CreateJob = () => {
       data.append("userProfileId", formData.userProfileId);
       data.append("location", formData.location);
       data.append("description", formData.description);
-      data.append("needs", JSON.stringify(formData.needs));
-      data.append("languages", JSON.stringify(formData.languages));
+      formData.needs.forEach(need => data.append("needs", need));
+      formData.languages.forEach(lang => data.append("languages", lang));
       formData.pictureURL.forEach(file => data.append("pictureURL", file));
 
       await addJobOffers(data);

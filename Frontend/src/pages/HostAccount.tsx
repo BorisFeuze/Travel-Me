@@ -496,9 +496,19 @@ const HostAccount = () => {
                   <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
                     {skillOptions.map((skill) => (
                       <li key={skill}>
-                        <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                        <label
+                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
+                          onClick={() => {
+                            handleInputChange(
+                              "skills",
+                              formData.skills.includes(skill.toLowerCase())
+                                ? formData.skills.filter((s) => s !== skill.toLowerCase())
+                                : [...formData.skills, skill.toLowerCase()]
+                            );
+                          }}
+                        >
                           <span className="flex-1">{skill}</span>
-                          {formData.skills.includes(skill) && (
+                          {formData.skills.includes(skill.toLowerCase()) && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-5 w-5"
@@ -543,7 +553,7 @@ const HostAccount = () => {
                   Languages
                 </span>
               </label>
-              <div className="relative mb-6">
+              <div className="relative mb-4">
                 <details
                   className="dropdown dropdown-top w-full"
                   open={openDropdown === "languages"}
@@ -564,9 +574,19 @@ const HostAccount = () => {
                   <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
                     {languageOptions.map((lang) => (
                       <li key={lang}>
-                        <label className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2">
+                        <label
+                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
+                          onClick={() => {
+                            handleInputChange(
+                              "languages",
+                              formData.languages.includes(lang.toLowerCase())
+                                ? formData.languages.filter((l) => l !== lang.toLowerCase())
+                                : [...formData.languages, lang.toLowerCase()]
+                            );
+                          }}
+                        >
                           <span className="flex-1">{lang}</span>
-                          {formData.languages.includes(lang) && (
+                          {formData.languages.includes(lang.toLowerCase()) && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-5 w-5"
@@ -580,24 +600,6 @@ const HostAccount = () => {
                               />
                             </svg>
                           )}
-                          <input
-                            type="checkbox"
-                            checked={formData.languages.includes(lang)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                handleInputChange("languages", [
-                                  ...formData.languages,
-                                  lang,
-                                ]);
-                              } else {
-                                handleInputChange(
-                                  "languages",
-                                  formData.languages.filter((l) => l !== lang)
-                                );
-                              }
-                            }}
-                            className="hidden"
-                          />
                         </label>
                       </li>
                     ))}
