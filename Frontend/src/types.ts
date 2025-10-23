@@ -43,14 +43,21 @@ declare global {
   type JobFormData = {               
   location: string;
   userProfileId: string;       
-  pictureURL: string[];    
+  pictureURL: File[];    
   description: string;
-  needs?: string[];           
+  needs: string[];           
   languages: string[];
 };
+
+  type JobCardData = {
+    _id: string;
+    image?: string;
+    title: string;
+    location: string;
+  }
 
 
   type SuccessRes = { message: string };
 }
 
-export type { AuthContextType, User, LoginData, RegisterData };
+export type { AuthContextType, User, LoginData, RegisterData, JobFormData, JobCardData, UserProfileFormData };

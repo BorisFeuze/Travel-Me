@@ -5,15 +5,6 @@ import { useAuth } from "@/context";
 const CreateJob = () => {
   const { user } = useAuth();
 
-  type JobFormData = {
-    location: string;
-    userProfileId: string;
-    pictureURL: File[];
-    description: string;
-    needs: string[];
-    languages: string[];
-  };
-
   const [formData, setFormData] = useState<JobFormData>({
     location: "",
     userProfileId: user?._id || "",
@@ -109,7 +100,7 @@ const CreateJob = () => {
 
       await addJobOffers(data);
 
-      setSaveMessage({ text: "Job offer created successfully!", type: "success" });
+      setSaveMessage({ text: "Job offer created!", type: "success" });
       setFormData({
         location: "",
         userProfileId: user?._id || "",
