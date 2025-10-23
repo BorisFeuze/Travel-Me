@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { validateZod, authenticate, hasRole2, formMiddleWare, cloudUploader } from '#middlewares';
-import { validateZod, authenticate, hasRole2, formMiddleWare, cloudUploader } from '#middlewares';
 import { createJobOffer, deleteJobOffer, getJobOffers, getSingleJobOffer, updateJobOffer } from '#controllers';
 import { jobOfferInputSchema, paramSchema } from '#schemas';
 
