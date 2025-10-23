@@ -70,8 +70,7 @@ const HostAccount = () => {
   return () => {
     document.removeEventListener("click", handleClickOutside);
   };
-}, []);
-
+}, []); 
 
 
   useEffect(() => {
@@ -195,7 +194,7 @@ const HostAccount = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8 pt-30">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
       <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
         {/* Left Side: Profile Picture */}
         <div className="w-full lg:w-1/3 flex flex-col items-center gap-6 bg-white rounded-2xl shadow-xl p-6">
