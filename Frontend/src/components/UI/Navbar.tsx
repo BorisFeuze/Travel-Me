@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { useAuth } from "@/context";
 import Searchbar from "./Searchbar";
-import logo from "../../assets/images/pngwing.com.png"; // 👈 importa il tuo logo
+import logo from "../../assets/images/pngwing.com.png"; 
 
 const Navbar = () => {
   const { signedIn, handleSignOut, user } = useAuth();

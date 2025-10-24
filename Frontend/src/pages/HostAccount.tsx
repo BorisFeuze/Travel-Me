@@ -17,7 +17,6 @@ const HostAccount = () => {
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
 
-  const [errors, setErrors] = useState({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -182,9 +181,9 @@ const HostAccount = () => {
       data.append("continent", formData.continent);
       data.append("country", formData.country);
       data.append("gender", formData.gender);
-      data.append("skills", JSON.stringify(formData.skills));
-      data.append("languages", JSON.stringify(formData.languages));
-      data.append("educations", JSON.stringify(formData.educations));
+      formData.educations.forEach(edu => data.append("educations", edu))
+      formData.skills.forEach(ski => data.append("skills", ski))
+      formData.languages.forEach(lan => data.append("languages", lan))
 
       console.log(data);
 
@@ -201,7 +200,7 @@ const HostAccount = () => {
 
       // const updatedUser = await addUserDetails(data);
 
-      // console.log(updatedUser);
+      console.log(updatedUser);
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
@@ -471,9 +470,7 @@ const HostAccount = () => {
 
               {/* Skills */}
               <label className="label">
-                <span className="label-text font-medium text-gray-700">
-                  Skills
-                </span>
+                <span className="label-text font-medium text-gray-700">Skills</span>
               </label>
               <div className="relative mb-4">
                 <details
@@ -481,9 +478,7 @@ const HostAccount = () => {
                   open={openDropdown === "skills"}
                   onClick={(e) => {
                     e.preventDefault();
-                    setOpenDropdown(
-                      openDropdown === "skills" ? null : "skills"
-                    );
+                    setOpenDropdown(openDropdown === "skills" ? null : "skills");
                   }}
                 >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
@@ -494,21 +489,22 @@ const HostAccount = () => {
                     </span>
                   </summary>
                   <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
-                    {skillOptions.map((skill) => (
-                      <li key={skill}>
+                    {skillOptions.map((ski) => (
+                      <li key={ski}>
                         <label
                           className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault();
                             handleInputChange(
                               "skills",
-                              formData.skills.includes(skill.toLowerCase())
-                                ? formData.skills.filter((s) => s !== skill.toLowerCase())
-                                : [...formData.skills, skill.toLowerCase()]
+                              formData.skills.includes(ski)
+                                ? formData.skills.filter((s) => s !== ski)
+                                : [...formData.skills, ski]
                             );
                           }}
                         >
-                          <span className="flex-1">{skill}</span>
-                          {formData.skills.includes(skill.toLowerCase()) && (
+                          <span className="flex-1">{ski}</span>
+                          {formData.skills.includes(ski) && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-5 w-5"
@@ -522,24 +518,6 @@ const HostAccount = () => {
                               />
                             </svg>
                           )}
-                          <input
-                            type="checkbox"
-                            checked={formData.skills.includes(skill)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                handleInputChange("skills", [
-                                  ...formData.skills,
-                                  skill,
-                                ]);
-                              } else {
-                                handleInputChange(
-                                  "skills",
-                                  formData.skills.filter((s) => s !== skill)
-                                );
-                              }
-                            }}
-                            className="hidden"
-                          />
                         </label>
                       </li>
                     ))}

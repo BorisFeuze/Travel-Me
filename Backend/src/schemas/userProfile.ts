@@ -2,9 +2,12 @@ import { z } from 'zod/v4';
 import { dbEntrySchema } from './shared.ts';
 import { Types, isValidObjectId } from 'mongoose';
 
-const coercedString = (val: string | [string]) => {
-  if (Array.isArray(val)) return val[0];
-  return val;
+const coercedString = (val: string | string[]) => {
+  if (Array.isArray(val)) {
+    for (const a of val) return a;
+  } else {
+    return val;
+  }
 };
 
 const coercedNumber = (val: number | [number]) => {
