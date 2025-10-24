@@ -419,21 +419,22 @@ const VolunteerAccount = () => {
                     </span>
                   </summary>
                   <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
-                    {skillOptions.map((skill) => (
-                      <li key={skill}>
+                    {skillOptions.map((ski) => (
+                      <li key={ski}>
                         <label
                           className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault();
                             handleInputChange(
                               "skills",
-                              formData.skills.includes(skill.toLowerCase())
-                                ? formData.skills.filter((s) => s !== skill.toLowerCase())
-                                : [...formData.skills, skill.toLowerCase()]
+                              formData.skills.includes(ski)
+                                ? formData.skills.filter((s) => s !== ski)
+                                : [...formData.skills, ski]
                             );
                           }}
                         >
-                          <span className="flex-1">{skill}</span>
-                          {formData.skills.includes(skill.toLowerCase()) && (
+                          <span className="flex-1">{ski}</span>
+                          {formData.skills.includes(ski) && (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               className="h-5 w-5"
