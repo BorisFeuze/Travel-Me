@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import profile_martin from "../../assets/images/Chat/profile_martin.png";
 import arrow_icon from "../../assets/images/Chat/arrow_icon.png";
 import help_icon from "../../assets/images/Chat/help_icon.png";
@@ -5,6 +6,14 @@ import logo_icon from "../../assets/images/Chat/logo_icon.svg";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
 
 const ChatContainer = ({ selectedUser, setSelectedUser }) => {
+  const scrollEnd = useRef();
+
+  useEffect(() => {
+    if (scrollEnd.current) {
+      scrollEnd.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
   return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       {/*-------header-------*/}
@@ -24,7 +33,7 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
       </div>
       {/*------chat area-------*/}
       <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6">
-        {/* {messageDummydata.map((msg, index) => (
+        {messageDummydata.map((msg, index) => (
           <div
             key={index}
             className={`flex items-end gap-2 justify ${msg.senderId !== "68f9e453e86c20bf01756be8" && "flex-row-reverse"}`}
@@ -55,7 +64,8 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
               <p className="text-gray-500">{msg.createdAt}</p>
             </div>
           </div>
-        ))} */}
+        ))}
+        <div ref={scrollEnd}></div>
       </div>
     </div>
   ) : (
