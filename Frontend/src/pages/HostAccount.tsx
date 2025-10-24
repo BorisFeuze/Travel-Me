@@ -17,7 +17,6 @@ const HostAccount = () => {
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
 
-  const [errors, setErrors] = useState({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -201,7 +200,7 @@ const HostAccount = () => {
 
       // const updatedUser = await addUserDetails(data);
 
-      // console.log(updatedUser);
+      console.log(updatedUser);
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {
