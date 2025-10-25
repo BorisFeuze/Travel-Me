@@ -9,9 +9,9 @@ type UserDTO = z.infer<typeof userSchema>;
 type GetUsersType = SuccessMsg & { users: UserDTO[] };
 type UserType = SuccessMsg & { user: UserDTO };
 
-export const getUsers: RequestHandler<{}, UserDTO[]> = async (_req, res) => {
+export const getUsers: RequestHandler<{}, GetUsersType> = async (_req, res) => {
   const users = await User.find().lean().select('-password');
-  res.json(users);
+  res.json({ message: 'all users', users });
 };
 
 export const createUser: RequestHandler<{}, UserType, UserInputDTO> = async (req, res) => {

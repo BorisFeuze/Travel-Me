@@ -19,8 +19,8 @@ export const addJobOffers = async (formData: FormData) => {
   return data;
 };
 
-export const getJobOffers = async (id: string): Promise<JobOffersResponse | null> => {
-  const res = await fetch(`${baseURL}?userId=${id}`, {
+export const getJobOffers = async (id: string) => {
+  const res = await fetch(`${baseURL}?userProfileId=${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
