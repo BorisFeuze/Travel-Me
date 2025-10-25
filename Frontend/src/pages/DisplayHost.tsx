@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UsersAPI, type User } from "@/library/usersMock";
+import { getUsers, getUserDetails } from "@/data";
 
 const DisplayHost = () => {
   const { id } = useParams<{ id: string }>();
   const [host, setHost] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -17,8 +19,18 @@ const DisplayHost = () => {
       }
       try {
         // mock: fetch a bigger list and find by id
-        const allHosts = await UsersAPI.getTopHosts(100);
-        const found = allHosts.find((h) => h.id === id) ?? null;
+        const dataUsers = await getUsers();
+
+        console.log(dataUsers);
+
+        const allHosts = dataUsers.users.filter((u) =>
+          u.roles.includes("host")
+        );
+        console.log(allHosts);
+        // const allHosts = await UsersAPI.getTopHosts(100);
+        const found = allHosts.find((h) => h._id === id) ?? null;
+
+        console.log(found);
         if (!found) setError("Host not found.");
         setHost(found);
       } catch {
@@ -28,6 +40,28 @@ const DisplayHost = () => {
       }
     })();
   }, [id]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getUserDetails(id);
+
+        console.log(data);
+
+        const userInfo = data.userProfiles[0];
+
+        if (userInfo) {
+          console.log(userInfo);
+
+          setInfo(userInfo);
+        }
+      } catch {
+        // setError("Error fetching top hosts");
+      } finally {
+        // setLoading(false);
+      }
+    })();
+  }, []);
 
   if (loading)
     return (
@@ -61,9 +95,9 @@ const DisplayHost = () => {
         {/* Left: avatar + greeting */}
         <div className="flex items-center gap-4">
           <div className="h-80 w-80 rounded-2xl border bg-slate-100 flex items-center justify-center overflow-hidden">
-            {host.pictureURL ? (
+            {info.pictureURL ? (
               <img
-                src={host.pictureURL}
+                src={info.pictureURL[0]}
                 alt={fullName || "Host avatar"}
                 className="h-full w-full object-cover"
               />
@@ -87,7 +121,7 @@ const DisplayHost = () => {
               <input
                 type="checkbox"
                 readOnly
-                checked={host.gender === g}
+                checked={info.gender === g}
                 className="checkbox checkbox-sm"
                 aria-label={`gender ${g}`}
               />
@@ -109,7 +143,7 @@ const DisplayHost = () => {
               readOnly
               className="textarea textarea-bordered w-full h-28"
               value={
-                (host as any).description ??
+                (info as any).description ??
                 "Ciao, I have more than 20 years professional artist renovation holder in Italy."
               }
             />
@@ -122,18 +156,18 @@ const DisplayHost = () => {
             </div>
             <div className="rounded-xl px-4 py-3 bg-green-200/80 text-slate-900 space-y-2">
               {/* Show needs if present */}
-              {host.needs && (
+              {info.needs && (
                 <p>
                   <span className="font-semibold">Need: </span>
-                  {host.needs}
+                  {info.needs}
                 </p>
               )}
               {/* Show skills list if present */}
-              {Array.isArray(host.skills) && host.skills.length > 0 && (
+              {Array.isArray(info.skills) && info.skills.length > 0 && (
                 <>
                   <p className="font-semibold">Keyskills</p>
                   <div className="flex flex-wrap gap-2">
-                    {host.skills.map((s) => (
+                    {info.skills.map((s) => (
                       <span key={s} className="badge badge-outline">
                         {s}
                       </span>
@@ -172,8 +206,8 @@ const DisplayHost = () => {
               readOnly
               className="input input-bordered w-full"
               value={
-                host.languages?.length
-                  ? host.languages.join(", ")
+                info.languages?.length
+                  ? info.languages.join(", ")
                   : "italian, english, german"
               }
             />
@@ -187,10 +221,10 @@ const DisplayHost = () => {
                 <span className="font-medium">Email:</span> {host.email}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Phone:</span> {host.phone}
+                <span className="font-medium">Phone:</span> {host.phoneNumber}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Age:</span> {host.age}
+                <span className="font-medium">Age:</span> {info.age}
               </p>
             </div>
           </div>

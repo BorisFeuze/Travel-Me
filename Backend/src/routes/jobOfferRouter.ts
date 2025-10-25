@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { validateZod, authenticate, hasRole2, formMiddleWare, cloudUploader } from '#middlewares';
 import { createJobOffer, deleteJobOffer, getJobOffers, getSingleJobOffer, updateJobOffer } from '#controllers';
-import { jobOfferInputSchema, paramSchema } from '#schemas';
+import { jobOfferInputSchema, paramSchema, querySchema } from '#schemas';
 
 const jobOffersRouter = Router();
 
-jobOffersRouter.route('/').get(getJobOffers).post(
+jobOffersRouter.route('/').get(validateZod(querySchema, 'query'), getJobOffers).post(
   formMiddleWare,
   cloudUploader,
   authenticate('strict'),

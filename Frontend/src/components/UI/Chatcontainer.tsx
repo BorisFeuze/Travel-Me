@@ -78,10 +78,11 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
           <input
             type="text"
             placeholder="Send a message"
-            className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-white placeholder-gray-400"
+            className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-black
+             placeholder-gray-400"
           />
           <input
-            type="text"
+            type="file"
             id="image"
             accept="'image/png , image/jpeg"
             hidden
@@ -90,7 +91,7 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
             <img
               src={gallery_icon}
               alt=""
-              className="w-5 mr-2 cursor-pointer"
+              className="w-5 mr-2 bg-black cursor-pointer"
             />
           </label>
         </div>
