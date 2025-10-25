@@ -4,9 +4,12 @@ import logo from "../../assets/images/Chat/logo.png";
 import menu_icon from "../../assets/images/Chat/menu_icon.png";
 import search_icon from "../../assets/images/Chat/search_icon.png";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
+import { useRef } from "react";
 
 const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const navigate = useNavigate();
+
+  const scrollEnd = useRef();
 
   const { allUsers } = useUser();
 
@@ -76,6 +79,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
           </div>
         ))}
       </div>
+      <div ref={scrollEnd}></div>
     </div>
   );
 };
