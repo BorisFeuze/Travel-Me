@@ -9,6 +9,21 @@ export const getUsers = async () => {
 
   if (!res.ok) throw new Error("Failed to save host details");
   const data = await res.json();
+  // console.log(data);
+  return data;
+};
+
+export const updateUser = async (id: string, formData) => {
+  const res = await fetch(`${baseURL}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (!res.ok) throw new Error("Failed to save host details");
+  const data = await res.json();
   console.log(data);
   return data;
 };

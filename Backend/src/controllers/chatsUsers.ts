@@ -1,6 +1,6 @@
 import { Chat, User } from '#models';
 import type { RequestHandler } from 'express';
-import { io, userSocketMap } from '#utils';
+import { io, userSocketMap } from '../index.ts';
 import { v2 as cloudinary } from 'cloudinary';
 import { CLOUD_NAME, API_KEY, API_SECRET } from '#config';
 

@@ -1,19 +1,61 @@
 import { useNavigate } from "react-router";
-import { useUser } from "@/context";
+import { useEffect, useState } from "react";
+import { getUsers } from "@/data";
+import { useChat, useUser, useAuth } from "@/context";
 import logo from "../../assets/images/Chat/logo.png";
 import menu_icon from "../../assets/images/Chat/menu_icon.png";
 import search_icon from "../../assets/images/Chat/search_icon.png";
-import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
 import { useRef } from "react";
 
-const Sidebar = ({ selectedUser, setSelectedUser }) => {
+const Sidebar = () => {
+  const [allUsers, setAllUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [input, setInput] = useState("");
+
+  const {
+    selectedUser,
+    setSelectedUser,
+    handleGetusers,
+    users,
+    unseenMessages,
+    setUnseenMessages,
+  } = useChat();
+
+  const { onlineUsers } = useAuth();
+
   const navigate = useNavigate();
 
   const scrollEnd = useRef();
 
-  const { allUsers } = useUser();
+  useEffect(() => {
+    (async () => {
+      try {
+        // mock: fetch a bigger list and find by id
+        const dataUsers = await getUsers();
 
-  console.log(allUsers);
+        if (!dataUsers) setError("users not found.");
+        console.log(dataUsers.users);
+        setAllUsers(dataUsers.users);
+      } catch {
+        setError("Failed to load host details.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  console.log(users);
+
+  const filteredUsers = input
+    ? users.filter((user) =>
+        user.firstName.toLowerCase().includes(input.toLowerCase())
+      )
+    : users;
+
+  useEffect(() => {
+    handleGetusers();
+  }, [onlineUsers]);
 
   return (
     <div
@@ -43,6 +85,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
         <div className="bg-[#282142] rounded-full flex items-center gap-2 py-3 px-4 mt-5">
           <img src={search_icon} alt="Search" className="w-3" />
           <input
+            onChange={(e) => setInput(e.target.value)}
             type="text"
             className="bg-transparent border-none outline-none text-white text-xs placeholder-[#c8c8c8] flex-1"
             placeholder="Search User..."
@@ -50,7 +93,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
         </div>
       </div>
       <div className="flex flex-col">
-        {allUsers.map((user, index) => (
+        {filteredUsers.map((user, index) => (
           <div
             key={index}
             onClick={() => {
@@ -58,10 +101,11 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
             }}
             className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142/50]"}`}
           >
-            <img
+            <UserChat id={user._id} firstName={user.firstName} index={index} />
+            {/* <img
               src={user?.picture || avatar_icon}
               alt=""
-              className="w-[35px] aspect-[1/1] rounded-full"
+              className="w-[35px] aspect-square rounded-full"
             />
             <div className="flex flex-col leading-5">
               <p>{user.fullName}</p>
@@ -75,7 +119,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
               <p className="absolute top-4 right-4 text-xs h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50">
                 {index}
               </p>
-            )}
+            )} */}
           </div>
         ))}
       </div>
