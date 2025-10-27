@@ -12,6 +12,7 @@ import {
   HostAccount,
   Opportunities,
   DisplayHost,
+  DetailContinent,
 } from "./pages";
 import RootLayout from "./layouts/RootLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -29,6 +30,7 @@ function App() {
           <Route path="job/:id" element={<DetailJob />} /> 
           <Route path="countrylist" element={<CountryLists />} />
           <Route path="chat" element={<Chat />} />
+          <Route path="continent/:continent" element={<DetailContinent />} />
 
           <Route element={<AuthLayout />}>
             <Route path="volunteerAccount" element={<VolunteerAccount />} />
