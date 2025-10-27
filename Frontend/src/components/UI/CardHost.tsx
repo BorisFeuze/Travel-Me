@@ -14,7 +14,7 @@ const CardHost = ({ _id, firstName, email }) => {
         const userInfo = data.userProfiles[0];
 
         if (userInfo) {
-          console.log(userInfo);
+          // console.log(userInfo);
 
           setInfo(userInfo);
         }
@@ -26,7 +26,7 @@ const CardHost = ({ _id, firstName, email }) => {
     })();
   }, []);
 
-  console.log(info.pictureURL);
+  // console.log(info.pictureURL);
 
   return (
     <>

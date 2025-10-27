@@ -1,10 +1,14 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { AuthContext } from ".";
-import { login, me, logout, register } from "@/data";
+import { VITE_APP_USER_API_URL } from "@/config";
+import { io } from "socket.io-client";
+import { login, me, logout, register, updateUser } from "@/data";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [signedIn, setSignedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [socket, setSocket] = useState(null);
   const [checkSession, setCheckSession] = useState(true);
 
   const handleSignIn = async ({ email, password }: LoginData) => {
@@ -22,17 +26,26 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const handleSignOut = async () => {
     await logout();
     setSignedIn(false);
+    socket?.disconnect();
     setUser(null);
+  };
+
+  const handleUpdateUser = async (id, body) => {
+    const { data } = await updateUser(id, body);
+    if (data) {
+      setUser(data.user);
+    }
   };
 
   useEffect(() => {
     const getUser = async () => {
       try {
         const userData = await me();
-        console.log("Data", userData);
+        // console.log("Data", userData);
 
         setUser(userData.user);
         setSignedIn(true);
+        connectSocket(socket, userData.user);
       } catch (error) {
         console.error(error);
       } finally {
@@ -43,6 +56,25 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (checkSession) getUser();
   }, [checkSession]);
 
+  //connect socket function to handle socket connection and online updates
+  const connectSocket = (socket, userData) => {
+    if (!userData || socket?.connected) return;
+
+    const newSocket = io(VITE_APP_USER_API_URL, {
+      query: {
+        userId: userData._id,
+      },
+    });
+    newSocket.connect();
+    setSocket(newSocket);
+    newSocket.on("getOnlineUser", (userIds) => {
+      setOnlineUsers(userIds);
+      console.log(onlineUsers);
+    });
+  };
+
+  console.log(onlineUsers);
+
   const value: AuthContextType = {
     signedIn,
     user,
@@ -51,6 +83,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     handleRegister,
     checkSession,
     setCheckSession,
+    onlineUsers,
+    socket,
+    handleUpdateUser,
   };
 
   return <AuthContext value={value}>{children}</AuthContext>;

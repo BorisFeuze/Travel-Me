@@ -10,21 +10,48 @@ const coercedString = (val: string | string[]) => {
   }
 };
 
+const coerceAvailabilityArray = (val: unknown) => {
+  if (typeof val === 'string') {
+    try {
+      return JSON.parse(val);
+    } catch {
+      return val;
+    }
+  }
+
+  if (Array.isArray(val)) {
+    if (val.length === 1 && typeof val[0] === 'string') {
+      try {
+        const parsed = JSON.parse(val[0] as string);
+        return parsed;
+      } catch {
+        return val;
+      }
+    }
+
+    const everyItemIsString = val.every(item => typeof item === 'string');
+    if (everyItemIsString) {
+      try {
+        const parsedEach = val.map(item => JSON.parse(item as string));
+        return parsedEach;
+      } catch {
+        return val;
+      }
+    }
+    return val;
+  }
+  return val;
+};
+
 export const genderSchema = z.strictObject({
   male: z.boolean().default(false),
   female: z.boolean().default(false),
   other: z.boolean().default(false)
 });
 
-export const availabilitySchema = z.strictObject({
-  from: z.preprocess(
-    val => (val ? new Date(val as string) : undefined),
-    z.date().optional()
-  ),
-  to: z.preprocess(
-    val => (val ? new Date(val as string) : undefined),
-    z.date().optional()
-  )
+export const availabilityItemSchema = z.strictObject({
+  from: z.preprocess(val => (val ? new Date(val as string) : undefined), z.date().optional()),
+  to: z.preprocess(val => (val ? new Date(val as string) : undefined), z.date().optional())
 });
 
 export const jobOfferInputSchema = z.strictObject({
@@ -46,8 +73,7 @@ export const jobOfferInputSchema = z.strictObject({
   description: z.preprocess(coercedString, z.string()),
   needs: z.array(z.string().default('')),
   languages: z.array(z.preprocess(coercedString, z.string().default(''))),
-
-  availability: z.array(availabilitySchema).optional()
+  availability: z.preprocess(coerceAvailabilityArray, z.array(availabilityItemSchema)).optional()
 });
 
 export const jobOfferSchema = z.strictObject({
