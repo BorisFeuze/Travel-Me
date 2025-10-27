@@ -6,21 +6,22 @@ import logo from "../../assets/images/Chat/logo.png";
 import menu_icon from "../../assets/images/Chat/menu_icon.png";
 import search_icon from "../../assets/images/Chat/search_icon.png";
 import { useRef } from "react";
+import UserChat from "./UserChat";
 
-const Sidebar = () => {
+const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState("");
 
-  const {
-    selectedUser,
-    setSelectedUser,
-    handleGetusers,
-    users,
-    unseenMessages,
-    setUnseenMessages,
-  } = useChat();
+  // const {
+  //   selectedUser,
+  //   setSelectedUser,
+  //   handleGetusers,
+  //   /* users,
+  //   unseenMessages,*/
+  //   setUnseenMessages,
+  // } = useChat();
 
   const { onlineUsers } = useAuth();
 
@@ -28,24 +29,24 @@ const Sidebar = () => {
 
   const scrollEnd = useRef();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        // mock: fetch a bigger list and find by id
-        const dataUsers = await getUsers();
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       // mock: fetch a bigger list and find by id
+  //       const dataUsers = await getUsers();
 
-        if (!dataUsers) setError("users not found.");
-        console.log(dataUsers.users);
-        setAllUsers(dataUsers.users);
-      } catch {
-        setError("Failed to load host details.");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  //       if (!dataUsers) setError("users not found.");
+  //       console.log(dataUsers.users);
+  //       setAllUsers(dataUsers.users);
+  //     } catch {
+  //       setError("Failed to load host details.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, []);
 
-  console.log(users);
+  // console.log(users);
 
   const filteredUsers = input
     ? users.filter((user) =>
@@ -53,9 +54,9 @@ const Sidebar = () => {
       )
     : users;
 
-  useEffect(() => {
-    handleGetusers();
-  }, [onlineUsers]);
+  // useEffect(() => {
+  //   handleGetusers();
+  // }, [onlineUsers]);
 
   return (
     <div
@@ -64,7 +65,7 @@ const Sidebar = () => {
       <div className="pd-5 border-2">
         <div className="flex justify-between items-center">
           <img src={logo} alt="logo" className="max-w-40" />
-          <div className="relative py-2 group">
+          {/* <div className="relative py-2 group">
             <img
               src={menu_icon}
               alt="Menu"
@@ -80,7 +81,7 @@ const Sidebar = () => {
               <hr className="my-2 border-t border-gray-500" />
               <p className="cursor-pointer text-sm">Logout</p>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="bg-[#282142] rounded-full flex items-center gap-2 py-3 px-4 mt-5">
           <img src={search_icon} alt="Search" className="w-3" />
@@ -101,7 +102,12 @@ const Sidebar = () => {
             }}
             className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142/50]"}`}
           >
-            <UserChat id={user._id} firstName={user.firstName} index={index} />
+            <UserChat
+              id={user._id}
+              firstName={user.firstName}
+              index={index}
+              lastName={user.lastName}
+            />
             {/* <img
               src={user?.picture || avatar_icon}
               alt=""
