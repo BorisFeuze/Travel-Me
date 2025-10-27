@@ -151,10 +151,6 @@ const CreateJob = () => {
 
       data.append("availability", JSON.stringify(formData.availability));
 
-      formData.availability.forEach((ranges) =>
-        data.append("availability", ranges)
-      );
-
       formData.pictureURL.forEach((file) => data.append("pictureURL", file));
 
       for (let [key, value] of data.entries()) {
@@ -175,7 +171,7 @@ const CreateJob = () => {
         description: "",
         needs: [],
         languages: [],
-        availability: {},
+        availability: [],
       });
       setPreviewUrls([]);
       setCurrentIndex(0);
