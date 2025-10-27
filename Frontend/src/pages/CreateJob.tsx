@@ -11,6 +11,8 @@ const CreateJob = () => {
   const [formData, setFormData] = useState<JobFormData>({
     _id: "",
     title: "",
+    continent: "",
+    country:"",
     location: "",
     userProfileId: user?._id || "",
     pictureURL: [],
@@ -141,6 +143,8 @@ const CreateJob = () => {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("userProfileId", formData.userProfileId);
+    data.append("continent", formData.continent);
+    data.append("country", formData.country);
     data.append("location", formData.location);
     data.append("description", formData.description);
     data.append("needs", JSON.stringify(formData.needs));
@@ -158,6 +162,8 @@ const CreateJob = () => {
       setFormData({
         _id: "",
         title: "",
+        continent: "",
+        country: "",
         location: "",
         userProfileId: user?._id || "",
         pictureURL: [],
@@ -270,6 +276,34 @@ const CreateJob = () => {
             placeholder="Enter title"
             value={formData.title}
             onChange={(e) => handleInputChange("title", e.target.value)}
+          />
+
+          {/* continent */}
+          <label className="label">
+            <span className="label-text font-medium text-gray-700">
+              Continent
+            </span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            placeholder="Enter continent"
+            value={formData.continent}
+            onChange={(e) => handleInputChange("continent", e.target.value)}
+          />
+
+          {/* country */}
+          <label className="label">
+            <span className="label-text font-medium text-gray-700">
+              Country
+            </span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            placeholder="Enter country"
+            value={formData.country}
+            onChange={(e) => handleInputChange("country", e.target.value)}
           />
 
           {/* location */}

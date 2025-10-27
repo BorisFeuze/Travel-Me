@@ -147,7 +147,9 @@ const Continent = ({
 
           const Card = (
             <div
-              className="relative h-64 rounded-2xl overflow-hidden bg-base-200 hover:shadow-md transition-shadow"
+              className="relative h-64 rounded-2xl overflow-hidden bg-base-200 
+             hover:shadow-xl transform transition-transform duration-300 
+             hover:scale-105 cursor-pointer"
               aria-label={`${label} - ${total} opportunities`}
             >
               {img && (
@@ -160,12 +162,6 @@ const Continent = ({
               <div className="relative h-full w-full flex items-center justify-between px-5">
                 <div className="text-base-100 bg-black/40 p-3 rounded-lg absolute top-3 left-4 tooltip tooltip-left">
                   <div className="text-3xl font-semibold">{label}</div>
-                  <div className="text-lg opacity-90">
-                    {total} opportunities
-                  </div>
-                </div>
-                <div className="badge badge-primary p-5 mask-origin-border absolute bottom-12 left-4 tooltip tooltip-left">
-                  Find opportunities in {label}
                 </div>
               </div>
             </div>
