@@ -4,9 +4,12 @@ import logo from "../../assets/images/Chat/logo.png";
 import menu_icon from "../../assets/images/Chat/menu_icon.png";
 import search_icon from "../../assets/images/Chat/search_icon.png";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
+import { useRef } from "react";
 
 const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const navigate = useNavigate();
+
+  const scrollEnd = useRef();
 
   const { allUsers } = useUser();
 
@@ -14,7 +17,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
 
   return (
     <div
-      className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl oderflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}
+      className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}
     >
       <div className="pd-5 border-2">
         <div className="flex justify-between items-center">
@@ -53,7 +56,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
             onClick={() => {
               setSelectedUser(user);
             }}
-            className={`relative flex imtems-center gaps-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142/50]"}`}
+            className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && "bg-[#282142/50]"}`}
           >
             <img
               src={user?.picture || avatar_icon}
@@ -76,6 +79,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
           </div>
         ))}
       </div>
+      <div ref={scrollEnd}></div>
     </div>
   );
 };

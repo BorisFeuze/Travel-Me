@@ -8,7 +8,6 @@ import {
 } from "@/data";
 import { useAuth } from "@/context";
 import { JobCard } from "@/components/UI";
-// import { validateDiaryForm } from "@/utils";
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -135,6 +134,7 @@ const HostAccount = () => {
     loadJobOffers();
   }, [user]);
 
+
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
     value: VolunteerFormData[K]
@@ -181,9 +181,9 @@ const HostAccount = () => {
       data.append("continent", formData.continent);
       data.append("country", formData.country);
       data.append("gender", formData.gender);
-      formData.educations.forEach(edu => data.append("educations", edu))
-      formData.skills.forEach(ski => data.append("skills", ski))
-      formData.languages.forEach(lan => data.append("languages", lan))
+      formData.educations.forEach((edu) => data.append("educations", edu));
+      formData.skills.forEach((ski) => data.append("skills", ski));
+      formData.languages.forEach((lan) => data.append("languages", lan));
 
       console.log(data);
 
@@ -470,7 +470,9 @@ const HostAccount = () => {
 
               {/* Skills */}
               <label className="label">
-                <span className="label-text font-medium text-gray-700">Skills</span>
+                <span className="label-text font-medium text-gray-700">
+                  Skills
+                </span>
               </label>
               <div className="relative mb-4">
                 <details
@@ -478,7 +480,9 @@ const HostAccount = () => {
                   open={openDropdown === "skills"}
                   onClick={(e) => {
                     e.preventDefault();
-                    setOpenDropdown(openDropdown === "skills" ? null : "skills");
+                    setOpenDropdown(
+                      openDropdown === "skills" ? null : "skills"
+                    );
                   }}
                 >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
@@ -558,7 +562,9 @@ const HostAccount = () => {
                             handleInputChange(
                               "languages",
                               formData.languages.includes(lang.toLowerCase())
-                                ? formData.languages.filter((l) => l !== lang.toLowerCase())
+                                ? formData.languages.filter(
+                                    (l) => l !== lang.toLowerCase()
+                                  )
                                 : [...formData.languages, lang.toLowerCase()]
                             );
                           }}

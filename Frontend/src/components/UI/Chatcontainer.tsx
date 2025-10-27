@@ -1,10 +1,22 @@
+import { useEffect, useRef } from "react";
 import profile_martin from "../../assets/images/Chat/profile_martin.png";
 import arrow_icon from "../../assets/images/Chat/arrow_icon.png";
 import help_icon from "../../assets/images/Chat/help_icon.png";
 import logo_icon from "../../assets/images/Chat/logo_icon.svg";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
+import gallery_icon from "../../assets/images/Chat/gallery_icon.svg";
+import send_button from "../../assets/images/Chat/send_button.svg";
+import { formatMessageTime } from "@/library";
 
 const ChatContainer = ({ selectedUser, setSelectedUser }) => {
+  const scrollEnd = useRef();
+
+  useEffect(() => {
+    if (scrollEnd.current) {
+      scrollEnd.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
   return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       {/*-------header-------*/}
@@ -52,10 +64,38 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
                 alt=""
                 className="w-7 rounded-full"
               />
-              <p className="text-gray-500">{msg.createdAt}</p>
+              <p className="text-gray-500">
+                {formatMessageTime(msg.createdAt)}
+              </p>
             </div>
           </div>
         ))} */}
+        <div ref={scrollEnd}></div>
+      </div>
+      {/*-------bottom area------ */}
+      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-3 p-3">
+        <div className="flex-1 flex items-center bg-gray-100/12 px-3 rounded-full">
+          <input
+            type="text"
+            placeholder="Send a message"
+            className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-black
+             placeholder-gray-400"
+          />
+          <input
+            type="file"
+            id="image"
+            accept="'image/png , image/jpeg"
+            hidden
+          />
+          <label htmlFor="image">
+            <img
+              src={gallery_icon}
+              alt=""
+              className="w-5 mr-2 bg-black cursor-pointer"
+            />
+          </label>
+        </div>
+        <img src={send_button} alt="" className="w-7 cursor-pointer" />
       </div>
     </div>
   ) : (

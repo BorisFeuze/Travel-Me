@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { addJobOffers } from "@/data/jobOffers";
 import { useAuth } from "@/context";
+import { Calendar02 } from "@/components/UI/Calendar02"; 
+import { type DateRange } from "react-day-picker";
+
 
 const CreateJob = () => {
   const { user } = useAuth();
@@ -14,6 +17,7 @@ const CreateJob = () => {
     description: "",
     needs: [],
     languages: [],
+    availability: [] as DateRange[],
   });
 
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -134,14 +138,19 @@ const CreateJob = () => {
     setSaveMessage(null);
 
     try {
-      const data = new FormData();
-      data.append("title", formData.title);
-      data.append("userProfileId", formData.userProfileId);
-      data.append("location", formData.location);
-      data.append("description", formData.description);
-      formData.needs.forEach((need) => data.append("needs", need));
-      formData.languages.forEach((lang) => data.append("languages", lang));
-      formData.pictureURL.forEach((file) => data.append("pictureURL", file));
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("userProfileId", formData.userProfileId);
+    data.append("location", formData.location);
+    data.append("description", formData.description);
+    data.append("needs", JSON.stringify(formData.needs));
+    data.append("languages", JSON.stringify(formData.languages));
+
+    data.append("availability", JSON.stringify(formData.availability));
+
+    formData.pictureURL.forEach(file => data.append("pictureURL", file));
+  
+
 
       await addJobOffers(data);
 
@@ -155,6 +164,7 @@ const CreateJob = () => {
         description: "",
         needs: [],
         languages: [],
+         availability: [], 
       });
       setPreviewUrls([]);
       setCurrentIndex(0);
@@ -387,6 +397,48 @@ const CreateJob = () => {
                 ))}
               </ul>
             </details>
+          </div>
+
+          {/* Availability Calendar */}
+          <label className="label">
+            <span className="label-text font-medium text-gray-700">
+              Availability
+            </span>
+          </label>
+          <div className="mb-6">
+            <Calendar02
+              multiRange={true}
+              selectedRanges={formData.availability || []}
+              onMultiRangeSelect={(ranges) => handleInputChange("availability", ranges)}
+            />
+            
+            {formData.availability && formData.availability.length > 0 && (
+              <div className="mt-4 space-y-2">
+                {formData.availability.map((range, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                    <p className="text-gray-600">
+                      <span className="font-medium">
+                        {range.from?.toLocaleDateString()}
+                      </span>
+                      {" to "}
+                      <span className="font-medium">
+                        {range.to?.toLocaleDateString()}
+                      </span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newRanges = formData.availability.filter((_, i) => i !== index);
+                        handleInputChange("availability", newRanges);
+                      }}
+                      className="text-red-500 hover:text-red-700 text-sm px-2"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* save Button */}
