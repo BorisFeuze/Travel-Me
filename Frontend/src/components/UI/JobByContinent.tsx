@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import JobOffersAPI from "@/library/api";
+import { getAllUserProfiles } from "@/data";
 import { Link, useSearchParams } from "react-router-dom";
 import { continentFromLocation, type ContinentKey } from "@/utils/geo";
 
@@ -73,12 +73,15 @@ const SAMPLE_OFFERS: JobOffer[] = [
 ];
 
 function groupByContinent(list: JobOffer[]) {
-  return list.reduce<Record<ContinentKey, JobOffer[]>>((acc, j) => {
-    const c = continentFromLocation(j.location);
-    if (!c) return acc;
-    (acc[c] ??= []).push(j);
-    return acc;
-  }, {} as Record<ContinentKey, JobOffer[]>);
+  return list.reduce<Record<ContinentKey, JobOffer[]>>(
+    (acc, j) => {
+      const c = continentFromLocation(j.location);
+      if (!c) return acc;
+      (acc[c] ??= []).push(j);
+      return acc;
+    },
+    {} as Record<ContinentKey, JobOffer[]>
+  );
 }
 
 const JobByContinent = () => {
@@ -89,10 +92,15 @@ const JobByContinent = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await JobOffersAPI.JobOffersAPI.fetchJobOffers();
+        const response = await getAllUserProfiles();
+        console.log(response);
+        const filteredEurope = response.userProfiles.filter(
+          (up) => up.continent === "Europe"
+        );
+        console.log(filteredEurope);
         // Backend returns {message: '...', jobOffers: [...]}
-        const data = response?.jobOffers || response;
-        setOffers(Array.isArray(data) ? data : []);
+        // const data = response?.jobOffers || response;
+        // setOffers(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error("Failed to load job offers from API:", e);
         // fallback to local sample data so homepage still shows content

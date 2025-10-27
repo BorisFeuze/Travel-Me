@@ -18,7 +18,7 @@ const RightSidebar = ({ selectedUser }) => {
           </h1>
           <p className="px-10 mx-auto">{selectedUser.bio}</p>
         </div>
-        <hr className="border-[#ffffff50] my-4" />
+        <hr className="border-black my-4" />
         {/* <div className="px-5 text-xs">
           <p>Media</p>
           <div className="mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
@@ -33,7 +33,8 @@ const RightSidebar = ({ selectedUser }) => {
             ))}
           </div>
         </div> */}
-        <button className="absolute bottom-5 left-0.5 transform -translate-x-0.5 bg-linear-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-2 rounded-full cursor-pointer">
+
+        <button className="absolute bottom-5 left-0.5 transform -translate-x-0.5 bg-linear-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light py-2 px-2 rounded-full w-full cursor-pointer">
           Logout
         </button>
       </div>

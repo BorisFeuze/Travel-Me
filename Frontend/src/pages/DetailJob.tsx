@@ -49,6 +49,10 @@ const DetailJob = () => {
   if (error) return <p className="text-center p-10 text-red-500">{error}</p>;
   if (!job) return <p className="text-center p-10 text-gray-500">Job offer not found.</p>;
 
+  console.log("job", job);
+  console.log("job.availability", job?.availability);
+
+
   const nextImage = () => {
     if (!job.pictureURL.length) return;
     setCurrentImage((prev) => (prev + 1) % job.pictureURL.length);
@@ -186,17 +190,39 @@ const DetailJob = () => {
       </div>
     </div>
 
-    {/* AVAILABILITY CALENDAR */}
-    <div className="mb-15">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
-        Availability
-      </h2>
-      <div className="flex justify-center">
-        <div className="bg-purple-50 rounded-2xl shadow-lg p-6">
-          <Calendar02 />
+    {job?.availability && Array.isArray(job.availability) && job.availability.length > 0 && (
+  <div className="mb-15">
+    <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
+      Availability
+    </h2>
+
+    <div className="flex justify-center">
+      <div className="[&_.rdp-day]:pointer-events-none bg-purple-50 rounded-2xl shadow-lg p-6">
+        <Calendar02
+          multiRange={true}
+          selectedRanges={job.availability}
+        />
+        
+        <div className="mt-4 space-y-2">
+          {job.availability.map((range, index) => (
+            <p key={index} className="text-gray-600 text-center">
+              <span className="font-semibold">From:</span>{" "}
+              <span className="font-medium">
+                {new Date(range.from).toLocaleDateString()}
+              </span>
+              {" to "}
+              <span className="font-medium">
+                {new Date(range.to).toLocaleDateString()}
+              </span>
+            </p>
+          ))}
         </div>
       </div>
     </div>
+  </div>
+)}
+
+
 
     {/* BOOK BUTTON */}
     <div className="flex justify-center">

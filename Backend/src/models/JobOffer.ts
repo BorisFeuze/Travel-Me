@@ -8,10 +8,17 @@ const jobOfferSchema = new Schema(
     pictureURL: { type: [String] },
     description: { type: String, required: [true, 'Description is required'] },
     needs: { type: [String] },
-    languages: { type: [String], required: [true, 'Language is required'] }
+    languages: { type: [String], required: [true, 'Language is required'] },
+    
+    availability: [
+      {
+        from: { type: Date, default: null },
+        to: { type: Date, default: null },
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
