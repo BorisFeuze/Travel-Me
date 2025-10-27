@@ -8,7 +8,6 @@ import {
 } from "@/data";
 import { useAuth } from "@/context";
 import { JobCard } from "@/components/UI";
-// import { validateDiaryForm } from "@/utils";
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -134,6 +133,7 @@ const HostAccount = () => {
 
     loadJobOffers();
   }, [user]);
+
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,

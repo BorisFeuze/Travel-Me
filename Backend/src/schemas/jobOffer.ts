@@ -16,6 +16,17 @@ export const genderSchema = z.strictObject({
   other: z.boolean().default(false)
 });
 
+export const availabilitySchema = z.strictObject({
+  from: z.preprocess(
+    val => (val ? new Date(val as string) : undefined),
+    z.date().optional()
+  ),
+  to: z.preprocess(
+    val => (val ? new Date(val as string) : undefined),
+    z.date().optional()
+  )
+});
+
 export const jobOfferInputSchema = z.strictObject({
   title: z.preprocess(coercedString, z.string()),
   location: z.preprocess(coercedString, z.string()),
@@ -25,16 +36,16 @@ export const jobOfferInputSchema = z.strictObject({
       z
         .string('userProfileId must be a string')
         .min(1, 'userProfileId is required')
-        .refine(val => {
-          return isValidObjectId(val);
-        }, 'Invalid userProfile ID'),
+        .refine(val => isValidObjectId(val), 'Invalid userProfile ID'),
       z.instanceof(Types.ObjectId)
     ])
   ),
   pictureURL: z.array(z.string().default('')),
   description: z.preprocess(coercedString, z.string()),
   needs: z.array(z.string().default('')),
-  languages: z.array(z.preprocess(coercedString, z.string().default('')))
+  languages: z.array(z.preprocess(coercedString, z.string().default(''))),
+
+  availability: z.array(availabilitySchema).optional()
 });
 
 export const jobOfferSchema = z.strictObject({
