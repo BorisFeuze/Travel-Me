@@ -146,18 +146,18 @@ const CreateJob = () => {
       data.append("country", formData.country);
       data.append("location", formData.location);
       data.append("description", formData.description);
-      data.append("needs", JSON.stringify(formData.needs));
-      data.append("languages", JSON.stringify(formData.languages));
-
+      // data.append("needs", JSON.stringify(formData.needs));
+      formData.needs.forEach((need) => data.append("needs", need));
+      // data.append("languages", JSON.stringify(formData.languages));
+      formData.languages.forEach((lang) => data.append("languages", lang));
       data.append("availability", JSON.stringify(formData.availability));
-
       formData.pictureURL.forEach((file) => data.append("pictureURL", file));
 
       for (let [key, value] of data.entries()) {
         console.log(key, value);
       }
 
-      // await addJobOffers(data);
+      await addJobOffers(data);
 
       setSaveMessage({ text: "Job offer created!", type: "success" });
       setFormData({
