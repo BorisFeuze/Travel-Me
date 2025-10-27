@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllJobOffers } from "@/data";
 import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
