@@ -8,6 +8,10 @@ type JobOffersResponse = {
 };
 
 export const addJobOffers = async (formData: FormData) => {
+  for (const pair of formData.entries()) {
+  console.log(pair[0], pair[1]);
+}
+
   const res = await fetch(baseURL, {
     method: "POST",
     body: formData,
@@ -34,7 +38,7 @@ export const getJobOffers = async (id: string) => {
     throw new Error(`Failed to fetch job offers: ${res.statusText}`);
   }
 
-  const data: JobFormData = await res.json();
+  const data: JobOffersResponse = await res.json();
   return data;
 };
 
