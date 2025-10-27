@@ -49,6 +49,10 @@ declare global {
   description: string;
   needs: string[];           
   languages: string[];
+  availability: {
+    from: Date;
+    to: Date;
+  }[];
 };
 
   type JobCardData = {
