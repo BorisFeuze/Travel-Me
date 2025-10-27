@@ -22,7 +22,18 @@ export const getJobOffers: RequestHandler<{}, GetJobOffersType> = async (req, re
 };
 
 export const createJobOffer: RequestHandler<{}, JobOfferType, JobOfferInputDTO> = async (req, res) => {
-  const { title, continent, country, location, userProfileId, pictureURL, description, needs, languages, availability } = req.body;
+  const {
+    title,
+    continent,
+    country,
+    location,
+    userProfileId,
+    pictureURL,
+    description,
+    needs,
+    languages,
+    availability
+  } = req.body;
   const jobOffer = await JobOffer.create<JobOfferInputDTO>({
     title,
     continent,
@@ -33,7 +44,7 @@ export const createJobOffer: RequestHandler<{}, JobOfferType, JobOfferInputDTO> 
     description,
     needs,
     languages,
-    availability,
+    availability
   });
   res.status(201).json({ message: 'jobOffer created', jobOffer });
 };
@@ -51,7 +62,18 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { title, continent, country, location, userProfileId, pictureURL, description, needs, languages, availability },
+    body: {
+      title,
+      continent,
+      country,
+      location,
+      userProfileId,
+      pictureURL,
+      description,
+      needs,
+      languages,
+      availability
+    },
     jobOffer
   } = req;
 
@@ -86,7 +108,6 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
 
   res.json({ message: 'updated jobOffer', jobOffer });
 };
-
 
 export const deleteJobOffer: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {
   const {
