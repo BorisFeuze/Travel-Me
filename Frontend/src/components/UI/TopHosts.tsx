@@ -64,21 +64,6 @@ const TopHosts = () => {
               className="snap-start shrink-0 w-40 rounded-2xl border p-4 text-center shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
               <CardHost _id={h._id} firstName={h.firstName} email={h.email} />
-              {/* <div className="mx-auto mb-2 grid h-16 w-16 place-items-center rounded-full border bg-slate-50 text-sm font-semibold">
-                {userInfo.pictureURL[0] ? (
-                  <img
-                    src={userInfo.pictureURL[0]}
-                    alt={`${h.firstName}`}
-                    className="h-16 w-16 rounded-full object-cover"
-                  />
-                ) : (
-                  <span>{initials(h)}</span>
-                )}
-              </div>
-              <div className="text-sm font-medium">{h.firstName}</div>
-              <div className="text-xs text-slate-500">
-                {userInfo.gender}, {userInfo.country}
-              </div> */}
             </Link>
           );
         })}

@@ -74,7 +74,7 @@ const DetailJob = () => {
     <h1 className="text-4xl font-extrabold leading-relaxed text-gray-900 text-left">
       {job.title}
     </h1>
-    <p className="text-gray-600 mt-1 text-left">{job.location}</p>
+    <p className="text-gray-600 mt-1 text-left">{job.continent}, {job.country}, {job.location}</p>
   </div>
 
   {/* HOST SECTION */}

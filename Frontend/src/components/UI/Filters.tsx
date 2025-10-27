@@ -1,104 +1,97 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
+import { getAllJobOffers } from "@/data";
 
-/** this could be replaced with API data */
-const CONTINENTS = [
-  "Europe",
-  "Asia",
-  "Africa",
-  "North America",
-  "South America",
-  "Oceania",
-];
-const COUNTRIES: Record<(typeof CONTINENTS)[number], string[]> = {
-  Europe: ["Germany", "Italy", "Spain", "Portugal", "Poland", "Austria"],
-  Asia: ["Japan", "China", "Thailand", "Vietnam"],
-  Africa: ["Morocco", "Kenya", "South Africa"],
-  "North America": ["USA", "Canada", "Mexico"],
-  "South America": ["Brazil", "Argentina", "Peru"],
-  Oceania: ["Australia", "New Zealand"],
-};
-
-const PLACES: Record<string, string[]> = {
-  Germany: ["Hamburg", "Berlin", "Munich", "Cologne"],
-  Italy: ["Rome", "Milan", "Naples", "Florence"],
-  Spain: ["Barcelona", "Madrid", "Valencia", "Seville"],
-  Portugal: ["Lisbon", "Porto", "Faro"],
-  Poland: ["Warsaw", "Krakow", "Gdansk"],
-  Austria: ["Vienna", "Salzburg", "Graz"],
-  Japan: ["Tokyo", "Osaka", "Kyoto"],
-  China: ["Shanghai", "Beijing", "Shenzhen"],
-  Thailand: ["Bangkok", "Chiang Mai", "Phuket"],
-  Vietnam: ["Hanoi", "Da Nang", "Ho Chi Minh City"],
-  // ...add more as needed
-};
-const SKILLS = [
-  "Cooking",
-  "Farm work",
-  "English Teaching",
-  "Gardening",
-  "hostel work",
-  "Child care",
-  "Animal care",
-  "Photography",
-  "Baking",
-  "Surf coaching",
-] as const;
-
-type FiltersState = {
-  continent?: (typeof CONTINENTS)[number];
+export type FiltersState = {
+  continent?: string;
   country?: string;
-  place?: string;
-  skills: string[]; // multi-select
+  location?: string;
+  skills: string[];
 };
 
-type FiltersProps = {
+export type FiltersProps = {
   onChange: (filters: FiltersState) => void;
   initial?: Partial<FiltersState>;
 };
 
-// function getCountriesForContinent(continent: string | null): string[] {
-//   if (continent && CONTINENTS[continent]) {
-//     return COUNTRIES[continent];
-//   }
-//   return [];
-// }
+const unique = (arr: (string | undefined | null)[]) =>
+  Array.from(new Set(arr.filter((v): v is string => !!v)));
 
 const Filters = ({ onChange, initial }: FiltersProps) => {
+  const [jobs, setJobs] = useState<JobFormData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [continent, setContinent] = useState<FiltersState["continent"]>(
     initial?.continent
   );
   const [country, setCountry] = useState<FiltersState["country"]>(
     initial?.country
   );
-  const [place, setPlace] = useState<FiltersState["place"]>(initial?.place);
+  const [location, setLocation] = useState<FiltersState["location"]>(
+    initial?.location
+  );
   const [skills, setSkills] = useState<string[]>(initial?.skills ?? []);
 
-  const countryOptions = useMemo<string[]>(() => {
-    if (!continent) return [];
-    return COUNTRIES[continent] ?? [];
-  }, [continent]);
-
-  const placeOptions = useMemo<string[]>(() => {
-    if (!country) return [];
-    return PLACES[country] ?? [];
-  }, [country]);
-
-  // Keep hierarchy consistent: reset child fields if parent changes
-  useEffect(() => {
-    setCountry((c) => (c && countryOptions.includes(c) ? c : undefined));
-    setPlace(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [continent]);
+  const [continentOptions, setContinentOptions] = useState<string[]>([]);
+  const [countryOptions, setCountryOptions] = useState<string[]>([]);
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
+  const [skillsOptions, setSkillsOptions] = useState<string[]>([]);
 
   useEffect(() => {
-    setPlace((p) => (p && placeOptions.includes(p) ? p : undefined));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [country]);
+    const run = async () => {
+      try {
+        setLoading(true);
+        const res = await getAllJobOffers();
+        const rows = res?.jobOffers ?? [];
+        setJobs(rows);
+      } catch (e: any) {
+        console.error(e);
+        setError(e?.message || "Failed to load job offers.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    run();
+  }, []);
 
-  // Lift state up whenever it changes
   useEffect(() => {
-    onChange?.({ continent, country, place, skills });
-  }, [continent, country, place, skills]);
+    if (!jobs.length) return;
+    setContinentOptions(unique(jobs.map((j: any) => j.continent)));
+    setSkillsOptions(
+      unique(jobs.flatMap((j: any) => (Array.isArray(j.needs) ? j.needs : [])))
+    );
+  }, [jobs]);
+
+  useEffect(() => {
+    const filtered = jobs.filter((j: any) =>
+      continent ? j.continent === continent : true
+    );
+    const countries = unique(filtered.map((j: any) => j.country));
+    setCountryOptions(countries);
+
+    if (country && !countries.includes(country)) {
+      setCountry(undefined);
+      setLocation(undefined);
+    }
+  }, [jobs, continent]);
+
+  useEffect(() => {
+    const filtered = jobs.filter(
+      (j: any) =>
+        (continent ? j.continent === continent : true) &&
+        (country ? j.country === country : true)
+    );
+    const locs = unique(filtered.map((j: any) => j.location));
+    setLocationOptions(locs);
+
+    if (location && !locs.includes(location)) {
+      setLocation(undefined);
+    }
+  }, [jobs, continent, country]);
+
+  useEffect(() => {
+    onChange?.({ continent, country, location, skills });
+  }, [continent, country, location, skills]);
 
   const toggleSkill = (s: string) => {
     setSkills((prev) =>
@@ -109,7 +102,7 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
   const clearAll = () => {
     setContinent(undefined);
     setCountry(undefined);
-    setPlace(undefined);
+    setLocation(undefined);
     setSkills([]);
   };
 
@@ -124,15 +117,12 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
               <select
                 className="bg-transparent outline-none text-sm text-gray-900 min-w-[140px]"
                 value={continent ?? ""}
-                onChange={(e) =>
-                  setContinent(
-                    (e.target.value || undefined) as FiltersState["continent"]
-                  )
-                }
+                onChange={(e) => setContinent(e.target.value || undefined)}
                 aria-label="Continent"
+                disabled={loading || !!error}
               >
-                <option value="">All the continents</option>
-                {CONTINENTS.map((c) => (
+                <option value="">All continents</option>
+                {continentOptions.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -145,11 +135,11 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
                 className="bg-transparent outline-none text-sm text-gray-900 min-w-[140px] disabled:text-gray-400"
                 value={country ?? ""}
                 onChange={(e) => setCountry(e.target.value || undefined)}
-                disabled={!continent}
+                disabled={!continent || loading || !!error}
                 aria-label="Country"
               >
                 <option value="">
-                  {continent ? "All the continents" : "Choose the continent"}
+                  {continent ? "All countries" : "Choose continent"}
                 </option>
                 {countryOptions.map((c) => (
                   <option key={c} value={c}>
@@ -162,15 +152,15 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
 
               <select
                 className="bg-transparent outline-none text-sm text-gray-900 min-w-[140px] disabled:text-gray-400"
-                value={place ?? ""}
-                onChange={(e) => setPlace(e.target.value || undefined)}
-                disabled={!country}
-                aria-label="Place"
+                value={location ?? ""}
+                onChange={(e) => setLocation(e.target.value || undefined)}
+                disabled={!country || loading || !!error}
+                aria-label="Location"
               >
                 <option value="">
-                  {country ? "All countries" : "Choose the country"}
+                  {country ? "All locations" : "Choose country"}
                 </option>
-                {placeOptions.map((p) => (
+                {locationOptions.map((p) => (
                   <option key={p} value={p}>
                     {p}
                   </option>
@@ -192,6 +182,7 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
                   tabIndex={0}
                   type="button"
                   className="text-sm text-gray-700 hover:text-gray-900 outline-none"
+                  disabled={loading || !!error}
                 >
                   {skills.length
                     ? `${skills.length} selected`
@@ -201,7 +192,7 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
                   tabIndex={0}
                   className="dropdown-content z-[5] menu p-2 shadow bg-white border rounded-xl w-64 max-h-72 overflow-auto"
                 >
-                  {SKILLS.map((s) => (
+                  {skillsOptions.map((s) => (
                     <li key={s}>
                       <label className="label cursor-pointer justify-start gap-3 py-1">
                         <input
@@ -219,13 +210,15 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
             </div>
           </div>
 
-          {/* Pulsante tondo di ricerca */}
           <div className="flex items-center justify-end px-2 py-2 md:py-0">
             <button
               type="button"
-              onClick={() => onChange?.({ continent, country, place, skills })}
+              onClick={() =>
+                onChange?.({ continent, country, location, skills })
+              }
               aria-label="Cerca"
               className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition focus:outline-none focus:ring-2 focus:ring-gray-300"
+              disabled={loading || !!error}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -239,7 +232,6 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
         </div>
       </div>
 
-      {/* Chips skills selezionate + Clear all opzionale */}
       {skills.length > 0 && (
         <div className="max-w-6xl mx-auto mt-2 flex flex-wrap gap-2 px-2">
           {skills.map((s) => (
@@ -268,7 +260,19 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
           Clear all
         </button>
       </div>
+
+      {loading && (
+        <p className="max-w-6xl mx-auto mt-2 px-2 text-sm text-gray-500">
+          Loading filter data…
+        </p>
+      )}
+      {error && (
+        <p className="max-w-6xl mx-auto mt-2 px-2 text-sm text-red-600">
+          {error}
+        </p>
+      )}
     </section>
   );
 };
+
 export default Filters;

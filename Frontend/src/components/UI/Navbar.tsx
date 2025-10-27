@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import { useAuth } from "@/context";
-import Searchbar from "./Searchbar";
 import logo from "../../assets/images/pngwing.com.png"; 
 
 const Navbar = () => {
@@ -107,5 +106,4 @@ const Navbar = () => {
     </header>
   );
 };
-
 export default Navbar;

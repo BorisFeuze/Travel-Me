@@ -6,12 +6,11 @@ import {
   Features,
   TopHosts,
   Continents,
-  Countries,
   Requiredskills,
   Joinus,
   Footer,
+  JobFilterCard,
 } from "@/components/UI";
-import DetailCountry from "./DetailCountry";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -45,17 +44,8 @@ const Home = () => {
       {/* add main Features Section */}
       <Features />
 
-      {/*Filters*/}
-      <Filters />
-
+      <JobFilterCard />
       {/* Top hosts Scroller */}
-      <TopHosts />
-
-      {/*Detail Country*/}
-      <DetailCountry />
-
-      {/* Countries Grid */}
-      <Countries />
 
       {/* Display Continents */}
       <Continents />
@@ -64,6 +54,8 @@ const Home = () => {
 
       {/* Join Us Section */}
       <Joinus />
+
+      <TopHosts />
 
       {/* FOOTER */}
       <Footer />

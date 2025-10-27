@@ -4,7 +4,6 @@ import NotFound from "./NotFound";
 import Chat from "./Chat";
 import Registration from "./Registration";
 import CreateJob from "./CreateJob";
-import DetailCountry from "./DetailCountry";
 import DetailJob from "./DetailJob";
 
 import CountryLists from "./CountyLists";
@@ -23,7 +22,6 @@ export {
   Chat,
   Registration,
   CreateJob,
-  DetailCountry,
   DetailJob,
   CountryLists,
   Opportunities,

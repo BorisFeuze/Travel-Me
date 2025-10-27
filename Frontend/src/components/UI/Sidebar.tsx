@@ -118,7 +118,7 @@ const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
               {index < 3 ? (
                 <span className="text-green-400">Online</span>
               ) : (
-                <span className="text-neutral-400 text-xs">Offline</span>
+                <span className="text-neutral-400">Offline</span>
               )}
             </div>
             {index > 2 && (
