@@ -31,7 +31,7 @@ export const createJobOffer: RequestHandler<{}, JobOfferType, JobOfferInputDTO> 
     description,
     needs,
     languages,
-    availability,
+    availability
   });
   res.status(201).json({ message: 'jobOffer created', jobOffer });
 };
@@ -49,9 +49,11 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { title, location, userProfileId, pictureURL, description, needs, languages, availability },
+    body: { title, location, userProfileId, pictureURL, description, needs, languages },
     jobOffer
   } = req;
+
+  const [{ from, to } = {} as AvailabilityType] = req.body.availability ?? [];
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: 404 });
@@ -63,26 +65,12 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
   jobOffer.description = description;
   jobOffer.needs = needs || [];
   jobOffer.languages = languages || [];
-
-  if (Array.isArray(availability)) {
-    jobOffer.availability = availability.map(a => ({
-      from: a?.from ? new Date(a.from) : null,
-      to: a?.to ? new Date(a.to) : null
-    }));
-  } else if (availability) {
-    jobOffer.availability = [
-      {
-        from: availability?.from ? new Date(availability.from) : null,
-        to: availability?.to ? new Date(availability.to) : null
-      }
-    ];
-  }
+  jobOffer.availability.push({ from: Date, to: Date });
 
   await jobOffer.save();
 
   res.json({ message: 'updated jobOffer', jobOffer });
 };
-
 
 export const deleteJobOffer: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {
   const {

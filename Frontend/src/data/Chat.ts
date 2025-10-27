@@ -8,7 +8,7 @@ export const getChatUsers = async () => {
   });
   if (!res.ok) throw new Error("Failed to get tne users");
   const data = await res.json();
-  console.log(data);
+  // console.log(data);
   return data;
 };
 

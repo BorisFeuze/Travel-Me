@@ -62,10 +62,10 @@ const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
     <div
       className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}
     >
-      <div className="pd-5 border-2">
-        <div className="flex justify-between items-center">
+      <div className="pd-5">
+        {/* <div className="flex justify-between items-center">
           <img src={logo} alt="logo" className="max-w-40" />
-          {/* <div className="relative py-2 group">
+          <div className="relative py-2 group">
             <img
               src={menu_icon}
               alt="Menu"
@@ -81,8 +81,8 @@ const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
               <hr className="my-2 border-t border-gray-500" />
               <p className="cursor-pointer text-sm">Logout</p>
             </div>
-          </div> */}
-        </div>
+          </div>
+        </div> */}
         <div className="bg-[#282142] rounded-full flex items-center gap-2 py-3 px-4 mt-5">
           <img src={search_icon} alt="Search" className="w-3" />
           <input

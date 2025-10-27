@@ -65,10 +65,15 @@ const ChatContainer = ({
     })();
   }, [messages]);
 
+  console.log(messages);
+  console.log(userInfo);
+
   // Handle sending a message
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (input.trim() === "") return null;
+    console.log(selectedUser._id);
+    console.log(input);
     await sendMessage(selectedUser?._id, { message: input.trim() });
     setInput("");
   };
@@ -132,9 +137,9 @@ const ChatContainer = ({
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 breal-all bg-violet-500/30 text-white ${msg.senderId === user?._id ? "rounded-br-none" : "rounded-bl-none"}`}
+                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 breal-all bg-violet-500/30 text-black ${msg.senderId === user?._id ? "rounded-br-none" : "rounded-bl-none"}`}
               >
-                {msg.chat}
+                {msg.message}
               </p>
             )}
             <div className="text-center text-xs">

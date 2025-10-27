@@ -13,13 +13,13 @@ const Chat = () => {
   const [chatUsers, setChatUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [unseenMessages, setUnseenMessages] = useState({});
-  const { user, onlineUsers } = useAuth();
+  const { socket, user, onlineUsers } = useAuth();
 
   useEffect(() => {
     (async () => {
       try {
         const data = await getChatUsers();
-        console.log("Data", data);
+        // console.log("Data", data);
         if (data) {
           setChatUsers(data.users);
           setUnseenMessages(data.unseenMessages);
@@ -49,7 +49,7 @@ const Chat = () => {
       const data = await sendMessages(selectedUserId, messages);
       console.log("Data", data);
       if (data) {
-        setMessages((prev) => [...prev, data.newMessage]);
+        setMessages((prev) => [...prev, data]);
       } else {
         console.error(data.message);
       }
@@ -57,6 +57,36 @@ const Chat = () => {
       console.error(error);
     }
   };
+
+  console.log(messages);
+
+  const subscribeToMessages = () => {
+    if (!socket) return;
+    socket.on("newMessage", () => {
+      if (selectedUser && newMessage.senderId === selectedUser._id) {
+        newMessage.seen = true;
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        updateNewMessages(newMessages._id);
+      } else {
+        setUnseenMessages((prev) => ({
+          ...prev,
+          [newMessages.senderId]: prev[newMessage.senderId]
+            ? prev[newMessage.senderId] + 1
+            : 1,
+        }));
+      }
+    });
+  };
+
+  // function to unsubscribe from messages
+  const unsubscribeFromMessages = () => {
+    if (socket) socket.off("newMessage");
+  };
+
+  useEffect(() => {
+    subscribeToMessages();
+    return () => unsubscribeFromMessages();
+  }, [socket, selectedUser]);
 
   return (
     <div className="border w-full h-screen sm:px-[15%] sm:py-[5%]">
@@ -80,6 +110,7 @@ const Chat = () => {
         />
         <RightSidebar
           selectedUser={selectedUser}
+          onlineUsers={onlineUsers}
           setSelectedUser={setSelectedUser}
         />
       </div>

@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { addJobOffers } from "@/data/jobOffers";
 import { useAuth } from "@/context";
-import { Calendar02 } from "@/components/UI/Calendar02"; 
+import { Calendar02 } from "@/components/UI/Calendar02";
 import { type DateRange } from "react-day-picker";
-
 
 const CreateJob = () => {
   const { user } = useAuth();
@@ -138,21 +137,29 @@ const CreateJob = () => {
     setSaveMessage(null);
 
     try {
-    const data = new FormData();
-    data.append("title", formData.title);
-    data.append("userProfileId", formData.userProfileId);
-    data.append("location", formData.location);
-    data.append("description", formData.description);
-    data.append("needs", JSON.stringify(formData.needs));
-    data.append("languages", JSON.stringify(formData.languages));
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("userProfileId", formData.userProfileId);
+      data.append("location", formData.location);
+      data.append("description", formData.description);
+      // data.append("needs", JSON.stringify(formData.needs));
+      // data.append("languages", JSON.stringify(formData.languages));
+      formData.needs.forEach((need) => data.append("skills", need));
+      formData.languages.forEach((lan) => data.append("languages", lan));
 
-    data.append("availability", JSON.stringify(formData.availability));
+      data.append("availability", JSON.stringify(formData.availability));
 
-    formData.pictureURL.forEach(file => data.append("pictureURL", file));
-  
+      formData.availability.forEach((ranges) =>
+        data.append("availability", ranges)
+      );
 
+      formData.pictureURL.forEach((file) => data.append("pictureURL", file));
 
-      await addJobOffers(data);
+      for (let [key, value] of data.entries()) {
+        console.log(key, value);
+      }
+
+      // await addJobOffers(data);
 
       setSaveMessage({ text: "Job offer created!", type: "success" });
       setFormData({
@@ -164,7 +171,7 @@ const CreateJob = () => {
         description: "",
         needs: [],
         languages: [],
-         availability: [], 
+        availability: {},
       });
       setPreviewUrls([]);
       setCurrentIndex(0);
@@ -180,7 +187,7 @@ const CreateJob = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 flex flex-col lg:flex-row gap-8">
+    <div className="min-h-screen bg-linear-to-b from-blue-50 to-purple-50 p-6 flex flex-col lg:flex-row gap-8">
       {/* Picture gallery */}
       <div className="w-full lg:w-1/3 flex flex-col items-center">
         <div
@@ -408,14 +415,19 @@ const CreateJob = () => {
           <div className="mb-6">
             <Calendar02
               multiRange={true}
-              selectedRanges={formData.availability || []}
-              onMultiRangeSelect={(ranges) => handleInputChange("availability", ranges)}
+              selectedRanges={formData.availability}
+              onMultiRangeSelect={(ranges) =>
+                handleInputChange("availability", ranges)
+              }
             />
-            
+
             {formData.availability && formData.availability.length > 0 && (
               <div className="mt-4 space-y-2">
                 {formData.availability.map((range, index) => (
-                  <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-gray-50 p-2 rounded"
+                  >
                     <p className="text-gray-600">
                       <span className="font-medium">
                         {range.from?.toLocaleDateString()}
@@ -428,7 +440,9 @@ const CreateJob = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        const newRanges = formData.availability.filter((_, i) => i !== index);
+                        const newRanges = formData.availability.filter(
+                          (_, i) => i !== index
+                        );
                         handleInputChange("availability", newRanges);
                       }}
                       className="text-red-500 hover:text-red-700 text-sm px-2"

@@ -69,8 +69,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setSocket(newSocket);
     newSocket.on("getOnlineUser", (userIds) => {
       setOnlineUsers(userIds);
+      console.log(onlineUsers);
     });
   };
+
+  console.log(onlineUsers);
 
   const value: AuthContextType = {
     signedIn,
