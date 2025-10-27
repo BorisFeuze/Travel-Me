@@ -6,12 +6,10 @@ import {
   Features,
   TopHosts,
   Continents,
-  Countries,
   Requiredskills,
   Joinus,
   Footer,
 } from "@/components/UI";
-import DetailCountry from "./DetailCountry";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -50,12 +48,6 @@ const Home = () => {
 
       {/* Top hosts Scroller */}
       <TopHosts />
-
-      {/*Detail Country*/}
-      <DetailCountry />
-
-      {/* Countries Grid */}
-      <Countries />
 
       {/* Display Continents */}
       <Continents />

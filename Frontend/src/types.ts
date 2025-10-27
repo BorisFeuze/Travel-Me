@@ -42,7 +42,9 @@ declare global {
 
   type JobFormData = {   
   _id: string;
-  title: string;           
+  title: string;
+  continent: string;
+  country: string;           
   location: string;
   userProfileId: string;       
   pictureURL: File[];    

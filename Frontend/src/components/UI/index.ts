@@ -5,7 +5,6 @@ import Filters from "./Filters";
 import Features from "./Features";
 import TopHosts from "./TopHosts";
 import Continents from "./Continents";
-import Countries from "./Countries";
 import Requiredskills from "./Requiredskills";
 import Joinus from "./Joinus";
 import Footer from "./Footer";
@@ -25,7 +24,6 @@ export {
   Features,
   TopHosts,
   Continents,
-  Countries,
   Requiredskills,
   JobByContinent,
   Joinus,
