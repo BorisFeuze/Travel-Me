@@ -19,7 +19,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
     <div
       className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}
     >
-      <div className="pd-5 border-2">
+      <div className="pd-5 mb-7">
         <div className="flex justify-between items-center">
           <img src={logo} alt="logo" className="max-w-40" />
           <div className="relative py-2 group">
@@ -68,7 +68,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
               {index < 3 ? (
                 <span className="text-green-400">Online</span>
               ) : (
-                <span className="text-neutral-400 text-xs">Offline</span>
+                <span className="text-neutral-400">Offline</span>
               )}
             </div>
             {index > 2 && (

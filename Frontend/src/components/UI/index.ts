@@ -10,6 +10,7 @@ import Joinus from "./Joinus";
 import Footer from "./Footer";
 import JobByContinent from "./JobByContinent";
 import JobCard from "./JobCard";
+import JobFilterCard from "./JobFilterCard";
 export { default as ChatContainer } from "./Chatcontainer";
 export { default as RightSidebar } from "./RightSidebar";
 export { default as Sidebar } from "./Sidebar";
@@ -28,4 +29,5 @@ export {
   JobByContinent,
   Joinus,
   Footer,
+  JobFilterCard,
 };

@@ -9,6 +9,7 @@ import {
   Requiredskills,
   Joinus,
   Footer,
+  JobFilterCard,
 } from "@/components/UI";
 
 const Home = () => {
@@ -46,8 +47,8 @@ const Home = () => {
       {/*Filters*/}
       <Filters />
 
+      <JobFilterCard />
       {/* Top hosts Scroller */}
-      <TopHosts />
 
       {/* Display Continents */}
       <Continents />
@@ -56,6 +57,8 @@ const Home = () => {
 
       {/* Join Us Section */}
       <Joinus />
+
+      <TopHosts />
 
       {/* FOOTER */}
       <Footer />

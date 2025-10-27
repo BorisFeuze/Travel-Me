@@ -9,8 +9,8 @@ type JobOffersResponse = {
 
 export const addJobOffers = async (formData: FormData) => {
   for (const pair of formData.entries()) {
-  console.log(pair[0], pair[1]);
-}
+    console.log(pair[0], pair[1]);
+  }
 
   const res = await fetch(baseURL, {
     method: "POST",
@@ -33,6 +33,19 @@ export const getJobOffers = async (id: string) => {
     console.warn("Unauthorized – user not logged in.");
     return null;
   }
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch job offers: ${res.statusText}`);
+  }
+
+  const data: JobOffersResponse = await res.json();
+  return data;
+};
+export const getAllJobOffers = async () => {
+  const res = await fetch(`${baseURL}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
 
   if (!res.ok) {
     throw new Error(`Failed to fetch job offers: ${res.statusText}`);
