@@ -21,16 +21,16 @@ const DisplayHost = () => {
         // mock: fetch a bigger list and find by id
         const dataUsers = await getUsers();
 
-        console.log(dataUsers);
+        // console.log(dataUsers);
 
         const allHosts = dataUsers.users.filter((u) =>
           u.roles.includes("host")
         );
-        console.log(allHosts);
+        // console.log(allHosts);
         // const allHosts = await UsersAPI.getTopHosts(100);
         const found = allHosts.find((h) => h._id === id) ?? null;
 
-        console.log(found);
+        // console.log(found);
         if (!found) setError("Host not found.");
         setHost(found);
       } catch {
@@ -46,19 +46,19 @@ const DisplayHost = () => {
       try {
         const data = await getUserDetails(id);
 
-        console.log(data);
+        // console.log(data);
 
         const userInfo = data.userProfiles[0];
 
         if (userInfo) {
-          console.log(userInfo);
+          // console.log(userInfo);
 
           setInfo(userInfo);
         }
       } catch {
-        // setError("Error fetching top hosts");
+        setError("Error fetching userProfile of Host");
       } finally {
-        // setLoading(false);
+        setLoading(false);
       }
     })();
   }, []);

@@ -1,6 +1,6 @@
-import { Chat, User } from '#models';
+import { ChatUsers, User } from '#models';
 import type { RequestHandler } from 'express';
-import { io, userSocketMap } from '#utils';
+import { io, userSocketMap } from '../index.ts';
 import { v2 as cloudinary } from 'cloudinary';
 import { CLOUD_NAME, API_KEY, API_SECRET } from '#config';
 
@@ -21,7 +21,7 @@ export const getUsersToChatWith: RequestHandler = async (req, res) => {
   // count number of messages not seen
   const unseenMessages: unseenMessagesType = {};
   const promises = filteredUsers.map(async user => {
-    const chats = await Chat.find({ senderId: user._id, receiverId: userId, seen: false });
+    const chats = await ChatUsers.find({ senderId: user._id, receiverId: userId, seen: false });
     if (chats.length > 0) {
       unseenMessages['user._id'] = chats.length;
     }
@@ -37,13 +37,13 @@ export const getChats: RequestHandler = async (req, res) => {
   const { id: selectedUserId } = req.params;
   const myId = req.user!.id;
 
-  const chats = await Chat.find({
+  const chats = await ChatUsers.find({
     $or: [
       { senderId: myId, receiverId: selectedUserId },
       { senderId: selectedUserId, receiverId: myId }
     ]
   });
-  await Chat.updateMany({ senderId: selectedUserId, receiverId: myId }, { seen: true });
+  await ChatUsers.updateMany({ senderId: selectedUserId, receiverId: myId }, { seen: true });
 
   res.json({ chats });
 };
@@ -52,7 +52,7 @@ export const getChats: RequestHandler = async (req, res) => {
 
 export const markChatAsSeen: RequestHandler = async (req, res) => {
   const { id } = req.params;
-  await Chat.findByIdAndUpdate(id, { seen: true });
+  await ChatUsers.findByIdAndUpdate(id, { seen: true });
   res.json({ message: 'chat updated' });
 };
 
@@ -69,7 +69,7 @@ export const sendChat: RequestHandler = async (req, res) => {
     const uploadResponse = await cloudinary.uploader.upload(image);
     imageUrl = uploadResponse.secure_url;
   }
-  const newChat = await Chat.create({
+  const newChat = await ChatUsers.create({
     senderId,
     receiverId,
     message,

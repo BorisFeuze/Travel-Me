@@ -21,7 +21,6 @@ const authenticate =
       const decoded = jwt.verify(accessToken, ACCESS_JWT_SECRET) as jwt.JwtPayload;
 
       if (!decoded.sub) throw new Error('Invalid access token', { cause: { status: 403 } });
-
       const user = {
         id: decoded.sub,
         roles: decoded.roles

@@ -11,7 +11,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const getAllUser = async () => {
       try {
         const usersData = await getAllUserProfiles();
-        console.log("Data", usersData.userProfiles);
+        // console.log("Data", usersData.userProfiles);
 
         setAllUsers(usersData.userProfiles);
       } catch (error) {
@@ -23,7 +23,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (checkSession) getAllUser();
   }, [checkSession]);
 
-  console.log(allUsers);
+  // console.log(allUsers);
 
   const value: UserContextType = {
     allUsers,
