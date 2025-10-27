@@ -29,6 +29,8 @@ export const availabilitySchema = z.strictObject({
 
 export const jobOfferInputSchema = z.strictObject({
   title: z.preprocess(coercedString, z.string()),
+  continent: z.preprocess(coercedString, z.string()),
+  country: z.preprocess(coercedString, z.string()),
   location: z.preprocess(coercedString, z.string()),
   userProfileId: z.preprocess(
     coercedString,
