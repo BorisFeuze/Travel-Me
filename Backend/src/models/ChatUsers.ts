@@ -1,9 +1,9 @@
 import { model, Schema } from 'mongoose';
 
-const Chat = new Schema(
+const ChatUsers = new Schema(
   {
-    senderId: { type: Schema.Types.ObjectId, ref: 'user', required: true, unique: true },
-    receiverId: { type: Schema.Types.ObjectId, ref: 'user', required: true, unique: true },
+    senderId: { type: Schema.Types.ObjectId, ref: 'user', required: true },
+    receiverId: { type: Schema.Types.ObjectId, ref: 'user', required: true },
     message: { type: String },
     image: { type: String },
     seen: { type: Boolean, default: false }
@@ -11,4 +11,4 @@ const Chat = new Schema(
   { timestamps: true }
 );
 
-export default model('chat', Chat);
+export default model('chatuser', ChatUsers);

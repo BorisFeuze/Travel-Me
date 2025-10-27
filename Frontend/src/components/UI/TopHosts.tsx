@@ -16,13 +16,13 @@ const TopHosts = () => {
     (async () => {
       try {
         const dataUsers = await getUsers();
-        console.log(dataUsers);
+        // console.log(dataUsers);
 
         const filteredHost = dataUsers.users.filter((u) =>
           u.roles.includes("host")
         );
 
-        console.log(filteredHost);
+        // console.log(filteredHost);
 
         setDisplayedHosts(filteredHost);
       } catch {
@@ -33,7 +33,7 @@ const TopHosts = () => {
     })();
   }, []);
 
-  console.log(displayedHosts);
+  // console.log(displayedHosts);
 
   if (loading) {
     return <div>Loading top hosts...</div>;
