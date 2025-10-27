@@ -44,9 +44,6 @@ const Home = () => {
       {/* add main Features Section */}
       <Features />
 
-      {/*Filters*/}
-      <Filters />
-
       <JobFilterCard />
       {/* Top hosts Scroller */}
 
