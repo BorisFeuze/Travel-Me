@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { JobOffer } from '#models';
 import { jobOfferInputSchema, jobOfferSchema } from '#schemas';
 import { type z } from 'zod/v4';
@@ -22,14 +22,18 @@ export const getJobOffers: RequestHandler<{}, GetJobOffersType> = async (req, re
 };
 
 export const createJobOffer: RequestHandler<{}, JobOfferType, JobOfferInputDTO> = async (req, res) => {
-  const { location, userProfileId, pictureGallery, description, needs, languages } = req.body;
+  const { title, continent, country, location, userProfileId, pictureURL, description, needs, languages, availability } = req.body;
   const jobOffer = await JobOffer.create<JobOfferInputDTO>({
+    title,
+    continent,
+    country,
     location,
     userProfileId,
-    pictureGallery,
+    pictureURL,
     description,
     needs,
-    languages
+    languages,
+    availability,
   });
   res.status(201).json({ message: 'jobOffer created', jobOffer });
 };
@@ -47,25 +51,42 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: { location, userProfileId, pictureGallery, description, needs, languages },
+    body: { title, continent, country, location, userProfileId, pictureURL, description, needs, languages, availability },
     jobOffer
   } = req;
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
+  if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: 404 });
 
-  if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: { status: 404 } });
-
+  jobOffer.title = title;
+  jobOffer.continent = continent;
+  jobOffer.country = country;
   jobOffer.location = location;
-  jobOffer.userProfileId = userProfileId;
-  jobOffer.pictureGallery = pictureGallery || [];
+  jobOffer.userProfileId = userProfileId as Types.ObjectId;
+  jobOffer.pictureURL = pictureURL || [];
   jobOffer.description = description;
   jobOffer.needs = needs || [];
   jobOffer.languages = languages || [];
+
+  if (Array.isArray(availability)) {
+    jobOffer.availability = availability.map(a => ({
+      from: a?.from ? new Date(a.from) : null,
+      to: a?.to ? new Date(a.to) : null
+    }));
+  } else if (availability) {
+    jobOffer.availability = [
+      {
+        from: availability?.from ? new Date(availability.from) : null,
+        to: availability?.to ? new Date(availability.to) : null
+      }
+    ];
+  }
 
   await jobOffer.save();
 
   res.json({ message: 'updated jobOffer', jobOffer });
 };
+
 
 export const deleteJobOffer: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {
   const {

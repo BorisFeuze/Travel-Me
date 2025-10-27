@@ -1,34 +1,14 @@
-import { authServiceURL } from "@/utils";
+import { VITE_APP_USER_API_URL } from "@/config";
 
-export const addUserDetails = async (formData: UserProfileFormData) => {
-  const res = await fetch(`${authServiceURL}/userProfiles`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
+const baseURL: string = `${VITE_APP_USER_API_URL}/users`;
+
+export const getUsers = async () => {
+  const res = await fetch(baseURL, {
+    method: "GET",
   });
 
-  if (!res.ok) throw new Error("Failed to save volunteer details");
+  if (!res.ok) throw new Error("Failed to save host details");
   const data = await res.json();
   console.log(data);
-  return data;
-};
-
-export const getUserDetails = async (): Promise<UserProfileFormData | null> => {
-  const res = await fetch(`${authServiceURL}/userProfiles/me`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-
-  if (res.status === 401) {
-    console.warn("Unauthorized – user not logged in.");
-    return null;
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch user details: ${res.statusText}`);
-  }
-
-  const data: UserProfileFormData = await res.json();
   return data;
 };

@@ -2,15 +2,25 @@ import { model, Schema } from 'mongoose';
 
 const jobOfferSchema = new Schema(
   {
+    title: { type: String, required: [true, 'Title is required'] },
+    continent: { type: String, required: [true, 'Continent is required'] },
+    country: { type: String, required: [true, 'Country is required'] },
     location: { type: String, required: [true, 'Location is required'] },
     userProfileId: { type: Schema.Types.ObjectId, ref: 'userProfile', required: true, unique: true },
-    pictureGallery: { type: [String], default: '' },
+    pictureURL: { type: [String] },
     description: { type: String, required: [true, 'Description is required'] },
     needs: { type: [String] },
-    languages: { type: [String], required: [true, 'Language is required'] }
+    languages: { type: [String], required: [true, 'Language is required'] },
+    
+    availability: [
+      {
+        from: { type: Date, default: null },
+        to: { type: Date, default: null },
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

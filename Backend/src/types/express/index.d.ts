@@ -19,7 +19,7 @@ declare global {
         id: string;
         roles: string[];
       };
-      image?: File;
+      pictureURL?: File | File[];
     }
   }
 }

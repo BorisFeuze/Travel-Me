@@ -1,19 +1,30 @@
 import { UsersAPI, type User } from "@/library/usersMock";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getUsers, getUserDetails } from "@/data";
+import CardHost from "./CardHost";
 
 const initials = (u: User) =>
   `${u.firstName?.[0] ?? ""}${u.lastName?.[0] ?? ""}`.toUpperCase();
 
 const TopHosts = () => {
-  const [displayedHosts, setDisplayedHosts] = useState<User[]>([]);
+  const [displayedHosts, setDisplayedHosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const hosts = await UsersAPI.getTopHosts(6);
-        setDisplayedHosts(hosts);
+        const dataUsers = await getUsers();
+        console.log(dataUsers);
+
+        const filteredHost = dataUsers.users.filter((u) =>
+          u.roles.includes("host")
+        );
+
+        console.log(filteredHost);
+
+        setDisplayedHosts(filteredHost);
       } catch {
         setError("Error fetching top hosts");
       } finally {
@@ -21,6 +32,8 @@ const TopHosts = () => {
       }
     })();
   }, []);
+
+  console.log(displayedHosts);
 
   if (loading) {
     return <div>Loading top hosts...</div>;
@@ -35,7 +48,7 @@ const TopHosts = () => {
   }
 
   return (
-    <section id="TopHosts" className="mx-auto max-w-6xl px-4 py-10">
+    <section id="TopHosts" className="mx-auto max-w-6xl px-4 pt-20 pb-10">
       <div className="mb-4 flex items-end justify-between">
         <h2 className="text-xl font-semibold">Top Hosts</h2>
         <a className="text-sm text-slate-600 hover:text-slate-900" href="#">
@@ -43,28 +56,17 @@ const TopHosts = () => {
         </a>
       </div>
       <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 justify-items-center">
-        {displayedHosts.map((h) => (
-          <div
-            key={h.id}
-            className="snap-start shrink-0 w-40 rounded-2xl border p-4 text-center shadow-sm"
-          >
-            <div className="mx-auto mb-2 grid h-16 w-16 place-items-center rounded-full border bg-slate-50 text-sm font-semibold">
-              {h.pictureURL ? (
-                <img
-                  src={h.pictureURL}
-                  alt={`${h.firstName}`}
-                  className="h-16 w-16 rounded-full object-cover"
-                />
-              ) : (
-                <span>{initials(h)}</span>
-              )}
-            </div>
-            <div className="text-sm font-medium">{h.firstName}</div>
-            <div className="text-xs text-slate-500">
-              {h.city}, {h.country}
-            </div>
-          </div>
-        ))}
+        {displayedHosts.map((h) => {
+          return (
+            <Link
+              key={h._id}
+              to={`/host/${h._id}`}
+              className="snap-start shrink-0 w-40 rounded-2xl border p-4 text-center shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            >
+              <CardHost _id={h._id} firstName={h.firstName} email={h.email} />
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

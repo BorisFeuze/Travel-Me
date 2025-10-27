@@ -22,7 +22,7 @@ const hasRole1 = (...AllowRoles: string[]): RequestHandler => {
       request.userProfile = userProfile;
     }
     // console.log(userProfile);
-    else if (userRoles.includes('admin')) {
+    if (userRoles.includes('admin')) {
       next();
     } else if (AllowRoles.includes('self')) {
       if (userId !== userProfile!.userId.toString()) {

@@ -10,10 +10,12 @@ const hasRole2 = (...AllowRoles: string[]): RequestHandler => {
     // console.log(request.user);
     const { id } = request.params;
     const { roles: userRoles, id: userId } = request.user;
-    let jobOffer: InstanceType<typeof JobOffer> | null = null;
+    let jobOffer;
 
     if (id) {
-      jobOffer = await JobOffer.findById(id);
+      jobOffer = await JobOffer.findById(id).populate('userProfileId', 'userId');
+
+      console.log(jobOffer);
 
       if (!jobOffer) {
         next(new Error('jobOffer not found', { cause: { status: 404 } }));
@@ -23,10 +25,10 @@ const hasRole2 = (...AllowRoles: string[]): RequestHandler => {
       request.jobOffer = jobOffer;
     }
     // console.log(jobOffer);
-    else if (userRoles.includes('admin')) {
+    if (userRoles.includes('admin')) {
       next();
     } else if (AllowRoles.includes('self')) {
-      if (userId !== jobOffer!.userProfileId.toString()) {
+      if (userId !== jobOffer!.userProfileId.userId.toString()) {
         next(new Error('Not authorized', { cause: { status: 403 } }));
         return;
       }

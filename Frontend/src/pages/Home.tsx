@@ -6,11 +6,10 @@ import {
   Features,
   TopHosts,
   Continents,
-  JobByContinent,
-  Countries,
   Requiredskills,
   Joinus,
   Footer,
+  JobFilterCard,
 } from "@/components/UI";
 
 const Home = () => {
@@ -28,16 +27,14 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* NAV placeholder */}
-      {/*Filters*/}
-      <Filters />
 
       {/* HERO */}
       <Heroheader
-        eyebrow=" Explore the World"
-        title="Welcome to Travel Me"
+        eyebrow="Travele & Work"
+        title="Explore the World by Travel-Me"
         // subtitle="Discover your next adventure during working hours!"
-        primaryCta={{ label: "Let's Go", href: "/signup" }}
-        // secondaryCta={{ label: "Live Demo", href: "/demo" }}
+        // primaryCta={{ label: "Explore now", href: "/countrylist" }}
+        primaryCta={{ label: "Explore now" }}
         align="center"
         bgImageUrl={heroBg} // ← pass the imported URL
         overlayOpacity={0.45}
@@ -47,20 +44,21 @@ const Home = () => {
       {/* add main Features Section */}
       <Features />
 
+      {/*Filters*/}
+      <Filters />
+
+      <JobFilterCard />
       {/* Top hosts Scroller */}
-      <TopHosts />
 
       {/* Display Continents */}
       <Continents />
-
-      {/* Countries Grid */}
-      <Countries />
-
       {/* Required skills/WORK TAGS */}
       <Requiredskills />
 
       {/* Join Us Section */}
       <Joinus />
+
+      <TopHosts />
 
       {/* FOOTER */}
       <Footer />

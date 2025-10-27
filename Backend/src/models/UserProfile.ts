@@ -2,7 +2,12 @@ import { model, Schema } from 'mongoose';
 
 const userProfile = new Schema(
   {
-    pictureURL: { type: String, default: '' },
+    pictureURL: {
+      type: [String],
+      required: [true, 'Image is required'],
+      default:
+        'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'
+    },
     userId: { type: Schema.Types.ObjectId, ref: 'user', required: true, unique: true },
     age: { type: Number, required: [true, 'Age is required'], default: 18 },
     continent: { type: String, required: [true, 'Continent is required'] },
