@@ -31,18 +31,18 @@ const Chat = () => {
   }, [onlineUsers]);
 
   useEffect(() => {
-    async () => {
+    (async () => {
       try {
         const data = await getMessages(selectedUser?._id);
         console.log("Data", data);
         if (data) {
-          setMessages(data.messages);
+          setMessages(data.chats);
         }
       } catch (error) {
         console.error(error);
       }
-    };
-  }, [selectedUser]);
+    })();
+  }, [socket, selectedUser]);
 
   const sendMessage = async (selectedUserId, messages) => {
     try {

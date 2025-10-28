@@ -71,7 +71,7 @@ export const jobOfferInputSchema = z.strictObject({
   ),
   pictureURL: z.array(z.string().default('')),
   description: z.preprocess(coercedString, z.string()),
-  needs: z.array(z.string().default('')),
+  needs: z.array(z.preprocess(coercedString, z.string().default(''))),
   languages: z.array(z.preprocess(coercedString, z.string().default(''))),
   availability: z.preprocess(coerceAvailabilityArray, z.array(availabilityItemSchema)).optional()
 });

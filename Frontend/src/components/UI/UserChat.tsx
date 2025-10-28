@@ -18,7 +18,7 @@ const UserChat = ({ id, firstName, index, lastName }) => {
       try {
         const data = await getUserDetails(id);
 
-        const userInfo = data.userProfiles[0];
+        const userInfo = data?.userProfiles[0];
 
         if (userInfo) {
           setInfo(userInfo);

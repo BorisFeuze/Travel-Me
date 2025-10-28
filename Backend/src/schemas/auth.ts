@@ -25,7 +25,7 @@ export const registerSchema = z
       confirmPassword: z.string(),
       firstName: z.string().min(1).max(50),
       lastName: z.string().min(1).max(50),
-      phoneNumber: z.coerce.number().min(1).optional(),
+      phoneNumber: z.string().min(1).optional(),
       roles: z.array(z.string()).optional().default(['user'])
     },
     { error: 'Please provide a valid email and a secure password.' }
