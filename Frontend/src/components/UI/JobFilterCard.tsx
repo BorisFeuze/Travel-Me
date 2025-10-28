@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { getAllJobOffers } from "@/data";
 import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
+import { useNavigate } from "react-router";
 
 type JobOffersListProps = {
   initial?: Partial<{
     continent: string;
     country: string;
+    location: string;
     skills: string[];
   }>;
 };
@@ -15,7 +17,12 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
   const [jobs, setJobs] = useState<JobFormData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({ skills: [], ...initial });
+  const [filters, setFilters] = useState({
+    skills: [] as string[],
+    ...initial,
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const run = async () => {
@@ -34,10 +41,16 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
   }, []);
 
   const filteredJobs = jobs.filter((job) => {
-    if (filters.continent && job.continent !== filters.continent) return false;
-    if (filters.country && job.country !== filters.country) return false;
-    if (filters.location && job.location !== filters.location) return false;
-    if (filters.skills.length) {
+    if (
+      (filters as any).continent &&
+      job.continent !== (filters as any).continent
+    )
+      return false;
+    if ((filters as any).country && job.country !== (filters as any).country)
+      return false;
+    if ((filters as any).location && job.location !== (filters as any).location)
+      return false;
+    if (filters.skills && filters.skills.length) {
       const needs = Array.isArray(job.needs) ? job.needs : [];
       const allIncluded = filters.skills.every((s) => needs.includes(s));
       if (!allIncluded) return false;
@@ -45,15 +58,18 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
     return true;
   });
 
-  if (loading)
+  if (loading) {
     return (
       <p className="text-center p-10 text-gray-500">Loading job offers...</p>
     );
-  if (error) return <p className="text-center p-10 text-red-500">{error}</p>;
+  }
+  if (error) {
+    return <p className="text-center p-10 text-red-500">{error}</p>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-gray-900">Job Offers</h1>
           <button
@@ -79,18 +95,19 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
             No job offers match your filters.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredJobs.map((job) => (
               <article
                 key={job._id}
-                className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition"
+                className="relative bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition"
               >
+                {/* COVER IMAGE */}
                 {job.pictureURL?.length ? (
                   <img
                     src={
                       typeof job.pictureURL[0] === "string"
-                        ? job.pictureURL[0]
-                        : URL.createObjectURL(job.pictureURL[0])
+                        ? (job.pictureURL[0] as string)
+                        : URL.createObjectURL(job.pictureURL[0] as File)
                     }
                     alt={job.title}
                     className="h-40 w-full object-cover"
@@ -131,7 +148,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
 
                   <div className="flex justify-between items-center pt-2">
                     <button
-                      onClick={() => console.log("open details", job._id)}
+                      onClick={() => navigate(`/job/${job._id}`)}
                       className="text-sm px-3 py-1.5 rounded-full border border-gray-300 hover:bg-gray-100 transition"
                     >
                       Details
