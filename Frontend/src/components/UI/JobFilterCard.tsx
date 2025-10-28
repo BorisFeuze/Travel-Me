@@ -1,13 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllJobOffers } from "@/data";
 import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
 
-const JobOffersList = () => {
+type JobOffersListProps = {
+  initial?: Partial<{
+    continent: string;
+    country: string;
+    skills: string[];
+  }>;
+};
+
+
+const JobFilterCard = ({ initial }: JobOffersListProps ) => {
   const [jobs, setJobs] = useState<JobFormData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({ skills: [] as string[] });
+  const [filters, setFilters] = useState({ skills: [], ...initial, });
 
   useEffect(() => {
     const run = async () => {
@@ -57,7 +66,7 @@ const JobOffersList = () => {
         </div>
 
         <div className="mb-4">
-          <Filters initial={{ skills: [] }} onChange={(f) => setFilters(f)} />
+          <Filters initial={ filters } onChange={(f) => setFilters(f)} />
         </div>
 
         <div className="flex items-center justify-between mb-3">
@@ -148,4 +157,4 @@ const JobOffersList = () => {
   );
 };
 
-export default JobOffersList;
+export default JobFilterCard;
