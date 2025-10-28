@@ -9,17 +9,6 @@ jobOffersRouter.route('/').get(validateZod(querySchema, 'query'), getJobOffers).
   formMiddleWare,
   cloudUploader,
   authenticate('strict'),
-  // (req, res, next) => {
-  //   try {
-  //     if (req.body.needs) req.body.needs = JSON.parse(req.body.needs);
-  //     if (req.body.languages) req.body.languages = JSON.parse(req.body.languages);
-  //     if (req.body.availability) req.body.availability = JSON.parse(req.body.availability);
-  //     next();
-  //   } catch (err) {
-  //     console.error('Fehler beim Parsen:', err);
-  //     return res.status(400).json({ message: 'Invalid JSON in FormData' });
-  //   }
-  // },
   /*hasRole2('self', 'admin'),*/
   validateZod(jobOfferInputSchema, 'body'),
   createJobOffer

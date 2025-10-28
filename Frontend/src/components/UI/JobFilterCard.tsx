@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { getAllJobOffers, getJobOfferById } from "@/data";
+import { getAllJobOffers } from "@/data";
 import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
 
-const JobOffersList = () => {
+type JobOffersListProps = {
+  initial?: Partial<{
+    continent: string;
+    country: string;
+    skills: string[];
+  }>;
+};
+
+const JobFilterCard = ({ initial }: JobOffersListProps) => {
   const [jobs, setJobs] = useState<JobFormData[]>([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filters, setFilters] = useState({ skills: [] as string[] });
+  const [filters, setFilters] = useState({ skills: [], ...initial });
 
-  const navigate = useNavigate();
   useEffect(() => {
     const run = async () => {
       try {
@@ -48,7 +53,7 @@ const JobOffersList = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-gray-900">Job Offers</h1>
           <button
@@ -60,7 +65,7 @@ const JobOffersList = () => {
         </div>
 
         <div className="mb-4">
-          <Filters initial={{ skills: [] }} onChange={(f) => setFilters(f)} />
+          <Filters initial={filters} onChange={(f) => setFilters(f)} />
         </div>
 
         <div className="flex items-center justify-between mb-3">
@@ -74,7 +79,7 @@ const JobOffersList = () => {
             No job offers match your filters.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredJobs.map((job) => (
               <article
                 key={job._id}
@@ -126,7 +131,7 @@ const JobOffersList = () => {
 
                   <div className="flex justify-between items-center pt-2">
                     <button
-                      onClick={() => navigate(`/job/${job._id}`)}
+                      onClick={() => console.log("open details", job._id)}
                       className="text-sm px-3 py-1.5 rounded-full border border-gray-300 hover:bg-gray-100 transition"
                     >
                       Details
@@ -151,4 +156,4 @@ const JobOffersList = () => {
   );
 };
 
-export default JobOffersList;
+export default JobFilterCard;
