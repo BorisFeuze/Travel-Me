@@ -6,7 +6,7 @@ const JobCard: React.FC<JobCardData> = ({ _id, title, image, location }) => {
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation(); 
-    navigate(`/job/edit/${_id}`);
+    navigate(`/edit-job/${_id}`);
   };
 
   return (

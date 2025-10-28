@@ -41,6 +41,15 @@ export const getJobOffers = async (id: string) => {
   const data: JobOffersResponse = await res.json();
   return data;
 };
+
+export const getJobOfferIds = async (id: string): Promise<string[]> => {
+  const data = await getJobOffers(id);
+  if (!data) return [];
+
+  return data.jobOffers.map((job) => job._id);
+};
+
+
 export const getAllJobOffers = async () => {
   const res = await fetch(`${baseURL}`, {
     method: "GET",
