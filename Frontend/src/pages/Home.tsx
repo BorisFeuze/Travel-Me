@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import heroBg from "@/assets/images/image1.jpg"; // or ../../assets/images/image1.jpg
 import {
-  Filters,
   Heroheader,
   Features,
   TopHosts,
