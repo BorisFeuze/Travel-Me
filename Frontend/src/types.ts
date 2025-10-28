@@ -82,6 +82,11 @@ declare global {
     disconnect: () => Promise<void>;
   };
 
+  type DataUserProfile = {
+    message: string;
+    userProfiles: UserProfileFormData[];
+  };
+
   type SuccessRes = { message: string };
 }
 
