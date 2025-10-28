@@ -9,6 +9,7 @@ jobOffersRouter.route('/').get(validateZod(querySchema, 'query'), getJobOffers).
   formMiddleWare,
   cloudUploader,
   authenticate('strict'),
+
   /*hasRole2('self', 'admin'),*/
   validateZod(jobOfferInputSchema, 'body'),
   createJobOffer

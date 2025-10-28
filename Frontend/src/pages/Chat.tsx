@@ -1,4 +1,4 @@
-import { ChatContainer, RightSidebar, Sidebar } from "@/components/UI";
+import { ChatContainer, Sidebar } from "@/components/UI";
 import { useState, useEffect } from "react";
 import {
   getChatUsers,
@@ -90,7 +90,7 @@ const Chat = () => {
   return (
     <div className="border w-full h-screen sm:px-[15%] sm:py-[5%]">
       <div
-        className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-full grid grid-cols-1 relative ${selectedUser ? "md:md:grid-cols-2 xl:md:grid-cols-2" : "md:grid-cols-2"}`}
+        className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-full grid grid-cols-1 relative ${selectedUser ? "md:grid-cols-[1fr_1.5fr] xl:grid-cols-[1fr_2fr]" : "md:grid-cols-2"}`}
       >
         <Sidebar
           users={chatUsers}
@@ -106,7 +106,6 @@ const Chat = () => {
           onlineUsers={onlineUsers}
           user={user}
         />
-        {/* <RightSidebar selectedUser={selectedUser} onlineUsers={onlineUsers} /> */}
       </div>
     </div>
   );

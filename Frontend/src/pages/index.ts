@@ -5,6 +5,8 @@ import Chat from "./Chat";
 import Registration from "./Registration";
 import CreateJob from "./CreateJob";
 import DetailJob from "./DetailJob";
+import DetailContinent from "./DetailContinent";
+import DetailSkill from "./DetailSkill";
 
 import CountryLists from "./CountyLists";
 import Opportunities from "./Opportunities";
@@ -26,4 +28,6 @@ export {
   CountryLists,
   Opportunities,
   DisplayHost,
+  DetailContinent,
+  DetailSkill
 };
