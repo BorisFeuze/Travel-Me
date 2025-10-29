@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context";
+import { validateRegistration } from "@/utils";
 
 type Role = "volunteer" | "host";
 
@@ -64,6 +65,7 @@ const Register = () => {
     try {
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
+      }
 
       const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>]).{12,}$/;
       if (!passwordRegex.test(password)) {
