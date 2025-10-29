@@ -30,7 +30,7 @@ const HostAccount = () => {
   } | null>(null);
 
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: undefined,
+    pictureURL: "",
     userId: "",
     age: undefined,
     continent: "",
@@ -41,6 +41,8 @@ const HostAccount = () => {
     skills: [],
     languages: [],
     educations: [],
+    adresse: "",
+    description: "",
   });
 
   const skillOptions = [
@@ -84,11 +86,14 @@ const HostAccount = () => {
         const currentUser = await getUserDetails(user!._id ?? "");
 
         if (currentUser) {
-          const dataCurrentUser = currentUser.userProfiles?.[0];
-          const currentnUserProfil = dataCurrentUser?.pictureURL?.[0];
+          const dataCurrentUser = currentUser.userProfiles[0];
+          const currentnUserProfil = dataCurrentUser.pictureURL[0];
           console.log(currentnUserProfil);
-          setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
-          setPreviewUrl(currentnUserProfil || null);
+
+          if (currentnUserProfil) {
+            setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
+            setPreviewUrl(currentnUserProfil || null);
+          }
           if (dataCurrentUser?._id) setProfileId(dataCurrentUser._id);
         }
       } catch (err) {
@@ -109,11 +114,11 @@ const HostAccount = () => {
 
         if (data && Array.isArray(data.jobOffers)) {
           const filteredJobs = data.jobOffers.filter(
-            (job: JobFormData) => job.userProfileId === user._id
+            (job: JobData) => job.userProfileId === user._id
           );
 
           const mappedJobs: JobCardData[] = filteredJobs.map(
-            (job: JobFormData) => ({
+            (job: JobData) => ({
               _id: job._id,
               title: job.title,
               location: job.location,
@@ -184,10 +189,14 @@ const HostAccount = () => {
       data.append("description", formData.description || "");
       data.append("gender", formData.gender);
       formData.educations.forEach((edu) => data.append("educations", edu));
-      formData.skills.forEach((ski) => data.append("skills", ski));
+      formData.skills?.forEach((ski) => data.append("skills", ski));
       formData.languages.forEach((lan) => data.append("languages", lan));
 
       console.log(data);
+
+      for (let [key, value] of data.entries()) {
+        console.log(key, value);
+      }
 
       let updatedUser;
       if (profileId) {
@@ -195,8 +204,8 @@ const HostAccount = () => {
       } else {
         updatedUser = await addUserDetails(data);
 
-        if (updatedUser?.userProfile?._id) {
-          setProfileId(updatedUser.userProfile._id);
+        if (updatedUser?.userProfiles[0]._id) {
+          setProfileId(updatedUser.userProfiles[0]._id);
         }
       }
 

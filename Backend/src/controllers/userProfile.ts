@@ -23,13 +23,13 @@ export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async
 
 export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputDTO> = async (req, res) => {
   const {
-    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations }
+    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations, adresse, description }
   } = req;
 
   // console.log(req.body);
   let userProfile: UserProfileDTO;
   const userProfiles = await UserProfile.find();
-  const isProfile = userProfiles.some(c => c.userId.toString() === userId.toString());
+  const isProfile = userProfiles.some(c => c.userId.toString() === userId?.toString());
   if (!isProfile) {
     userProfile = await UserProfile.create({
       pictureURL,
@@ -40,7 +40,10 @@ export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputD
       gender,
       skills,
       languages,
-      educations
+      educations,
+
+      adresse,
+      description
     });
 
     res.status(201).json({ message: 'userProfile created' });
@@ -65,7 +68,7 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
 ) => {
   const {
     params: { id },
-    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations },
+    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations, adresse, description },
     userProfile
   } = req;
 
@@ -79,6 +82,8 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
   userProfile.country = country as string;
   userProfile.gender = gender as string;
   userProfile.skills = skills || [];
+  userProfile.adresse = adresse as string;
+  userProfile.description = description as string;
   userProfile.languages = languages || [];
   userProfile.educations = educations || [];
 

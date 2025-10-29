@@ -1,17 +1,31 @@
-import { useNavigate } from "react-router";
-import { /*useEffect,*/ useState } from "react";
+// import { useNavigate } from "react-router";
+import {
+  /*useEffect,*/ useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 // import { getUsers } from "@/data";
-import { useAuth } from "@/context";
+// import { useAuth } from "@/context";
 // import logo from "../../assets/images/Chat/logo.png";
 // import menu_icon from "../../assets/images/Chat/menu_icon.png";
 import search_icon from "../../assets/images/Chat/search_icon.png";
 // import { useRef } from "react";
 import UserChat from "./UserChat";
 
-const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
-  const [allUsers, setAllUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+type SidebarType = {
+  users: User[];
+  selectedUser: User;
+  setSelectedUser: Dispatch<SetStateAction<User>>;
+};
+
+const Sidebar = ({
+  users,
+  selectedUser,
+  setSelectedUser /*unseenMessages*/,
+}: SidebarType) => {
+  // const [allUsers, setAllUsers] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState("");
 
   // const {
@@ -23,7 +37,7 @@ const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
   //   setUnseenMessages,
   // } = useChat();
 
-  const { onlineUsers } = useAuth();
+  // const { onlineUsers } = useAuth();
 
   // const navigate = useNavigate();
 
@@ -103,7 +117,7 @@ const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
             <UserChat
               id={user._id}
               firstName={user.firstName}
-              index={index}
+              // index={index}
               lastName={user.lastName}
             />
             {/* <img

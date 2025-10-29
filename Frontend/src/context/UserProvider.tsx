@@ -1,11 +1,22 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { UserContext } from ".";
-import { getAllUserProfiles } from "@/data";
+import {
+  getAllUserProfiles,
+  getSingleUserProfile,
+  getUserDetails,
+} from "@/data";
 import { useAuth } from ".";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState<UserProfileFormData[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfileData[]>([]);
   const { checkSession, setCheckSession } = useAuth();
+
+  const getUserProfile = async (id: string) => {
+    const userProfile = await getUserDetails(id);
+
+    return userProfile;
+  };
 
   useEffect(() => {
     const getAllUser = async () => {
@@ -23,11 +34,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (checkSession) getAllUser();
   }, [checkSession]);
 
-  // console.log(allUsers);
-
   const value: UserContextType = {
     allUsers,
     setAllUsers,
+    getUserProfile,
   };
 
   return <UserContext value={value}>{children}</UserContext>;

@@ -69,7 +69,7 @@ export const jobOfferInputSchema = z.strictObject({
       z.instanceof(Types.ObjectId)
     ])
   ),
-  pictureURL: z.array(z.string().default('')),
+  pictureURL: z.array(z.string().default('')).optional(),
   description: z.preprocess(coercedString, z.string()),
   needs: z.array(z.preprocess(coercedString, z.string().default(''))),
   languages: z.array(z.preprocess(coercedString, z.string().default(''))),

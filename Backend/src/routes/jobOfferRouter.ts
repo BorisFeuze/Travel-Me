@@ -9,15 +9,6 @@ jobOffersRouter.route('/').get(validateZod(querySchema, 'query'), getJobOffers).
   formMiddleWare,
   cloudUploader,
   authenticate('strict'),
-
-  /*hasRole2('self', 'admin'),*/
-  validateZod(jobOfferInputSchema, 'body'),
-  createJobOffer
-);
-jobOffersRouter.route('/').get(validateZod(querySchema, 'query'), getJobOffers).post(
-  formMiddleWare,
-  cloudUploader,
-  authenticate('strict'),
   /*hasRole2('self', 'admin'),*/
   validateZod(jobOfferInputSchema, 'body'),
   createJobOffer
@@ -27,10 +18,10 @@ jobOffersRouter
   .route('/:id')
   .get(getSingleJobOffer)
   .put(
-    formMiddleWare,
-    cloudUploader,
     authenticate('strict'),
     hasRole2('self', 'admin'),
+    formMiddleWare,
+    cloudUploader,
     validateZod(jobOfferInputSchema, 'body'),
     updateJobOffer
   )

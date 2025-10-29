@@ -7,12 +7,12 @@ import {
   /* updateNewMessages,*/
 } from "@/data";
 import { useAuth } from "@/context";
-import type { User, Chat } from "@/types";
+import type { User, ChatType } from "@/types";
 
 const Chat = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [chatUsers, setChatUsers] = useState<User[]>([]);
-  const [messages, setMessages] = useState<Chat[]>([]);
+  const [messages, setMessages] = useState<ChatType[]>([]);
   const [unseenMessages, setUnseenMessages] = useState({});
   const { /*socket,*/ user, onlineUsers } = useAuth();
 

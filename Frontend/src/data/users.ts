@@ -13,7 +13,18 @@ export const getUsers = async () => {
   return data;
 };
 
-export const updateUser = async (id: string, formData) => {
+export const getSingleUser = async (id: string) => {
+  const res = await fetch(`${baseURL}/${id}`, {
+    method: "GET",
+  });
+
+  if (!res.ok) throw new Error("Failed to save host details");
+  const data = await res.json();
+  // console.log(data);
+  return data;
+};
+
+export const updateUser = async (id: string, formData: UserformData) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "PUT",
     headers: {

@@ -48,13 +48,12 @@ const Home = () => {
 
       {/* Display Continents */}
       <Continents />
+      <TopHosts />
       {/* Required skills/WORK TAGS */}
       <Requiredskills />
 
       {/* Join Us Section */}
       <Joinus />
-
-      <TopHosts />
 
       {/* FOOTER */}
       <Footer />
