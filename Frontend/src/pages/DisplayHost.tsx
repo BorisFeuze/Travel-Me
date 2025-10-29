@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { type User } from "@/library/usersMock";
+import { useParams, useNavigate } from "react-router-dom";
+
 import { getUsers, getUserDetails } from "@/data";
+import { useAuth } from "@/context";
 
 const DisplayHost = () => {
-  const { id } = useParams() as { id: string };
+  const { id } = useParams<{ id: string }>();
   const [host, setHost] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState({});
+  const [info, setInfo] = useState<UserProfileFormData | null>(null);
+
+  const { user } = useAuth();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -23,12 +28,12 @@ const DisplayHost = () => {
 
         // console.log(dataUsers);
 
-        const allHosts = dataUsers.users.filter((u: any) =>
-          u.roles.includes("host")
+        const allHosts = dataUsers.users.filter((u: User) =>
+          u.roles?.includes("host")
         );
         // console.log(allHosts);
         // const allHosts = await UsersAPI.getTopHosts(100);
-        const found = allHosts.find((h: any) => h._id === id) ?? null;
+        const found = allHosts.find((h: User) => h._id === id) ?? null;
 
         // console.log(found);
         if (!found) setError("Host not found.");
@@ -42,6 +47,11 @@ const DisplayHost = () => {
   }, [id]);
 
   useEffect(() => {
+    if (!id) {
+      setError("Invalid user id.");
+      setLoading(false);
+      return;
+    }
     (async () => {
       try {
         const data = await getUserDetails(id);
@@ -50,7 +60,7 @@ const DisplayHost = () => {
           return null;
         }
 
-        const userInfo = data.userProfiles[0];
+        const userInfo = data?.userProfiles[0];
 
         if (userInfo) {
           // console.log(userInfo);
@@ -84,11 +94,11 @@ const DisplayHost = () => {
       </div>
     );
 
-  // small helpers
-  const fullName = `${host.firstName ?? ""} ${host.lastName ?? ""}`.trim();
-  const address =
-    host.addressLine ??
-    `${host.city ?? ""}${host.city ? ", " : ""}${host.country ?? ""}`;
+  // // small helpers
+  // const fullName = `${host.firstName ?? ""} ${host.lastName ?? ""}`.trim();
+  // const address =
+  //   host.addressLine ??
+  //   `${host.city ?? ""}${host.city ? ", " : ""}${host.country ?? ""}`;
 
   return (
     <div className="bg-base-100 rounded-2xl shadow-sm p-6 md:p-8">
@@ -97,10 +107,10 @@ const DisplayHost = () => {
         {/* Left: avatar + greeting */}
         <div className="flex items-center gap-4">
           <div className="h-80 w-80 rounded-2xl border bg-slate-100 flex items-center justify-center overflow-hidden">
-            {info.pictureURL ? (
+            {info?.pictureURL ? (
               <img
-                src={info.pictureURL[0]}
-                alt={fullName || "Host avatar"}
+                src={info?.pictureURL as string}
+                alt={host?.firstName || "Host avatar"}
                 className="h-full w-full object-cover"
               />
             ) : (
@@ -123,7 +133,7 @@ const DisplayHost = () => {
               <input
                 type="checkbox"
                 readOnly
-                checked={info.gender === g}
+                checked={info?.gender === g}
                 className="checkbox checkbox-sm"
                 aria-label={`gender ${g}`}
               />
@@ -145,7 +155,7 @@ const DisplayHost = () => {
               readOnly
               className="textarea textarea-bordered w-full h-28"
               value={
-                (info as any).description ??
+                info?.description ??
                 "Ciao, I have more than 20 years professional artist renovation holder in Italy."
               }
             />
@@ -154,22 +164,15 @@ const DisplayHost = () => {
           {/* Needs / Required skills */}
           <div>
             <div className="text-slate-800 font-semibold mb-2">
-              Needs / Required skills
+              Required skills
             </div>
             <div className="rounded-xl px-4 py-3 bg-green-200/80 text-slate-900 space-y-2">
-              {/* Show needs if present */}
-              {info.needs && (
-                <p>
-                  <span className="font-semibold">Need: </span>
-                  {info.needs}
-                </p>
-              )}
               {/* Show skills list if present */}
-              {Array.isArray(info.skills) && info.skills.length > 0 && (
+              {Array.isArray(info?.skills) && info?.skills.length > 0 && (
                 <>
                   <p className="font-semibold">Keyskills</p>
                   <div className="flex flex-wrap gap-2">
-                    {info.skills.map((s) => (
+                    {info?.skills.map((s) => (
                       <span key={s} className="badge badge-outline">
                         {s}
                       </span>
@@ -197,7 +200,7 @@ const DisplayHost = () => {
             <input
               readOnly
               className="input input-bordered w-full"
-              value={address}
+              value={info?.adresse}
             />
           </div>
 
@@ -208,8 +211,8 @@ const DisplayHost = () => {
               readOnly
               className="input input-bordered w-full"
               value={
-                info.languages?.length
-                  ? info.languages.join(", ")
+                info?.languages?.length
+                  ? info?.languages.join(", ")
                   : "italian, english, german"
               }
             />
@@ -226,14 +229,23 @@ const DisplayHost = () => {
                 <span className="font-medium">Phone:</span> {host.phoneNumber}
               </p>
               <p className="text-gray-600">
-                <span className="font-medium">Age:</span> {info.age}
+                <span className="font-medium">Age:</span> {info?.age}
               </p>
             </div>
           </div>
 
           {/* Actions */}
           <div className="pt-2">
-            <button className="btn btn-primary">Chat me directly</button>
+            <button
+              onClick={() =>
+                user
+                  ? navigate(`/chat`)
+                  : navigate(`/login?redirect=/job/${job._id}`)
+              }
+              className="btn btn-primary"
+            >
+              Chat me directly
+            </button>
           </div>
         </div>
       </div>

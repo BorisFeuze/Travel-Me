@@ -1,9 +1,14 @@
 import { Link } from "react-router";
-import { useAuth } from "@/context";
+import { useAuth, useUser } from "@/context";
 import logo from "../../assets/images/pngwing.com.png";
 
 const Navbar = () => {
   const { signedIn, handleSignOut, user } = useAuth();
+  const { allUsers } = useUser();
+
+  const currUserProfile = allUsers.find((u: UserProfileFormData) => {
+    return u.userId === user?._id;
+  });
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
@@ -83,9 +88,9 @@ const Navbar = () => {
                 Sign Out
               </button>
 
-              {/* {user?.photoURL && (
+              {currUserProfile?.pictureURL && (
                 <img
-                  src={user.photoURL}
+                  src={currUserProfile.pictureURL[0]}
                   alt="User"
                   className="w-9 h-9 object-cover"
                 />

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context";
+import { validateSignIn } from "@/utils";
 
 type LoginFormState = {
   email: string;
@@ -26,9 +27,12 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      if (!email || !password) throw new Error("All fields are required");
 
+    const validationErrors = validateSignIn({ email, password });
+    if (Object.keys(validationErrors).length !== 0) {
+      return { error: validationErrors, success: false };
+    }
+    try {
       setLoading(true);
 
       await handleSignIn({ email, password });

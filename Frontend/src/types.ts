@@ -1,21 +1,29 @@
 import type { Dispatch, SetStateAction } from "react";
 
 declare global {
-  type User = {
+  export type DBEntry = {
     _id: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
+
+  type UserformData = {
     firstName: string;
     lastName: string;
-    phoneNumber?: string;
+    phoneNumber: string;
     email: string;
     roles: string[];
   };
+
+  type User = DBEntry & UserformData;
 
   type LoginData = {
     email: string;
     password: string;
   };
 
-  type RegisterData = User & {
+  type RegisterData = UserformData & {
     password: string;
     confirmPassword: string;
   };
@@ -32,20 +40,34 @@ declare global {
     socket: Socket | null;
   };
 
+  type UserContextType = {
+    allUsers: UserProfileFormData[];
+    setAllUsers: Dispatch<SetStateAction<UserProfileFormData[]>>;
+    getUserProfile: (id:string) => Promise<void>;
+  };
+
   type UserProfileFormData = {
-    pictureURL?: string;
+    pictureURL?: string | File | undefined;
     userId: string;
     age?: number;
     continent: string;
     country: string;
     gender: string;
+    description: string;
     skills: string[];
     languages: string[];
     educations: string[];
+    adresse: string;
+  };
+
+  type UserProfileData = DBEntry & UserProfileFormData;
+
+  type DateRange = {
+    from: Date;
+    to: Date;
   };
 
   type JobFormData = {
-    _id: string;
     title: string;
     continent: string;
     country: string;
@@ -55,11 +77,10 @@ declare global {
     description: string;
     needs: string[];
     languages: string[];
-    availability: {
-      from: Date;
-      to: Date;
-    }[];
+    availability: DateRange[];
   };
+
+  type JobData = DBEntry & JobFormData;
 
   type JobCardData = {
     _id: string;
@@ -68,7 +89,7 @@ declare global {
     location: string;
   };
 
-  type Chat = {
+  type ChatType = {
     image?: string;
     message?: string;
     receiverId: string;
@@ -87,12 +108,16 @@ declare global {
 
 export type {
   AuthContextType,
+  UserformData,
   User,
   LoginData,
   RegisterData,
   JobFormData,
   JobCardData,
   UserProfileFormData,
-  Chat,
+  UserProfileData,
+  ChatType,
   Socket,
+  UserContextType,
+  JobData,
 };

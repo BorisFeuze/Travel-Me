@@ -48,19 +48,21 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      if (
-        !firstName ||
-        !lastName ||
-        !email ||
-        !password ||
-        !confirmPassword ||
-        !phoneNumber
-      ) {
-        throw new Error("All fields are required");
-      }
 
-      if (password !== confirmPassword)
+    const validationErrors = validateRegistration({
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      phoneNumber,
+    });
+    if (Object.keys(validationErrors).length !== 0) {
+      return { error: validationErrors, success: false };
+    }
+
+    try {
+      if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
 
       const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>]).{12,}$/;
