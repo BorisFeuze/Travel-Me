@@ -3,11 +3,10 @@ import { addUserDetails, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
 
 const VolunteerAccount = () => {
-
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  
+
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -48,24 +47,23 @@ const VolunteerAccount = () => {
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
-//for dropedown closing
- useEffect(() => {
-  const handleClickOutside = (e: MouseEvent) => {
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
+  //for dropedown closing
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
 
-    if (!target.closest(".dropdown")) {
-      setOpenDropdown(null);
-    }
-  };
+      if (!target.closest(".dropdown")) {
+        setOpenDropdown(null);
+      }
+    };
 
-  document.addEventListener("click", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
 
-  return () => {
-    document.removeEventListener("click", handleClickOutside);
-  };
-}, []); 
-
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -85,7 +83,6 @@ const VolunteerAccount = () => {
     };
     loadUser();
   }, []);
-
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -107,10 +104,13 @@ const VolunteerAccount = () => {
   };
 
   const handleSave = async () => {
-  if (!formData.continent || !formData.country || !formData.gender) {
-  setSaveMessage({ text: "Please fill all required fields.", type: "error" });
-  return;
-}
+    if (!formData.continent || !formData.country || !formData.gender) {
+      setSaveMessage({
+        text: "Please fill all required fields.",
+        type: "error",
+      });
+      return;
+    }
 
     setIsSaving(true);
     setSaveMessage(null);
@@ -122,17 +122,17 @@ const VolunteerAccount = () => {
       const data = new FormData();
       data.append("userId", formData.userId);
 
-    if (formData.pictureURL instanceof File) {
-      data.append("pictureURL", formData.pictureURL);
-    }
-      
+      if (formData.pictureURL instanceof File) {
+        data.append("pictureURL", formData.pictureURL);
+      }
+
       data.append("age", formData.age?.toString() || "");
       data.append("continent", formData.continent);
       data.append("country", formData.country);
       data.append("gender", formData.gender);
-      formData.educations.forEach(edu => data.append("educations", edu))
-      formData.skills.forEach(ski => data.append("skills", ski))
-      formData.languages.forEach(lan => data.append("languages", lan))
+      formData.educations.forEach((edu) => data.append("educations", edu));
+      formData.skills.forEach((ski) => data.append("skills", ski));
+      formData.languages.forEach((lan) => data.append("languages", lan));
 
       console.log(data);
 
@@ -300,7 +300,9 @@ const VolunteerAccount = () => {
 
               {/* Gender */}
               <label className="label">
-                <span className="label-text font-medium text-gray-700">Gender</span>
+                <span className="label-text font-medium text-gray-700">
+                  Gender
+                </span>
               </label>
               <div className="relative mb-4">
                 <details
@@ -308,7 +310,9 @@ const VolunteerAccount = () => {
                   open={openDropdown === "gender"}
                   onClick={(e) => {
                     e.preventDefault();
-                    setOpenDropdown(openDropdown === "gender" ? null : "gender");
+                    setOpenDropdown(
+                      openDropdown === "gender" ? null : "gender"
+                    );
                   }}
                 >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
@@ -350,7 +354,9 @@ const VolunteerAccount = () => {
 
               {/* Education */}
               <label className="label">
-                <span className="label-text font-medium text-gray-700">Education</span>
+                <span className="label-text font-medium text-gray-700">
+                  Education
+                </span>
               </label>
               <div className="relative mb-4">
                 <details
@@ -358,7 +364,9 @@ const VolunteerAccount = () => {
                   open={openDropdown === "education"}
                   onClick={(e) => {
                     e.preventDefault();
-                    setOpenDropdown(openDropdown === "education" ? null : "education");
+                    setOpenDropdown(
+                      openDropdown === "education" ? null : "education"
+                    );
                   }}
                 >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
@@ -400,7 +408,9 @@ const VolunteerAccount = () => {
 
               {/* Skills */}
               <label className="label">
-                <span className="label-text font-medium text-gray-700">Skills</span>
+                <span className="label-text font-medium text-gray-700">
+                  Skills
+                </span>
               </label>
               <div className="relative mb-4">
                 <details
@@ -408,7 +418,9 @@ const VolunteerAccount = () => {
                   open={openDropdown === "skills"}
                   onClick={(e) => {
                     e.preventDefault();
-                    setOpenDropdown(openDropdown === "skills" ? null : "skills");
+                    setOpenDropdown(
+                      openDropdown === "skills" ? null : "skills"
+                    );
                   }}
                 >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
@@ -457,7 +469,9 @@ const VolunteerAccount = () => {
 
               {/* Languages */}
               <label className="label">
-                <span className="label-text font-medium text-gray-700">Languages</span>
+                <span className="label-text font-medium text-gray-700">
+                  Languages
+                </span>
               </label>
               <div className="relative mb-4">
                 <details
@@ -465,7 +479,9 @@ const VolunteerAccount = () => {
                   open={openDropdown === "languages"}
                   onClick={(e) => {
                     e.preventDefault();
-                    setOpenDropdown(openDropdown === "languages" ? null : "languages");
+                    setOpenDropdown(
+                      openDropdown === "languages" ? null : "languages"
+                    );
                   }}
                 >
                   <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
@@ -484,7 +500,9 @@ const VolunteerAccount = () => {
                             handleInputChange(
                               "languages",
                               formData.languages.includes(lang.toLowerCase())
-                                ? formData.languages.filter((l) => l !== lang.toLowerCase())
+                                ? formData.languages.filter(
+                                    (l) => l !== lang.toLowerCase()
+                                  )
                                 : [...formData.languages, lang.toLowerCase()]
                             );
                           }}
@@ -523,9 +541,7 @@ const VolunteerAccount = () => {
         </div>
       </div>
     </div>
-
-
-)};
-      
+  );
+};
 
 export default VolunteerAccount;

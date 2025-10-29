@@ -1,14 +1,19 @@
-import { UsersAPI, type User } from "@/library/usersMock";
+import { type User } from "@/library/usersMock";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getUsers, getUserDetails } from "@/data";
+import { getUsers } from "@/data";
 import CardHost from "./CardHost";
 
+type HostSummary = {
+  _id: string;
+  firstName: string;
+  email: string;
+};
 const initials = (u: User) =>
   `${u.firstName?.[0] ?? ""}${u.lastName?.[0] ?? ""}`.toUpperCase();
 
 const TopHosts = () => {
-  const [displayedHosts, setDisplayedHosts] = useState([]);
+  const [displayedHosts, setDisplayedHosts] = useState<HostSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +23,7 @@ const TopHosts = () => {
         const dataUsers = await getUsers();
         // console.log(dataUsers);
 
-        const filteredHost = dataUsers.users.filter((u) =>
+        const filteredHost = dataUsers.users.filter((u: any) =>
           u.roles.includes("host")
         );
 
