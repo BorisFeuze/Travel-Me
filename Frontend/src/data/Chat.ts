@@ -18,7 +18,7 @@ export const getMessages = async (id) => {
   });
   if (!res.ok) throw new Error("Failed to get the Messages");
   const data = await res.json();
-  console.log(data);
+  // console.log(data);
   return data;
 };
 
@@ -32,7 +32,7 @@ export const sendMessages = async (selectedUserId, messageData) => {
   });
   if (!res.ok) throw new Error("Failed to send the Message");
   const data = await res.json();
-  console.log(data);
+  // console.log(data);
   return data;
 };
 
@@ -42,6 +42,6 @@ export const updateNewMessages = async (newMessageId) => {
   });
   if (!res.ok) throw new Error("Failed to send the Message");
   const data = await res.json();
-  console.log(data);
+  // console.log(data);
   return data;
 };
