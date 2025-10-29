@@ -39,7 +39,7 @@ const HostAccount = () => {
     skills: [],
     languages: [],
     educations: [],
-    adresse: "",
+    address: "",
     description: "",
   });
 
@@ -629,7 +629,7 @@ const HostAccount = () => {
           {/* Plus Card */}
           <div
             onClick={() => navigate("/create-job")}
-            className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-[4/3]"
+            className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-4/3"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

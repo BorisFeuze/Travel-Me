@@ -39,7 +39,7 @@ export const getUserDetails = async (id: string) => {
 };
 
 export const updateUserDetails = async (id: string, formData: FormData) => {
-  const res = await fetch(`${baseURL}${id}`, {
+  const res = await fetch(`${baseURL}/${id}`, {
     method: "PUT",
     body: formData,
   });

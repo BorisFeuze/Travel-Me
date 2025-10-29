@@ -131,7 +131,7 @@ const VolunteerAccount = () => {
       data.append("country", formData.country);
       data.append("gender", formData.gender);
       formData.educations.forEach((edu) => data.append("educations", edu));
-      formData.skills?.forEach((ski) => data.append("skills", ski));
+      formData.skills.forEach((ski) => data.append("skills", ski));
       formData.languages.forEach((lan) => data.append("languages", lan));
 
       console.log(data);

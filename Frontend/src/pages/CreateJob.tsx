@@ -476,7 +476,7 @@ const CreateJob = () => {
                       <span className="font-medium">
                         {range.from?.toLocaleDateString()}
                       </span>
-                      {" to "}
+                      {" - "}
                       <span className="font-medium">
                         {range.to?.toLocaleDateString()}
                       </span>
