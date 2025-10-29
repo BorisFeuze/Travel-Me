@@ -29,5 +29,5 @@ export {
   Opportunities,
   DisplayHost,
   DetailContinent,
-  DetailSkill
+  DetailSkill,
 };

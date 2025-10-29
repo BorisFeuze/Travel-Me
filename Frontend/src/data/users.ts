@@ -24,7 +24,7 @@ export const getSingleUser = async (id: string) => {
   return data;
 };
 
-export const updateUser = async (id: string, formData) => {
+export const updateUser = async (id: string, formData: UserformData) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "PUT",
     headers: {

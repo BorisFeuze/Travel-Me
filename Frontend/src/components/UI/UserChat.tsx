@@ -13,7 +13,7 @@ type UserChatType = {
 const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<UserProfileFormData | null>(null);
+  const [info, setInfo] = useState<UserProfile | null>(null);
 
   const { onlineUsers } = useAuth();
 
@@ -25,10 +25,10 @@ const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
     }
     (async () => {
       try {
-        const data: DataUserProfile = await getUserDetails(id);
+        const data = await getUserDetails(id);
 
         if (data) {
-          setInfo(data?.userProfiles[0]);
+          setInfo(data.userProfiles[0]);
         }
       } catch {
         setError("Error fetching userProfile of Host");

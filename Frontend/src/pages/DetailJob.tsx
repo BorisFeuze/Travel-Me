@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getJobOfferById, getSingleUser, getUserDetails } from "@/data";
+import { getJobOfferById, getSingleUser, getSingleUserProfile } from "@/data";
 import { Calendar02 } from "@/components/UI/Calendar02";
 import { ArrowLeft, ArrowRight, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context";
@@ -9,8 +9,8 @@ const DetailJob = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth?.() ?? { user: null };
-  const [job, setJob] = useState<JobFormData | null>(null);
-  const [host, setHost] = useState<UserProfile | null>(null);
+  const [job, setJob] = useState<JobData | null>(null);
+  const [hostProfile, setHostProfile] = useState<UserProfileData[]>([]);
   const [hostInfo, setHostInfo] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,30 +26,47 @@ const DetailJob = () => {
       try {
         setLoading(true);
         const res = await getJobOfferById(id);
-        const jobData: JobFormData | null = res?.jobOffer ?? null;
+        const jobData: JobData = res?.jobOffer ?? null;
         if (!jobData) {
           setError("Job offer not found.");
           return;
         }
+        console.log(jobData);
         setJob(jobData);
 
-        if (jobData.userProfileId) {
-          const hostData = await getUserDetails(jobData.userProfileId);
-          setHost(hostData?.userProfiles?.[0] || null);
+        if (!jobData.userProfileId) {
+          setError("userProfileId not found.");
+          return;
         }
-        if (hostData.userId) {
-          const hostInfo = await getSingleUser(hostData.userId);
-          setHostInfo(hostInfo || null);
+
+        console.log(jobData.userProfileId);
+        const hostData = await getSingleUserProfile(jobData.userProfileId);
+
+        console.log(hostData.userProfiles);
+
+        setHostProfile(hostData.userProfiles);
+
+        if (!hostData.userProfiles[0].userId) {
+          setError("userId not found.");
+          return;
+        }
+
+        if (hostData) {
+          const hostInfo = await getSingleUser(hostData.userProfiles[0].userId);
+          // console.log(hostInfo);
+          setHostInfo(hostInfo.user);
         }
       } catch (e: any) {
         console.error(e);
-        setError(e?.message || "Failed to load job offer.");
+        setError(e?.message);
       } finally {
         setLoading(false);
       }
     };
     run();
   }, [id]);
+
+  console.log(hostInfo);
 
   const nextImage = () => {
     if (!job?.pictureURL?.length) return;
@@ -92,14 +109,12 @@ const DetailJob = () => {
           <div className="flex flex-col items-center gap-2">
             <div
               className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105 mt-2"
-              onClick={() =>
-                navigate(`/host/${host?._id ?? job.userProfileId}`)
-              }
+              onClick={() => navigate(`/host/${hostInfo?._id}`)}
               title="Go to host profile"
             >
-              {host?.pictureURL?.[0] ? (
+              {hostProfile[0]?.pictureURL ? (
                 <img
-                  src={host.pictureURL[0]}
+                  src={hostProfile[0].pictureURL[0] as string}
                   alt="Host"
                   className="object-cover w-full h-full"
                 />
@@ -109,7 +124,7 @@ const DetailJob = () => {
             </div>
             <div>
               <h3 className="text-gray-600 text-sm text-center">
-                {host
+                {hostInfo
                   ? `${hostInfo?.firstName ?? ""} ${hostInfo?.lastName ?? ""}`.trim()
                   : "Host"}
               </h3>
@@ -154,7 +169,7 @@ const DetailJob = () => {
           <button
             onClick={() =>
               user
-                ? navigate(`/chat/${host?._id ?? job.userProfileId}`)
+                ? navigate(`/chat`)
                 : navigate(`/login?redirect=/job/${job._id}`)
             }
             className="flex items-center gap-2 bg-linear-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transition-transform"

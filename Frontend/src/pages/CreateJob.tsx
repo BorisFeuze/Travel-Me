@@ -1,19 +1,36 @@
 import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { addJobOffers } from "@/data/jobOffers";
-import { useAuth } from "@/context";
+import { useAuth, useUser } from "@/context";
 import { Calendar02 } from "@/components/UI/Calendar02";
 import { type DateRange } from "react-day-picker";
 
 const CreateJob = () => {
   const { user } = useAuth();
+  const { getUserProfile } = useUser();
+  const [profile, setProfile] = useState();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const profile: UserProfileData = await getUserProfile(user?._id ?? "");
+        console.log(profile);
+
+        if (!profile.userProfiles[0]) {
+          console.error("please created a account");
+        }
+        setProfile(profile.userProfiles[0]._id);
+      } catch (error) {}
+    })();
+  }, []);
+
+  // console.log(profile);
 
   const [formData, setFormData] = useState<JobFormData>({
-    _id: "",
     title: "",
     continent: "",
     country: "",
     location: "",
-    userProfileId: user?._id || "",
+    userProfileId: profile || "",
     pictureURL: [],
     description: "",
     needs: [],
@@ -161,12 +178,11 @@ const CreateJob = () => {
 
       setSaveMessage({ text: "Job offer created!", type: "success" });
       setFormData({
-        _id: "",
         title: "",
         continent: "",
         country: "",
         location: "",
-        userProfileId: user?._id || "",
+        userProfileId: profile || "",
         pictureURL: [],
         description: "",
         needs: [],

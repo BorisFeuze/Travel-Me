@@ -4,7 +4,7 @@ const baseURL: string = `${VITE_APP_USER_API_URL}/jobOffers`;
 
 type JobOffersResponse = {
   message: string;
-  jobOffers: JobFormData[];
+  jobOffers: JobData[];
 };
 
 export const addJobOffers = async (formData: FormData) => {
@@ -78,7 +78,7 @@ export const deleteJobOffer = async (id: string) => {
 
 type JobOfferDetailResponse = {
   message: string;
-  jobOffer: JobFormData;
+  jobOffer: JobData;
 };
 
 export const getJobOfferById = async (id: string) => {
