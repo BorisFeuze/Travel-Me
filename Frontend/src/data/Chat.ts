@@ -12,7 +12,7 @@ export const getChatUsers = async () => {
   return data;
 };
 
-export const getMessages = async (id) => {
+export const getMessages = async (id: string) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "GET",
   });

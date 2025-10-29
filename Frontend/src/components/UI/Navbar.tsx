@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useAuth } from "@/context";
-import logo from "../../assets/images/pngwing.com.png"; 
+import logo from "../../assets/images/pngwing.com.png";
 
 const Navbar = () => {
   const { signedIn, handleSignOut, user } = useAuth();
@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <header className="fixed top-0 left-0 w-full z-50">
       <div
-        className="max-w-[100rem] mx-auto mt-3
+        className="max-w-400 mx-auto mt-3
                    flex items-center justify-between gap-3
                    px-4 sm:px-6 py-3
                    rounded-2xl
@@ -83,13 +83,13 @@ const Navbar = () => {
                 Sign Out
               </button>
 
-              {user?.photoURL && (
+              {/* {user?.photoURL && (
                 <img
                   src={user.photoURL}
                   alt="User"
                   className="w-9 h-9 object-cover"
                 />
-              )}
+              )} */}
             </>
           ) : (
             <Link

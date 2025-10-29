@@ -10,21 +10,4 @@ const JobOffersAPI = {
   },
 };
 
-const HostAPI = {
-  fetchHosts: async () => {
-    const response = await fetch(`${API_URL}/hosts`); // which endpoint?
-    if (!response.ok) {
-      throw new Error("Failed to fetch hosts");
-    }
-    return response.json();
-  },
-  fetchHostById: async (id: string) => {
-    const res = await fetch(`${API_URL}/hosts/${id}`, {
-      credentials: "include",
-    });
-    if (!res.ok) throw new Error("Failed to fetch host");
-    return res.json();
-  },
-};
-
 export default { JobOffersAPI /*HostAPI*/ };

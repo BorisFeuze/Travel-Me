@@ -14,6 +14,10 @@ const Login = () => {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+
+  // 👇 NEW
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const { handleSignIn } = useAuth();
 
@@ -40,58 +44,72 @@ const Login = () => {
   };
 
   return (
-  <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 flex items-center justify-center p-6">
-    <form
-      className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-4"
-      onSubmit={handleSubmit}
-    >
-      <h1 className="text-3xl font-bold text-center text-black mb-6 uppercase">
-        Log in
-      </h1>
-
-      <label className="flex flex-col gap-1">
-        <span className="text-gray-700 font-medium">Email</span>
-        <input
-          name="email"
-          value={email}
-          onChange={handleChange}
-          type="email"
-          placeholder="Enter your email"
-          className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition"
-        />
-      </label>
-
-      <label className="flex flex-col gap-1">
-        <span className="text-gray-700 font-medium">Password</span>
-        <input
-          name="password"
-          value={password}
-          onChange={handleChange}
-          type="password"
-          placeholder="Enter your password"
-          className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition"
-        />
-      </label>
-
-      <small className="text-gray-600 text-center">
-        Don&apos;t have an account?{" "}
-        <Link to="/register" className="text-primary hover:underline">
-          Register!
-        </Link>
-      </small>
-
-      <button
-        type="submit"
-        className="btn btn-primary w-full bg-black text-white mt-4 border-2 text-[1.1rem] rounded-3xl"
-        disabled={loading}
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 flex items-center justify-center p-6">
+      <form
+        className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-4"
+        onSubmit={handleSubmit}
       >
-        {loading ? "Loading..." : "Login"}
-      </button>
-    </form>
-  </div>
-);
+        <h1 className="text-3xl font-bold text-center text-black mb-6 uppercase">
+          Log in
+        </h1>
 
+        <label className="flex flex-col gap-1">
+          <span className="text-gray-700 font-medium">Email</span>
+          <input
+            name="email"
+            value={email}
+            onChange={handleChange}
+            type="email"
+            placeholder="Enter your email"
+            className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+          />
+        </label>
 
+        <label className="flex flex-col gap-1">
+          <span className="text-gray-700 font-medium">Password</span>
+          <input
+            name="password"
+            value={password}
+            onChange={handleChange}
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter your password"
+            className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+          />
+
+          <div className="flex items-center gap-2 mt-3">
+            <input
+              id="showPassword"
+              type="checkbox"
+              className="checkbox checkbox-sm"
+              checked={showPassword}
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />
+            <label
+              htmlFor="showPassword"
+              className="text-sm text-gray-600 cursor-pointer"
+            >
+              Show password
+            </label>
+          </div>
+        </label>
+
+        <small className="text-gray-600 text-center">
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="text-primary hover:underline">
+            Register!
+          </Link>
+        </small>
+
+        <button
+          type="submit"
+          className="btn btn-primary w-full bg-black text-white mt-4 border-2 text-[1.1rem] rounded-3xl"
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Login"}
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default Login;

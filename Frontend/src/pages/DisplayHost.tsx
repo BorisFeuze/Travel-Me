@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { UsersAPI, type User } from "@/library/usersMock";
+import { type User } from "@/library/usersMock";
 import { getUsers, getUserDetails } from "@/data";
 
 const DisplayHost = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams() as { id: string };
   const [host, setHost] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,12 +23,12 @@ const DisplayHost = () => {
 
         // console.log(dataUsers);
 
-        const allHosts = dataUsers.users.filter((u) =>
+        const allHosts = dataUsers.users.filter((u: any) =>
           u.roles.includes("host")
         );
         // console.log(allHosts);
         // const allHosts = await UsersAPI.getTopHosts(100);
-        const found = allHosts.find((h) => h._id === id) ?? null;
+        const found = allHosts.find((h: any) => h._id === id) ?? null;
 
         // console.log(found);
         if (!found) setError("Host not found.");
@@ -46,7 +46,9 @@ const DisplayHost = () => {
       try {
         const data = await getUserDetails(id);
 
-        // console.log(data);
+        if (!data) {
+          return null;
+        }
 
         const userInfo = data.userProfiles[0];
 
