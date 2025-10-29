@@ -67,8 +67,6 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
     jobOffer
   } = req;
 
-  const [{ from, to } = {} as AvailabilityType] = req.body.availability ?? [];
-
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: 404 });
 
@@ -87,6 +85,7 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
 
   res.json({ message: 'updated jobOffer', jobOffer });
 };
+
 
 export const deleteJobOffer: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {
   const {

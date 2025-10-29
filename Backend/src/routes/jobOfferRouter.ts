@@ -27,10 +27,10 @@ jobOffersRouter
   .route('/:id')
   .get(getSingleJobOffer)
   .put(
-    formMiddleWare,
-    cloudUploader,
     authenticate('strict'),
     hasRole2('self', 'admin'),
+    formMiddleWare,
+    cloudUploader,
     validateZod(jobOfferInputSchema, 'body'),
     updateJobOffer
   )

@@ -67,12 +67,22 @@ export const getAllJobOffers = async () => {
 export const updateJobOffers = async (id: string, formData: FormData) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "PUT",
-    body: formData,
+    body: formData, 
+    
   });
-  if (!res.ok) throw new Error("Failed to update job offer details");
-  const data = await res.json();
-  console.log(data);
-  return data;
+
+  if (!res.ok) {
+    let errorMessage = "Failed to update job offer";
+    try {
+      const errorData = await res.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch {
+      errorMessage = `Server error (${res.status})`;
+    }
+    throw new Error(errorMessage);
+  }
+
+  return await res.json();
 };
 
 export const deleteJobOffer = async (id: string) => {
@@ -94,14 +104,13 @@ export const getJobOfferById = async (id: string) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
-    // credentials: "include", // attiva solo se il tuo server richiede cookie/sessione
+    
   });
 
   if (!res.ok) {
-    const err: any = new Error(`Failed to fetch job offer: ${res.statusText}`);
-    err.status = res.status; // utile per distinguere 401/403/404 nel client
-    throw err;
-  }
+  const err: unknown = new Error(`Failed to fetch job offer: ${res.statusText}`);
+  throw err;
+}
 
   const data: JobOfferDetailResponse = await res.json();
   return data;
