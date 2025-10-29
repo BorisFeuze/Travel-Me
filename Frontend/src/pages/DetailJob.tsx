@@ -84,44 +84,36 @@ const DetailJob = () => {
             </p>
           </div>
 
-          <div className="flex flex-col items-center gap-2">
-            <div
-              className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105 mt-2"
-              onClick={() =>
-                navigate(`/host/${host?._id ?? job.userProfileId}`)
-              }
-              title="Go to host profile"
-            >
-              {host?.pictureURL?.[0] ? (
-                <img
-                  src={host.pictureURL[0]}
-                  alt="Host"
-                  className="object-cover w-full h-full"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-200" />
-              )}
-            </div>
-            <div>
-              <h3 className="text-gray-600 text-sm text-center">
-                {host
-                  ? `${host.firstName ?? ""} ${host.lastName ?? ""}`.trim()
-                  : "Host"}
-              </h3>
-            </div>
-          </div>
-        </div>
+  {/* HOST SECTION */}
+  <div className="flex flex-col items-center gap-2">
+    <div
+      className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105 mt-2"
+      onClick={() => console.log("Navigate to host profile")}
+    >
+      <img
+        src={host?.pictureURL?.[0]}
+        alt="Host"
+        className="object-cover w-full h-full"
+      />
+    </div>
+    <div>
+      <h3 className="text-gray-600 text-sm text-center">
+        {host ? `${user.firstName} ${user.lastName}` : "Host Name"}
+      </h3>
+    </div>
+  </div>
+</div>
 
-        {/* GALLERY */}
-        {Array.isArray(job.pictureURL) && job.pictureURL.length > 0 && (
-          <div className="relative flex justify-center items-center mt-6">
-            <button
-              onClick={prevImage}
-              className="absolute left-0 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition z-10"
-              aria-label="Previous image"
-            >
-              <ArrowLeft className="w-6 h-6" />
-            </button>
+    {/* IMAGE GALLERY */}
+    {job.pictureURL.length > 0 && (
+      <div className="relative flex justify-center items-center mt-6">
+        {/* LEFT BUTTON */}
+        <button
+          onClick={prevImage}
+          className="absolute left-0 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition z-10"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
 
             <div className="overflow-hidden rounded-3xl shadow-xl transition-transform duration-500 hover:scale-105">
               <img
