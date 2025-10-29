@@ -4,7 +4,7 @@ import { getAllUserProfiles } from "@/data";
 import { useAuth } from ".";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState<UserProfileFormData[]>([]);
   const { checkSession, setCheckSession } = useAuth();
 
   useEffect(() => {

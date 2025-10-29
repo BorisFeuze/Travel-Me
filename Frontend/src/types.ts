@@ -1,11 +1,17 @@
 import type { Dispatch, SetStateAction } from "react";
 
 declare global {
-  type User = {
+  export type DBEntry = {
     _id: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
+
+  type User = DBEntry & {
     firstName: string;
     lastName: string;
-    phoneNumber?: string;
+    phoneNumber: string;
     email: string;
     roles: string[];
   };
@@ -32,6 +38,11 @@ declare global {
     socket: Socket | null;
   };
 
+  type UserContextType = {
+    allUsers: UserProfileFormData[];
+    setAllUsers: Dispatch<SetStateAction<UserProfileFormData[]>>;
+  };
+
   type UserProfileFormData = {
     pictureURL?: string;
     userId: string;
@@ -43,6 +54,8 @@ declare global {
     languages: string[];
     educations: string[];
   };
+
+  type UserProfile = DBEntry & UserProfileFormData;
 
   type JobFormData = {
     _id: string;
@@ -98,6 +111,8 @@ export type {
   JobFormData,
   JobCardData,
   UserProfileFormData,
+  UserProfile,
   Chat,
   Socket,
+  UserContextType,
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getJobOfferById, getUserDetails } from "@/data";
+import { getJobOfferById, getSingleUser, getUserDetails } from "@/data";
 import { Calendar02 } from "@/components/UI/Calendar02";
 import { ArrowLeft, ArrowRight, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context";
@@ -10,7 +10,8 @@ const DetailJob = () => {
   const navigate = useNavigate();
   const { user } = useAuth?.() ?? { user: null };
   const [job, setJob] = useState<JobFormData | null>(null);
-  const [host, setHost] = useState<User | null>(null);
+  const [host, setHost] = useState<UserProfile | null>(null);
+  const [hostInfo, setHostInfo] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState(0);
@@ -35,6 +36,10 @@ const DetailJob = () => {
         if (jobData.userProfileId) {
           const hostData = await getUserDetails(jobData.userProfileId);
           setHost(hostData?.userProfiles?.[0] || null);
+        }
+        if (hostData.userId) {
+          const hostInfo = await getSingleUser(hostData.userId);
+          setHostInfo(hostInfo || null);
         }
       } catch (e: any) {
         console.error(e);
@@ -105,7 +110,7 @@ const DetailJob = () => {
             <div>
               <h3 className="text-gray-600 text-sm text-center">
                 {host
-                  ? `${host.firstName ?? ""} ${host.lastName ?? ""}`.trim()
+                  ? `${hostInfo?.firstName ?? ""} ${hostInfo?.lastName ?? ""}`.trim()
                   : "Host"}
               </h3>
             </div>
