@@ -2,23 +2,27 @@ import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
 import { useState, useEffect } from "react";
 
 import { getUserDetails } from "@/data";
-import { useAuth, useChat } from "@/context";
+import { useAuth } from "@/context";
 
-const UserChat = ({ id, firstName, index, lastName }) => {
+type UserChatType = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
+const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState({});
 
   const { onlineUsers } = useAuth();
 
-  const { unseenMessages } = useChat();
-
   useEffect(() => {
     (async () => {
       try {
         const data = await getUserDetails(id);
 
-        const userInfo = data.userProfiles[0];
+        const userInfo = data?.userProfiles[0];
 
         if (userInfo) {
           setInfo(userInfo);

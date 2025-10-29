@@ -1,49 +1,71 @@
-import { useEffect, useRef, useState } from "react";
-import profile_martin from "../../assets/images/Chat/profile_martin.png";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+// import profile_martin from "../../assets/images/Chat/profile_martin.png";
 import arrow_icon from "../../assets/images/Chat/arrow_icon.png";
 import help_icon from "../../assets/images/Chat/help_icon.png";
 import logo_icon from "../../assets/images/Chat/logo_icon.svg";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
-import gallery_icon from "../../assets/images/Chat/gallery_icon.svg";
+// import gallery_icon from "../../assets/images/Chat/gallery_icon.svg";
 import send_button from "../../assets/images/Chat/send_button.svg";
 import { formatMessageTime } from "@/library";
 import { getUserDetails } from "@/data";
-import { useAuth } from "@/context";
+// import { useAuth } from "@/context";
+
+type ChatContainerType = {
+  selectedUser: User;
+  setSelectedUser: Dispatch<SetStateAction<User>>;
+  messages: Chat[];
+  sendMessage: (
+    selectedUserId: string,
+    { message }: { message: string }
+  ) => Promise<void>;
+  onlineUsers: string[];
+  user: User;
+};
+
+type DataType = {
+  userProfiles?: UserProfileFormData[];
+};
 
 const ChatContainer = ({
   selectedUser,
   setSelectedUser,
   messages,
-  setMessages,
   sendMessage,
   onlineUsers,
   user,
-}) => {
+}: ChatContainerType) => {
   const scrollEnd = useRef();
   const [input, setInput] = useState("");
-  const [info, setInfo] = useState([]);
+  const [info, setInfo] = useState<UserProfileFormData | null>(null);
   const [userInfo, setUserInfo] = useState([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await getUserDetails(selectedUser?._id);
+        const { userProfiles } = await getUserDetails(selectedUser?._id);
 
-        if (data) {
-          // console.log(data);
-
-          const userInfo = data.userProfiles[0];
+        if (userProfiles) {
+          const userInfo = userProfiles[0];
 
           // console.log(userInfo);
 
           setInfo(userInfo);
         }
       } catch {
-        setError("Error fetching userProfile of Host");
+        setError("Error fetching userProfile of selectedUser");
       }
     })();
   }, [selectedUser]);
+
+  console.log(selectedUser);
+  console.log(user);
 
   useEffect(() => {
     (async () => {
@@ -51,7 +73,7 @@ const ChatContainer = ({
         const data = await getUserDetails(user?._id);
 
         if (data) {
-          // console.log(data);
+          console.log(data);
 
           const userInfo = data.userProfiles[0];
 
@@ -78,20 +100,20 @@ const ChatContainer = ({
     setInput("");
   };
 
-  //Handle sending an image
-  const handleSendImage = async (e) => {
-    const file = e.target.files[0];
-    if (!file || !file.type.startWith("image/")) {
-      console.error("select an image file");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      await sendMessage(selectedUser._id, { image: reader.result });
-      e.target.value = "";
-    };
-    reader.readAsDataURL(file);
-  };
+  // //Handle sending an image
+  // const handleSendImage = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file || !file.type.startWith("image/")) {
+  //     console.error("select an image file");
+  //     return;
+  //   }
+  //   const reader = new FileReader();
+  //   reader.onloadend = async () => {
+  //     await sendMessage(selectedUser._id, { image: reader.result });
+  //     e.target.value = "";
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
 
   useEffect(() => {
     if (scrollEnd.current && messages) {
@@ -127,21 +149,8 @@ const ChatContainer = ({
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex items-end gap-2 justify ${msg.senderId !== user?._id && "flex-row-reverse"}`}
+            className={`flex items-end gap-2 justify ${msg.senderId === user?._id && "flex-row-reverse"}`}
           >
-            {msg.image ? (
-              <img
-                src={msg.image}
-                alt=""
-                className="max-w-[230px] border border-gray-700 rounded-lg overflow-hidden mb-8"
-              />
-            ) : (
-              <p
-                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 breal-all bg-violet-500/30 text-black ${msg.senderId === user?._id ? "rounded-br-none" : "rounded-bl-none"}`}
-              >
-                {msg.message}
-              </p>
-            )}
             <div className="text-center text-xs">
               <img
                 src={
@@ -156,6 +165,19 @@ const ChatContainer = ({
                 {formatMessageTime(msg.createdAt)}
               </p>
             </div>
+            {msg.image ? (
+              <img
+                src={msg.image}
+                alt=""
+                className="max-w-[230px] border border-gray-700 rounded-lg overflow-hidden mb-8"
+              />
+            ) : (
+              <p
+                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 breal-all bg-violet-500/30 text-black ${msg.senderId !== user?._id ? "rounded-bl-none" : "rounded-br-none"}`}
+              >
+                {msg.message}
+              </p>
+            )}
           </div>
         ))}
         <div ref={scrollEnd}></div>
@@ -172,7 +194,7 @@ const ChatContainer = ({
             className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-black
              placeholder-gray-400"
           />
-          <input
+          {/* <input
             onChange={handleSendImage}
             type="file"
             id="image"
@@ -185,7 +207,7 @@ const ChatContainer = ({
               alt=""
               className="w-5 mr-2 bg-black cursor-pointer"
             />
-          </label>
+          </label> */}
         </div>
         <img
           onClick={handleSendMessage}

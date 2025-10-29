@@ -6,8 +6,7 @@ export const userInputSchema = z.strictObject({
   lastName: z.string().min(1),
   email: z.string(),
   password: z.string().min(8).max(520),
-  // phoneNumber: z.number().min(1).max(520),
-  phoneNumber: z.string().min(1).max(15),
+  phoneNumber: z.string().min(1).max(520),
   roles: z.array(z.string().min(1).max(50).default('volunteer'))
 });
 

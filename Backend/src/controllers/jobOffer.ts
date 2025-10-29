@@ -1,13 +1,14 @@
 import type { RequestHandler } from 'express';
 import { isValidObjectId, Types } from 'mongoose';
 import { JobOffer } from '#models';
-import { jobOfferInputSchema, jobOfferSchema } from '#schemas';
+import { jobOfferInputSchema, jobOfferSchema, availabilityItemSchema } from '#schemas';
 import { type z } from 'zod/v4';
 
 type JobOfferInputDTO = z.infer<typeof jobOfferInputSchema>;
 type JobofferDTO = z.infer<typeof jobOfferSchema>;
 type GetJobOffersType = SuccessMsg & { jobOffers: JobofferDTO[] };
 type JobOfferType = SuccessMsg & { jobOffer: JobofferDTO };
+type AvailabilityType = z.infer<typeof availabilityItemSchema>;
 
 export const getJobOffers: RequestHandler<{}, GetJobOffersType> = async (req, res) => {
   const userProfileId = req.sanitQuery?.userProfileId;
@@ -62,18 +63,7 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
   const {
     params: { id },
-    body: {
-      title,
-      continent,
-      country,
-      location,
-      userProfileId,
-      pictureURL,
-      description,
-      needs,
-      languages,
-      availability
-    },
+    body: { title, continent, country, location, userProfileId, pictureURL, description, needs, languages },
     jobOffer
   } = req;
 
@@ -91,7 +81,7 @@ export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOff
   jobOffer.description = description;
   jobOffer.needs = needs || [];
   jobOffer.languages = languages || [];
-  jobOffer.availability.push({ from: Date, to: Date });
+  jobOffer.availability.push({ from: from, to: to });
 
   await jobOffer.save();
 

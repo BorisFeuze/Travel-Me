@@ -1,19 +1,20 @@
-import { ChatContainer, RightSidebar, Sidebar } from "@/components/UI";
+import { ChatContainer, Sidebar } from "@/components/UI";
 import { useState, useEffect } from "react";
 import {
   getChatUsers,
   getMessages,
   sendMessages,
-  updateNewMessages,
+  /* updateNewMessages,*/
 } from "@/data";
 import { useAuth } from "@/context";
+import type { User, Chat } from "@/types";
 
 const Chat = () => {
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [chatUsers, setChatUsers] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [chatUsers, setChatUsers] = useState<User[]>([]);
+  const [messages, setMessages] = useState<Chat[]>([]);
   const [unseenMessages, setUnseenMessages] = useState({});
-  const { socket, user, onlineUsers } = useAuth();
+  const { /*socket,*/ user, onlineUsers } = useAuth();
 
   useEffect(() => {
     (async () => {
@@ -31,22 +32,22 @@ const Chat = () => {
   }, [onlineUsers]);
 
   useEffect(() => {
-    async () => {
+    (async () => {
       try {
         const data = await getMessages(selectedUser?._id);
         console.log("Data", data);
         if (data) {
-          setMessages(data.messages);
+          setMessages(data.chats);
         }
       } catch (error) {
         console.error(error);
       }
-    };
-  }, [selectedUser]);
+    })();
+  }, [messages]);
 
-  const sendMessage = async (selectedUserId, messages) => {
+  const sendMessage = async (selectedUserId: string, message: string) => {
     try {
-      const data = await sendMessages(selectedUserId, messages);
+      const data = await sendMessages(selectedUserId, message);
       console.log("Data", data);
       if (data) {
         setMessages((prev) => [...prev, data]);
@@ -58,40 +59,38 @@ const Chat = () => {
     }
   };
 
-  console.log(messages);
+  // const subscribeToMessages = () => {
+  //   if (!socket) return;
+  //   socket.on("newMessage", () => {
+  //     if (selectedUser && newMessage.senderId === selectedUser._id) {
+  //       newMessage.seen = true;
+  //       setMessages((prevMessages) => [...prevMessages, newMessage]);
+  //       updateNewMessages(newMessages._id);
+  //     } else {
+  //       setUnseenMessages((prev) => ({
+  //         ...prev,
+  //         [newMessages.senderId]: prev[newMessage.senderId]
+  //           ? prev[newMessage.senderId] + 1
+  //           : 1,
+  //       }));
+  //     }
+  //   });
+  // };
 
-  const subscribeToMessages = () => {
-    if (!socket) return;
-    socket.on("newMessage", () => {
-      if (selectedUser && newMessage.senderId === selectedUser._id) {
-        newMessage.seen = true;
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        updateNewMessages(newMessages._id);
-      } else {
-        setUnseenMessages((prev) => ({
-          ...prev,
-          [newMessages.senderId]: prev[newMessage.senderId]
-            ? prev[newMessage.senderId] + 1
-            : 1,
-        }));
-      }
-    });
-  };
+  // // function to unsubscribe from messages
+  // const unsubscribeFromMessages = () => {
+  //   if (socket) socket.off("newMessage");
+  // };
 
-  // function to unsubscribe from messages
-  const unsubscribeFromMessages = () => {
-    if (socket) socket.off("newMessage");
-  };
-
-  useEffect(() => {
-    subscribeToMessages();
-    return () => unsubscribeFromMessages();
-  }, [socket, selectedUser]);
+  // useEffect(() => {
+  //   subscribeToMessages();
+  //   return () => unsubscribeFromMessages();
+  // }, [socket, selectedUser]);
 
   return (
     <div className="border w-full h-screen sm:px-[15%] sm:py-[5%]">
       <div
-        className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-full grid grid-cols-1 relative ${selectedUser ? "md:grid-cols-[1fr_1.5fr_1fr] xl:grid-cols-[1fr_2fr_1fr]" : "md:grid-cols-2"}`}
+        className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-full grid grid-cols-1 relative ${selectedUser ? "md:grid-cols-[1fr_1.5fr] xl:grid-cols-[1fr_2fr]" : "md:grid-cols-2"}`}
       >
         <Sidebar
           users={chatUsers}
@@ -103,15 +102,9 @@ const Chat = () => {
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
           messages={messages}
-          setMessages={setMessages}
           sendMessage={sendMessage}
           onlineUsers={onlineUsers}
           user={user}
-        />
-        <RightSidebar
-          selectedUser={selectedUser}
-          onlineUsers={onlineUsers}
-          setSelectedUser={setSelectedUser}
         />
       </div>
     </div>

@@ -1,11 +1,11 @@
-import type { Url } from "url";
+import type { Dispatch, SetStateAction } from "react";
 
 declare global {
   type User = {
     _id: string;
     firstName: string;
     lastName: string;
-    phoneNumber?: number;
+    phoneNumber?: string;
     email: string;
     roles: string[];
   };
@@ -26,10 +26,14 @@ declare global {
     handleSignIn: ({ email, password }: LoginData) => Promise<void>;
     handleSignOut: () => Promise<void>;
     handleRegister: (formState: Omit<RegisterData, "_id">) => Promise<void>;
+    checkSession: boolean;
+    setCheckSession: Dispatch<SetStateAction<boolean>>;
+    onlineUsers: string[];
+    socket: Socket | null;
   };
 
   type UserProfileFormData = {
-    pictureURL?: Url;
+    pictureURL?: string;
     userId: string;
     age?: number;
     continent: string;

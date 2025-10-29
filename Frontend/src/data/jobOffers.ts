@@ -75,3 +75,25 @@ export const deleteJobOffer = async (id: string) => {
   if (!res.ok) throw new Error("Failed to delete job offer");
   console.log(`Job offer deleted.`);
 };
+
+type JobOfferDetailResponse = {
+  message: string;
+  jobOffer: JobFormData;
+};
+
+export const getJobOfferById = async (id: string) => {
+  const res = await fetch(`${baseURL}/${id}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    // credentials: "include", // attiva solo se il tuo server richiede cookie/sessione
+  });
+
+  if (!res.ok) {
+    const err: any = new Error(`Failed to fetch job offer: ${res.statusText}`);
+    err.status = res.status; // utile per distinguere 401/403/404 nel client
+    throw err;
+  }
+
+  const data: JobOfferDetailResponse = await res.json();
+  return data;
+};

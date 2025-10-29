@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
-import { getUsers } from "@/data";
-import { useChat, useUser, useAuth } from "@/context";
-import logo from "../../assets/images/Chat/logo.png";
-import menu_icon from "../../assets/images/Chat/menu_icon.png";
+import { /*useEffect,*/ useState } from "react";
+// import { getUsers } from "@/data";
+import { useAuth } from "@/context";
+// import logo from "../../assets/images/Chat/logo.png";
+// import menu_icon from "../../assets/images/Chat/menu_icon.png";
 import search_icon from "../../assets/images/Chat/search_icon.png";
-import { useRef } from "react";
+// import { useRef } from "react";
 import UserChat from "./UserChat";
 
 const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
@@ -25,9 +25,7 @@ const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
 
   const { onlineUsers } = useAuth();
 
-  const navigate = useNavigate();
-
-  const scrollEnd = useRef();
+  // const navigate = useNavigate();
 
   // useEffect(() => {
   //   (async () => {
@@ -129,7 +127,6 @@ const Sidebar = ({ users, selectedUser, setSelectedUser, unseenMessages }) => {
           </div>
         ))}
       </div>
-      <div ref={scrollEnd}></div>
     </div>
   );
 };
