@@ -132,13 +132,13 @@ const DetailJob = () => {
           </div>
         </div>
 
-        {/* GALLERY */}
-        {Array.isArray(job.pictureURL) && job.pictureURL.length > 0 && (
+        {/* IMAGE GALLERY */}
+        {job.pictureURL.length > 0 && (
           <div className="relative flex justify-center items-center mt-6">
+            {/* LEFT BUTTON */}
             <button
               onClick={prevImage}
               className="absolute left-0 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition z-10"
-              aria-label="Previous image"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>

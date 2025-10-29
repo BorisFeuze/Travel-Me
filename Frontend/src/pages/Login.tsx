@@ -15,6 +15,10 @@ const Login = () => {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+
+  // 👇 NEW
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const { handleSignIn } = useAuth();
 
@@ -44,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-blue-50 to-purple-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 flex items-center justify-center p-6">
       <form
         className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 flex flex-col gap-4"
         onSubmit={handleSubmit}
@@ -71,10 +75,26 @@ const Login = () => {
             name="password"
             value={password}
             onChange={handleChange}
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
             className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition"
           />
+
+          <div className="flex items-center gap-2 mt-3">
+            <input
+              id="showPassword"
+              type="checkbox"
+              className="checkbox checkbox-sm"
+              checked={showPassword}
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />
+            <label
+              htmlFor="showPassword"
+              className="text-sm text-gray-600 cursor-pointer"
+            >
+              Show password
+            </label>
+          </div>
         </label>
 
         <small className="text-gray-600 text-center">

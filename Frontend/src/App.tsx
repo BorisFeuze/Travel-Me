@@ -14,6 +14,7 @@ import {
   DisplayHost,
   DetailContinent,
   DetailSkill,
+  EditJob,
 } from "./pages";
 import RootLayout from "./layouts/RootLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -42,6 +43,7 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="hostAccount" element={<HostAccount />} />
             <Route path="create-job" element={<CreateJob />} />
+            <Route path="edit-job/:id" element={<EditJob />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>

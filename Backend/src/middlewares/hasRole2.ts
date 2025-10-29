@@ -1,50 +1,61 @@
 import type { RequestHandler } from 'express';
 import { JobOffer } from '#models';
 
-const hasRole2 = (...AllowRoles: string[]): RequestHandler => {
-  return async (request, response, next) => {
-    if (!request.user) {
-      next(new Error('unauthorized', { cause: { status: 401 } }));
-      return;
-    }
-    // console.log(request.user);
-    const { id } = request.params;
-    const { roles: userRoles, id: userId } = request.user;
-    let jobOffer;
-
-    if (id) {
-      jobOffer = await JobOffer.findById(id).populate('userProfileId', 'userId');
-
-      console.log(jobOffer);
-
-      if (!jobOffer) {
-        next(new Error('jobOffer not found', { cause: { status: 404 } }));
-        return;
+const hasRole2 = (...allowedRoles: string[]): RequestHandler => {
+  return async (req, res, next) => {
+    try {
+      if (!req.user) {
+        return next(new Error('Unauthorized', { cause: { status: 401 } }));
       }
 
-      request.jobOffer = jobOffer;
-    }
-    // console.log(jobOffer);
-    if (userRoles.includes('admin')) {
-      next();
-    } else if (AllowRoles.includes('self')) {
-      if (userId !== jobOffer!.userProfileId.userId.toString()) {
-        next(new Error('Not authorized', { cause: { status: 403 } }));
-        return;
-      }
-      next();
-      return;
-    }
+      const { id } = req.params;
+      const { roles: userRoles, id: userId } = req.user;
+      let jobOffer;
 
-    // check for other roles
-    if (
-      !AllowRoles.some(role => {
-        return userRoles.includes(role);
-      })
-    ) {
-      next(new Error('Role not allowes', { cause: { status: 403 } }));
+      // Wenn eine JobOffer-ID vorhanden ist, laden wir das Angebot
+      if (id) {
+        jobOffer = await JobOffer.findById(id);
+
+        if (!jobOffer) {
+          return next(new Error('Job offer not found', { cause: { status: 404 } }));
+        }
+
+        req.jobOffer = jobOffer;
+      }
+
+      // Admin darf immer
+      if (userRoles.includes('admin')) {
+        return next();
+      }
+
+      // Self-Check: erlaubt, wenn 'self' in allowedRoles ist
+      if (allowedRoles.includes('self')) {
+        if (!jobOffer) {
+          return next(new Error('Job offer has no owner', { cause: { status: 403 } }));
+        }
+
+        // Prüfe Owner-ID: funktioniert auch ohne populate
+        const ownerId = jobOffer.userProfileId._id
+          ? jobOffer.userProfileId._id.toString()
+          : jobOffer.userProfileId.toString();
+
+        if (userId !== ownerId) {
+          return next(new Error('Not authorized', { cause: { status: 403 } }));
+        }
+
+        return next();
+      }
+
+      const hasAllowedRole = allowedRoles.some(role => userRoles.includes(role));
+
+      if (!hasAllowedRole) {
+        return next(new Error('Role not allowed', { cause: { status: 403 } }));
+      }
+
+      next();
+    } catch (err) {
+      next(err);
     }
-    next();
   };
 };
 

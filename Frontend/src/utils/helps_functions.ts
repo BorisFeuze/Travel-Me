@@ -40,7 +40,7 @@ const validateMyDuckForm = ({ name, imgUrl, quote }: DuckInput): DuckErrors => {
   if (!imgUrl.trim()) {
     newErrors.imgUrl = "Image is required";
   } else if (!isValidUrl(imgUrl)) {
-    newErrors.imgUrl = " Image must be a valid URL";
+    newErrors.imgUrl = "Image must be a valid URL";
   }
   if (!quote.trim()) newErrors.quote = "Quote is required";
 

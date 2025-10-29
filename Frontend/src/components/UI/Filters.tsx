@@ -190,7 +190,7 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
                 </button>
                 <ul
                   tabIndex={0}
-                  className="dropdown-content z-[5] menu p-2 shadow bg-white border rounded-xl w-64 max-h-72 overflow-auto"
+                  className="dropdown-content z-5 menu p-2 shadow bg-white border rounded-xl w-64 max-h-72 overflow-auto"
                 >
                   {skillsOptions.map((s) => (
                     <li key={s}>

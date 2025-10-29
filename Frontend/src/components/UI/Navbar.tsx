@@ -94,7 +94,7 @@ const Navbar = () => {
                   alt="User"
                   className="w-9 h-9 object-cover"
                 />
-              )}
+              )} */}
             </>
           ) : (
             <Link

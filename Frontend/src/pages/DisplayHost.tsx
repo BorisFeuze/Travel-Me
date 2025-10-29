@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-// import { UsersAPI, type User } from "@/library/usersMock";
+
 import { getUsers, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
 
 const DisplayHost = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [host, setHost] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<UserProfileFormData | null>(null);
+
+  const { user } = useAuth();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -27,7 +29,7 @@ const DisplayHost = () => {
         // console.log(dataUsers);
 
         const allHosts = dataUsers.users.filter((u: User) =>
-          u.roles.includes("host")
+          u.roles?.includes("host")
         );
         // console.log(allHosts);
         // const allHosts = await UsersAPI.getTopHosts(100);
@@ -54,7 +56,9 @@ const DisplayHost = () => {
       try {
         const data = await getUserDetails(id);
 
-        // console.log(data);
+        if (!data) {
+          return null;
+        }
 
         const userInfo = data?.userProfiles[0];
 
