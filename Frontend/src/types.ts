@@ -34,38 +34,48 @@ declare global {
     age?: number;
     continent: string;
     country: string;
+    address: string;
     gender: string;
     skills: string[];
     languages: string[];
     educations: string[];
+    // optional host description
+    description?: string;
   };
 
-  type JobFormData = {   
-  _id: string;
-  title: string;
-  continent: string;
-  country: string;           
-  location: string;
-  userProfileId: string;       
-  pictureURL: File[];    
-  description: string;
-  needs: string[];           
-  languages: string[];
-  availability: {
-    from: Date;
-    to: Date;
-  }[];
-};
+  type JobFormData = {
+    _id: string;
+    title: string;
+    continent: string;
+    country: string;
+    location: string;
+    userProfileId: string;
+    pictureURL: File[];
+    description: string;
+    needs: string[];
+    languages: string[];
+    availability: {
+      from: Date;
+      to: Date;
+    }[];
+  };
 
   type JobCardData = {
     _id: string;
     image?: string;
     title: string;
     location: string;
-  }
-
+  };
 
   type SuccessRes = { message: string };
 }
 
-export type { AuthContextType, User, LoginData, RegisterData, JobFormData, JobCardData, UserProfileFormData };
+export type {
+  AuthContextType,
+  User,
+  LoginData,
+  RegisterData,
+  JobFormData,
+  JobCardData,
+  UserProfileFormData,
+};
