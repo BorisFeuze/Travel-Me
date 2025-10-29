@@ -23,14 +23,14 @@ const CreateJob = () => {
     })();
   }, []);
 
-  // console.log(profile);
+  console.log(profile);
 
   const [formData, setFormData] = useState<JobFormData>({
     title: "",
     continent: "",
     country: "",
     location: "",
-    userProfileId: profile || "",
+    userProfileId: "",
     pictureURL: [],
     description: "",
     needs: [],
@@ -154,6 +154,8 @@ const CreateJob = () => {
 
     setIsSaving(true);
     setSaveMessage(null);
+
+    formData.userProfileId = profile as string;
 
     try {
       const data = new FormData();

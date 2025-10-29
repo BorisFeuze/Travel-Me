@@ -23,7 +23,7 @@ export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async
 
 export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputDTO> = async (req, res) => {
   const {
-    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations, adresse, description }
+    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations, address, description }
   } = req;
 
   // console.log(req.body);
@@ -41,8 +41,7 @@ export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputD
       skills,
       languages,
       educations,
-
-      adresse,
+      address,
       description
     });
 
@@ -68,7 +67,7 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
 ) => {
   const {
     params: { id },
-    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations, adresse, description },
+    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations, address, description },
     userProfile
   } = req;
 
@@ -82,7 +81,7 @@ export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, 
   userProfile.country = country as string;
   userProfile.gender = gender as string;
   userProfile.skills = skills || [];
-  userProfile.adresse = adresse as string;
+  userProfile.address = address as string;
   userProfile.description = description as string;
   userProfile.languages = languages || [];
   userProfile.educations = educations || [];

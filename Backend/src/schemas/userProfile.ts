@@ -41,7 +41,7 @@ export const userProfileInputSchema = z.strictObject({
     )
     .optional(),
   age: z.preprocess(coercedNumber, z.coerce.number().default(18)),
-  adresse: z.preprocess(coercedString, z.string()),
+  address: z.preprocess(coercedString, z.string()),
   description: z.preprocess(coercedString, z.string()),
   continent: z.preprocess(coercedString, z.string()),
   country: z.preprocess(coercedString, z.string()),
