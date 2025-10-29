@@ -200,7 +200,7 @@ const DisplayHost = () => {
             <input
               readOnly
               className="input input-bordered w-full"
-              value={info?.adresse}
+              value={info?.address}
             />
           </div>
 

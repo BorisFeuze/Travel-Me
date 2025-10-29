@@ -14,7 +14,7 @@ const hasRole2 = (...allowedRoles: string[]): RequestHandler => {
 
       // Wenn eine JobOffer-ID vorhanden ist, laden wir das Angebot
       if (id) {
-        jobOffer = await JobOffer.findById(id);
+        jobOffer = await JobOffer.findById(id).populate('userProfileId', 'userId');
 
         if (!jobOffer) {
           return next(new Error('Job offer not found', { cause: { status: 404 } }));

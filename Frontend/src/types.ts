@@ -44,6 +44,9 @@ declare global {
     allUsers: UserProfileFormData[];
     setAllUsers: Dispatch<SetStateAction<UserProfileFormData[]>>;
     getUserProfile: (id: string) => Promise<void>;
+    allUsers: UserProfileData[];
+    setAllUsers: Dispatch<SetStateAction<UserProfileData[]>>;
+    getUserProfile: (id: string) => Promise<void>;
   };
 
   type UserProfileFormData = {
@@ -58,6 +61,7 @@ declare global {
     skills: string[];
     languages: string[];
     educations: string[];
+    address: string;
   };
 
   type UserProfileData = DBEntry & UserProfileFormData;

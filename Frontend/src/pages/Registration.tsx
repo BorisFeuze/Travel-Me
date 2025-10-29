@@ -66,7 +66,6 @@ const Register = () => {
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
-
       const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>]).{12,}$/;
       if (!passwordRegex.test(password)) {
         throw new Error(
@@ -210,7 +209,7 @@ const Register = () => {
           onClick={toggleRole}
           className={`relative mt-4 cursor-pointer rounded-xl p-4 transition-all duration-300 text-center border-2 font-semibold ${
             isHost
-              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-transparent shadow-lg"
+              ? "bg-linear-to-r from-purple-600 to-indigo-600 text-white border-transparent shadow-lg"
               : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200"
           }`}
         >

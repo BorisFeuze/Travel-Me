@@ -8,8 +8,7 @@ import {
 import { useAuth } from ".";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [allUsers, setAllUsers] = useState<UserProfileFormData[]>([]);
-  const [userProfile, setUserProfile] = useState<UserProfileData[]>([]);
+  const [allUsers, setAllUsers] = useState<UserProfileData[]>([]);
   const { checkSession, setCheckSession } = useAuth();
 
   const getUserProfile = async (id: string) => {

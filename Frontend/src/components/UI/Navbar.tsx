@@ -6,7 +6,7 @@ const Navbar = () => {
   const { signedIn, handleSignOut, user } = useAuth();
   const { allUsers } = useUser();
 
-  const currUserProfile = allUsers.find((u: UserProfileFormData) => {
+  const currUserProfile = allUsers.find((u: UserProfileData) => {
     return u.userId === user?._id;
   });
 
@@ -90,7 +90,7 @@ const Navbar = () => {
 
               {currUserProfile?.pictureURL && (
                 <img
-                  src={currUserProfile.pictureURL[0]}
+                  src={currUserProfile.pictureURL as string}
                   alt="User"
                   className="w-9 h-9 object-cover"
                 />

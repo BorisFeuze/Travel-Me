@@ -10,7 +10,7 @@ const userProfile = new Schema(
     },
     userId: { type: Schema.Types.ObjectId, ref: 'user', required: true, unique: true },
     age: { type: Number, required: [true, 'Age is required'], default: 18 },
-    adresse: { type: String, required: [true, 'adresse is required'] },
+    address: { type: String, required: [true, 'adresse is required'] },
     description: { type: String, required: [true, 'description is required'] },
     continent: { type: String, required: [true, 'Continent is required'] },
     country: { type: String, required: [true, 'Country is required'] },

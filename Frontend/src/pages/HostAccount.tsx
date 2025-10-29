@@ -5,8 +5,9 @@ import {
   getUserDetails,
   getJobOffers,
   updateUserDetails,
+  getSingleUserProfile,
 } from "@/data";
-import { useAuth } from "@/context";
+import { useAuth, useUser } from "@/context";
 import { JobCard } from "@/components/UI";
 
 const HostAccount = () => {
@@ -15,7 +16,7 @@ const HostAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-
+  const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -23,6 +24,8 @@ const HostAccount = () => {
   const [jobOffers, setJobOffers] = useState<JobCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const { getUserProfile } = useUser();
 
   const [saveMessage, setSaveMessage] = useState<{
     text: string;
@@ -41,9 +44,25 @@ const HostAccount = () => {
     skills: [],
     languages: [],
     educations: [],
-    adresse: "",
-    description: "",
   });
+
+  const [profile, setProfile] = useState();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const profile: UserProfileData = await getUserProfile(user?._id ?? "");
+        console.log(profile);
+
+        if (!profile.userProfiles[0]) {
+          console.error("please created a account");
+        }
+        setProfile(profile.userProfiles[0]._id);
+      } catch (error) {}
+    })();
+  }, []);
+
+  console.log(profile);
 
   const skillOptions = [
     "Cooking",
@@ -102,20 +121,29 @@ const HostAccount = () => {
     };
     loadUser();
   }, []);
-
+  console.log(profile);
   //Load job offers
   useEffect(() => {
     if (!user) return;
-
+    console.log();
     const loadJobOffers = async () => {
+      if (!profile) {
+        setError("Invalid userProfile id.");
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       try {
-        const data = await getJobOffers(user._id);
+        const data = await getJobOffers(profile);
+
+        console.log(data);
 
         if (data && Array.isArray(data.jobOffers)) {
           const filteredJobs = data.jobOffers.filter(
-            (job: JobData) => job.userProfileId === user._id
+            (job: JobData) => job.userProfileId === profile
           );
+
+          console.log(filteredJobs);
 
           const mappedJobs: JobCardData[] = filteredJobs.map(
             (job: JobData) => ({
@@ -140,6 +168,8 @@ const HostAccount = () => {
 
     loadJobOffers();
   }, [user]);
+
+  console.log(jobOffers);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -186,7 +216,8 @@ const HostAccount = () => {
       data.append("age", formData.age?.toString() || "");
       data.append("continent", formData.continent);
       data.append("country", formData.country);
-      data.append("description", formData.description || "");
+      data.append("address", formData.address);
+      data.append("description", formData.description);
       data.append("gender", formData.gender);
       formData.educations.forEach((edu) => data.append("educations", edu));
       formData.skills?.forEach((ski) => data.append("skills", ski));
@@ -203,6 +234,8 @@ const HostAccount = () => {
         updatedUser = await updateUserDetails(profileId, data);
       } else {
         updatedUser = await addUserDetails(data);
+
+        console.log(updatedUser);
 
         if (updatedUser?.userProfiles[0]._id) {
           setProfileId(updatedUser.userProfiles[0]._id);
@@ -280,7 +313,7 @@ const HostAccount = () => {
             <textarea
               placeholder="Please introduce yourself as a host and describe your place."
               className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y"
-              value={formData.description || ""}
+              value={formData.description}
               onChange={(e) =>
                 handleInputChange("description", e.target.value as any)
               }
