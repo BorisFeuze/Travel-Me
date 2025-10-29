@@ -41,6 +41,9 @@ declare global {
   };
 
   type UserContextType = {
+    allUsers: UserProfileFormData[];
+    setAllUsers: Dispatch<SetStateAction<UserProfileFormData[]>>;
+    getUserProfile: (id: string) => Promise<void>;
     allUsers: UserProfileData[];
     setAllUsers: Dispatch<SetStateAction<UserProfileData[]>>;
     getUserProfile: (id: string) => Promise<void>;
@@ -52,6 +55,7 @@ declare global {
     age?: number;
     continent: string;
     country: string;
+    address: string;
     gender: string;
     description: string;
     skills: string[];
