@@ -22,7 +22,10 @@ export const getMessages = async (id: string) => {
   return data;
 };
 
-export const sendMessages = async (selectedUserId, messageData) => {
+export const sendMessages = async (
+  selectedUserId: string,
+  messageData: ChatType
+) => {
   const res = await fetch(`${baseURL}/send/${selectedUserId}`, {
     method: "POST",
     headers: {
@@ -36,7 +39,7 @@ export const sendMessages = async (selectedUserId, messageData) => {
   return data;
 };
 
-export const updateNewMessages = async (newMessageId) => {
+export const updateNewMessages = async (newMessageId: string) => {
   const res = await fetch(`${baseURL}/mark/${newMessageId}`, {
     method: "PUT",
   });

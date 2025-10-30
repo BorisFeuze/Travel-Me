@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getJobOfferById, getSingleUser, getSingleUserProfile } from "@/data";
+import { getJobOfferById, getSingleUserProfile } from "@/data";
 import { Calendar02 } from "@/components/UI/Calendar02";
 import { ArrowLeft, ArrowRight, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context";
@@ -10,8 +10,7 @@ const DetailJob = () => {
   const navigate = useNavigate();
   const { user } = useAuth?.() ?? { user: null };
   const [job, setJob] = useState<JobData | null>(null);
-  const [hostProfile, setHostProfile] = useState<UserProfileData[]>([]);
-  const [hostInfo, setHostInfo] = useState<User | null>(null);
+  const [hostProfile, setHostProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState(0);
@@ -50,12 +49,6 @@ const DetailJob = () => {
           setError("userId not found.");
           return;
         }
-
-        if (hostData) {
-          const hostInfo = await getSingleUser(hostData.userProfile.userId._id);
-          // console.log(hostInfo);
-          setHostInfo(hostInfo.user);
-        }
       } catch (e: any) {
         console.error(e);
         setError(e?.message);
@@ -65,8 +58,6 @@ const DetailJob = () => {
     };
     run();
   }, [id]);
-
-  console.log(hostInfo);
 
   const nextImage = () => {
     if (!job?.pictureURL?.length) return;
@@ -109,12 +100,12 @@ const DetailJob = () => {
           <div className="flex flex-col items-center gap-2">
             <div
               className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105 mt-2"
-              onClick={() => navigate(`/host/${hostInfo?._id}`)}
+              onClick={() => navigate(`/host/${hostProfile?.userId?._id}`)}
               title="Go to host profile"
             >
               {hostProfile?.pictureURL ? (
                 <img
-                  src={hostProfile.pictureURL[0] as string}
+                  src={hostProfile.pictureURL as string}
                   alt="Host"
                   className="object-cover w-full h-full"
                 />
@@ -124,8 +115,8 @@ const DetailJob = () => {
             </div>
             <div>
               <h3 className="text-gray-600 text-sm text-center">
-                {hostInfo
-                  ? `${hostInfo?.firstName ?? ""} ${hostInfo?.lastName ?? ""}`.trim()
+                {hostProfile
+                  ? `${hostProfile.userId?.firstName ?? ""} ${hostProfile.userId?.lastName ?? ""}`.trim()
                   : "Host"}
               </h3>
             </div>

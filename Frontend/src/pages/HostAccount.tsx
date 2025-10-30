@@ -5,7 +5,6 @@ import {
   getUserDetails,
   getJobOffers,
   updateUserDetails,
-  getSingleUserProfile,
 } from "@/data";
 import { useAuth, useUser } from "@/context";
 import { JobCard } from "@/components/UI";
@@ -16,8 +15,8 @@ const HostAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | File>();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -88,12 +87,12 @@ const HostAccount = () => {
 
         if (currentUser) {
           const dataCurrentUser = currentUser.userProfiles[0];
-          const currentnUserProfil = dataCurrentUser.pictureURL[0];
+          const currentnUserProfil = dataCurrentUser.pictureURL;
           console.log(currentnUserProfil);
 
           if (currentnUserProfil) {
             setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
-            setPreviewUrl(currentnUserProfil || null);
+            setPreviewUrl(currentnUserProfil);
           }
           if (dataCurrentUser?._id) setProfileId(dataCurrentUser._id);
         }
@@ -110,20 +109,20 @@ const HostAccount = () => {
     const loadJobOffers = async () => {
       setLoading(true);
       try {
-        const profile: UserProfileData = await getUserProfile(user?._id ?? "");
+        const profile = await getUserProfile(user?._id ?? "");
         console.log(profile);
 
-        if (!profile.userProfiles[0]) {
+        if (!profile?.userProfiles[0]) {
           console.error("please created a account");
         }
 
-        const data = await getJobOffers(profile.userProfiles[0]._id);
+        const data = await getJobOffers(profile?.userProfiles[0]._id as string);
 
         // console.log(data);
 
         if (data && Array.isArray(data.jobOffers)) {
           const filteredJobs = data.jobOffers.filter(
-            (job: JobData) => job.userProfileId === profile.userProfiles[0]._id
+            (job: JobData) => job.userProfileId === profile?.userProfiles[0]._id
           );
 
           console.log(filteredJobs);
@@ -248,7 +247,7 @@ const HostAccount = () => {
           <div className="flex flex-col px-6 items-center md:items-start gap-3">
             <div className="relative w-24 h-24">
               <img
-                src={previewUrl || ""}
+                src={previewUrl as string}
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover border border-gray-200"
               />
