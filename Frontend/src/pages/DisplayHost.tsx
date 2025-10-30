@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { MessageSquare } from "lucide-react";
 
 import { getUsers, getUserDetails } from "@/data";
 import { useAuth } from "@/context";
@@ -235,16 +236,13 @@ const DisplayHost = () => {
           </div>
 
           {/* Actions */}
-          <div className="pt-2">
+          <div className="flex  mt-6">
             <button
-              onClick={() =>
-                user
-                  ? navigate(`/chat`)
-                  : navigate(`/login?redirect=/job/${job._id}`)
-              }
-              className="btn btn-primary"
+              onClick={() => (user ? navigate(`/chat`) : navigate(`/login`))}
+              className="flex items-center gap-2 bg-linear-to-r border border-blue-600 cursor-pointer bg-blue-600 hover:bg-white hover:text-blue-700 hover:border-blue text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transition-transform"
             >
-              Chat me directly
+              <MessageSquare className="w-5 h-5" />
+              {user ? "Contact" : "Login to contact"}
             </button>
           </div>
         </div>

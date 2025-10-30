@@ -110,7 +110,6 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
                   key={job._id}
                   className="relative bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition"
                 >
-                  {/* COVER IMAGE */}
                   {job.pictureURL?.length ? (
                     <img
                       src={
@@ -177,12 +176,11 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
               ))}
             </div>
 
-            {/* SEE MORE */}
             {visibleCount < filteredJobs.length && (
               <div className="flex justify-center mt-8">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + 4)}
-                  className="px-4 py-2 text-sm font-medium bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition"
+                  className="px-4 py-2 text-sm font-medium bg-black border text-white border-gray-200 rounded-full shadow-sm hover:bg-gray-50 hover:text-black hover:border-black transition cursor-pointer"
                 >
                   See more...
                 </button>
