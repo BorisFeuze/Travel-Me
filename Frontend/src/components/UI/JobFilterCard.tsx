@@ -118,18 +118,18 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
                           : URL.createObjectURL(job.pictureURL[0] as File)
                       }
                       alt={job.title}
-                      className="h-40 w-full object-cover"
+                      className="h-40 w-full object-cover capitalize"
                     />
                   ) : (
                     <div className="h-40 w-full bg-gray-200" />
                   )}
 
                   <div className="p-4">
-                    <h2 className="text-lg font-semibold text-gray-900 line-clamp-1">
+                    <h2 className="text-lg font-semibold text-gray-900 line-clamp-1 capitalize">
                       {job.title}
                     </h2>
 
-                    <p className="text-sm text-gray-500 mt-2">
+                    <p className="text-sm text-gray-500 mt-2 capitalize">
                       {job.continent && job.country
                         ? `${job.continent}, ${job.country}`
                         : job.country || job.continent}

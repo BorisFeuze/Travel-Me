@@ -26,15 +26,6 @@ const Navbar = () => {
           <Link to="/" className="hover:opacity-80 transition">
             Home
           </Link>
-          <Link to="/explore" className="hover:opacity-80 transition">
-            Explore
-          </Link>
-          <Link to="/about" className="hover:opacity-80 transition">
-            About
-          </Link>
-          <Link to="/contact" className="hover:opacity-80 transition">
-            Contact
-          </Link>
         </nav>
 
         <Link
