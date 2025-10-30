@@ -46,24 +46,6 @@ const HostAccount = () => {
     educations: [],
   });
 
-  const [profile, setProfile] = useState();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const profile: UserProfileData = await getUserProfile(user?._id ?? "");
-        console.log(profile);
-
-        if (!profile.userProfiles[0]) {
-          console.error("please created a account");
-        }
-        setProfile(profile.userProfiles[0]._id);
-      } catch (error) {}
-    })();
-  }, []);
-
-  console.log(profile);
-
   const skillOptions = [
     "Cooking",
     "Teaching",
@@ -121,26 +103,27 @@ const HostAccount = () => {
     };
     loadUser();
   }, []);
-  console.log(profile);
+
   //Load job offers
   useEffect(() => {
     if (!user) return;
-    console.log();
     const loadJobOffers = async () => {
-      if (!profile) {
-        setError("Invalid userProfile id.");
-        setLoading(false);
-        return;
-      }
       setLoading(true);
       try {
-        const data = await getJobOffers(profile);
+        const profile: UserProfileData = await getUserProfile(user?._id ?? "");
+        console.log(profile);
 
-        console.log(data);
+        if (!profile.userProfiles[0]) {
+          console.error("please created a account");
+        }
+
+        const data = await getJobOffers(profile.userProfiles[0]._id);
+
+        // console.log(data);
 
         if (data && Array.isArray(data.jobOffers)) {
           const filteredJobs = data.jobOffers.filter(
-            (job: JobData) => job.userProfileId === profile
+            (job: JobData) => job.userProfileId === profile.userProfiles[0]._id
           );
 
           console.log(filteredJobs);
@@ -222,8 +205,6 @@ const HostAccount = () => {
       formData.educations.forEach((edu) => data.append("educations", edu));
       formData.skills?.forEach((ski) => data.append("skills", ski));
       formData.languages.forEach((lan) => data.append("languages", lan));
-
-      console.log(data);
 
       for (let [key, value] of data.entries()) {
         console.log(key, value);

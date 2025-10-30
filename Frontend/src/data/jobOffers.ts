@@ -49,7 +49,6 @@ export const getJobOfferIds = async (id: string): Promise<string[]> => {
   return data.jobOffers.map((job) => job._id);
 };
 
-
 export const getAllJobOffers = async () => {
   const res = await fetch(`${baseURL}`, {
     method: "GET",
@@ -67,8 +66,7 @@ export const getAllJobOffers = async () => {
 export const updateJobOffers = async (id: string, formData: FormData) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "PUT",
-    body: formData, 
-    
+    body: formData,
   });
 
   if (!res.ok) {
@@ -82,7 +80,9 @@ export const updateJobOffers = async (id: string, formData: FormData) => {
     throw new Error(errorMessage);
   }
 
-  return await res.json();
+  const data: JobOffersResponse = await res.json();
+
+  return data;
 };
 
 export const deleteJobOffer = async (id: string) => {
@@ -104,13 +104,14 @@ export const getJobOfferById = async (id: string) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
-    
   });
 
   if (!res.ok) {
-  const err: unknown = new Error(`Failed to fetch job offer: ${res.statusText}`);
-  throw err;
-}
+    const err: unknown = new Error(
+      `Failed to fetch job offer: ${res.statusText}`
+    );
+    throw err;
+  }
 
   const data: JobOfferDetailResponse = await res.json();
   return data;

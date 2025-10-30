@@ -42,17 +42,17 @@ const DetailJob = () => {
         console.log(jobData.userProfileId);
         const hostData = await getSingleUserProfile(jobData.userProfileId);
 
-        console.log(hostData.userProfiles);
+        console.log(hostData);
 
-        setHostProfile(hostData.userProfiles);
+        setHostProfile(hostData.userProfile);
 
-        if (!hostData.userProfiles[0].userId) {
+        if (!hostData.userProfile.userId) {
           setError("userId not found.");
           return;
         }
 
         if (hostData) {
-          const hostInfo = await getSingleUser(hostData.userProfiles[0].userId);
+          const hostInfo = await getSingleUser(hostData.userProfile.userId._id);
           // console.log(hostInfo);
           setHostInfo(hostInfo.user);
         }
@@ -112,9 +112,9 @@ const DetailJob = () => {
               onClick={() => navigate(`/host/${hostInfo?._id}`)}
               title="Go to host profile"
             >
-              {hostProfile[0]?.pictureURL ? (
+              {hostProfile?.pictureURL ? (
                 <img
-                  src={hostProfile[0].pictureURL[0] as string}
+                  src={hostProfile.pictureURL[0] as string}
                   alt="Host"
                   className="object-cover w-full h-full"
                 />

@@ -155,7 +155,7 @@ const CreateJob = () => {
     setIsSaving(true);
     setSaveMessage(null);
 
-    formData.userProfileId = profile as string;
+    formData.userProfileId = profile;
 
     try {
       const data = new FormData();
