@@ -7,7 +7,7 @@ const VolunteerAccount = () => {
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | File>();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -74,10 +74,10 @@ const VolunteerAccount = () => {
 
         if (currentUser) {
           const dataCurrentUser = currentUser.userProfiles?.[0];
-          const currentnUserProfil = dataCurrentUser?.pictureURL?.[0];
+          const currentnUserProfil = dataCurrentUser?.pictureURL;
           console.log(currentnUserProfil);
           setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
-          setPreviewUrl(currentnUserProfil || null);
+          setPreviewUrl(currentnUserProfil);
         }
       } catch (err) {
         console.error("Failed to load user data", err);
@@ -165,7 +165,7 @@ const VolunteerAccount = () => {
           <div className="flex flex-col px-6 items-center md:items-start gap-3">
             <div className="relative w-24 h-24">
               <img
-                src={previewUrl || ""}
+                src={previewUrl as string}
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover border border-gray-200"
               />

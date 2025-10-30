@@ -7,18 +7,18 @@ import { type DateRange } from "react-day-picker";
 const CreateJob = () => {
   const { user } = useAuth();
   const { getUserProfile } = useUser();
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState<string>();
 
   useEffect(() => {
     (async () => {
       try {
-        const profile: UserProfileData = await getUserProfile(user?._id ?? "");
+        const profile = await getUserProfile(user?._id ?? "");
         console.log(profile);
 
-        if (!profile.userProfiles[0]) {
+        if (!profile?.userProfiles[0]) {
           console.error("please created a account");
         }
-        setProfile(profile.userProfiles[0]._id);
+        setProfile(profile?.userProfiles[0]._id);
       } catch (error) {}
     })();
   }, []);
@@ -358,7 +358,7 @@ const CreateJob = () => {
           </label>
           <div className="relative mb-4">
             <details
-              ref={(el) => (dropdownRefs.current[0] = el)}
+              ref={(el) => {(dropdownRefs.current[0] = el)}}
               className="dropdown dropdown-top w-full"
               onClick={() => handleDropdownToggle(0)}
             >
@@ -409,7 +409,7 @@ const CreateJob = () => {
           </label>
           <div className="relative mb-6">
             <details
-              ref={(el) => (dropdownRefs.current[1] = el)}
+              ref={(el) => {(dropdownRefs.current[1] = el)}}
               className="dropdown dropdown-top w-full"
               onClick={() => handleDropdownToggle(1)}
             >

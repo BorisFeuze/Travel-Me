@@ -42,11 +42,7 @@ declare global {
 
   type UserContextType = {
     allUsers: UserProfileFormData[];
-    setAllUsers: Dispatch<SetStateAction<UserProfileFormData[]>>;
-    getUserProfile: (id: string) => Promise<void>;
-    allUsers: UserProfileData[];
-    setAllUsers: Dispatch<SetStateAction<UserProfileData[]>>;
-    getUserProfile: (id: string) => Promise<void>;
+    getUserProfile: (id: string) => Promise<UserProfilesResponse | null>;
   };
 
   type UserProfileFormData = {
@@ -61,7 +57,6 @@ declare global {
     skills: string[];
     languages: string[];
     educations: string[];
-    address: string;
   };
 
   type UserProfileData = DBEntry & UserProfileFormData;
@@ -93,18 +88,29 @@ declare global {
     location: string;
   };
 
-  type ChatType = {
+  type ChatInputType = {
     image?: string;
     message?: string;
     receiverId: string;
     senderId: string;
     seen: boolean;
-    createdAt: Date;
   };
+
+  type ChatType = DBEntry & ChatInputType;
 
   type Socket = {
     connected: boolean;
     disconnect: () => Promise<void>;
+  };
+
+  type UserProfilesResponse = {
+    message: string;
+    userProfiles: UserProfileData[];
+  };
+
+  type UserProfileResp = {
+    message: string;
+    userProfile: UserProfileData;
   };
 
   type SuccessRes = { message: string };
