@@ -291,7 +291,7 @@ const CreateJob = () => {
           </label>
           <input
             type="text"
-            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition capitalize"
             placeholder="Enter title"
             value={formData.title}
             onChange={(e) => handleInputChange("title", e.target.value)}
@@ -305,7 +305,7 @@ const CreateJob = () => {
           </label>
           <input
             type="text"
-            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition capitalize"
             placeholder="Enter continent"
             value={formData.continent}
             onChange={(e) => handleInputChange("continent", e.target.value)}
@@ -319,7 +319,7 @@ const CreateJob = () => {
           </label>
           <input
             type="text"
-            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition capitalize"
             placeholder="Enter country"
             value={formData.country}
             onChange={(e) => handleInputChange("country", e.target.value)}
@@ -333,7 +333,7 @@ const CreateJob = () => {
           </label>
           <input
             type="text"
-            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition capitalize"
             placeholder="Enter location"
             value={formData.location}
             onChange={(e) => handleInputChange("location", e.target.value)}
@@ -346,7 +346,7 @@ const CreateJob = () => {
             </span>
           </label>
           <textarea
-            className="textarea textarea-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
+            className="textarea textarea-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition capitalize"
             placeholder="Enter job description"
             value={formData.description}
             onChange={(e) => handleInputChange("description", e.target.value)}

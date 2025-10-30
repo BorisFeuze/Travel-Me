@@ -293,7 +293,7 @@ const HostAccount = () => {
             </label>
             <textarea
               placeholder="Please introduce yourself as a host and describe your place."
-              className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y"
+              className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y capitalize"
               value={formData.description}
               onChange={(e) =>
                 handleInputChange("description", e.target.value as any)
@@ -417,7 +417,7 @@ const HostAccount = () => {
                 <input
                   type="text"
                   placeholder="Enter your country"
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 capitalize"
                   value={formData.country}
                   onChange={(e) => handleInputChange("country", e.target.value)}
                 />
@@ -428,7 +428,7 @@ const HostAccount = () => {
                 <input
                   type="text"
                   placeholder="Enter your address"
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 capitalize"
                   value={formData.address}
                   onChange={(e) => handleInputChange("address", e.target.value)}
                 />
@@ -440,7 +440,7 @@ const HostAccount = () => {
                   type="text"
                   placeholder="Enter your continent"
                   title="Continent"
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 capitalize"
                   value={formData.continent}
                   onChange={(e) =>
                     handleInputChange("continent", e.target.value)
