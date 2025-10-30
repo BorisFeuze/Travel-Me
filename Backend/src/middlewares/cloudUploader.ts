@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import type { RequestHandler } from 'express';
 import { CLOUD_NAME, API_KEY, API_SECRET } from '#config';
+import { fileURLToPath } from 'node:url';
 
 cloudinary.config({
   cloud_name: CLOUD_NAME,
@@ -15,7 +16,9 @@ const cloudUploader: RequestHandler = async (request, response, next) => {
 
   if (!fileArray) throw new Error('please upload the pictures', { cause: { status: 400 } });
 
-  for (const file of fileArray) {
+  const files = Array.isArray(fileArray) ? fileArray : [fileArray];
+
+  for (const file of files) {
     const results = await cloudinary.uploader.upload(file.filepath);
 
     uploadedFiles.push(results.secure_url);

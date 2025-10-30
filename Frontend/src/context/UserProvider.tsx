@@ -1,10 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { UserContext } from ".";
-import {
-  getAllUserProfiles,
-  getSingleUserProfile,
-  getUserDetails,
-} from "@/data";
+import { getAllUserProfiles, getUserDetails } from "@/data";
 import { useAuth } from ".";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -35,7 +31,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value: UserContextType = {
     allUsers,
-    setAllUsers,
     getUserProfile,
   };
 
