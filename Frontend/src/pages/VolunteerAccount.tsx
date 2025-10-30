@@ -165,7 +165,10 @@ const VolunteerAccount = () => {
           <div className="flex flex-col px-6 items-center md:items-start gap-3">
             <div className="relative w-24 h-24">
               <img
-                src={previewUrl || ""}
+                src={
+                  previewUrl ||
+                  "https://static.vecteezy.com/ti/vetor-gratis/p1/9292244-default-avatar-icon-vector-of-social-media-user-vetor.jpg"
+                }
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover border border-gray-200"
               />
