@@ -155,8 +155,17 @@ const DetailJob = () => {
             </button>
           </div>
         )}
+        <div className="flex justify-end  mt-6">
+          <button
+            onClick={() => (user ? navigate(`/chat`) : navigate(`/login`))}
+            className="flex items-center gap-2 bg-linear-to-r border border-blue-600 cursor-pointer bg-blue-600 hover:bg-white hover:text-blue-700 hover:border-blue text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transition-transform"
+          >
+            <MessageSquare className="w-5 h-5" />
+            {user ? "Contact" : "Login to contact"}
+          </button>
+        </div>
 
-        <div className="flex justify-end mt-6">
+        {/* <div className="flex justify-end mt-6">
           <button
             onClick={() =>
               user
@@ -168,7 +177,7 @@ const DetailJob = () => {
             <MessageSquare className="w-5 h-5" />
             {user ? "Contact" : "Login to contact"}
           </button>
-        </div>
+        </div> */}
 
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-800 mb-2 text-left">
