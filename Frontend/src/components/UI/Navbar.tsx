@@ -96,7 +96,7 @@ const Sidebar = () => {
 
             <div className="flex-1">
               <p className="text-sm font-semibold text-gray-800">
-                {user?.name || "User"}
+                {user?.firstName || "User"}
               </p>
               <button
                 onClick={handleSignOut}
