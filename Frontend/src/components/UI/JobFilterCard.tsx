@@ -15,7 +15,7 @@ type JobOffersListProps = {
 };
 
 const JobFilterCard = ({ initial }: JobOffersListProps) => {
-  const [jobs, setJobs] = useState<JobFormData[]>([]);
+  const [jobs, setJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({

@@ -1,5 +1,6 @@
-// src/layouts/RootLayout.tsx
 import { Outlet, useLocation } from "react-router";
+
+import { ToastContainer } from "react-toastify";
 import { AuthProvider, UserProvider } from "@/context";
 import Navbar from "@/components/UI/Navbar";
 import RightPanel from "@/components/UI/RightPanel";
@@ -20,6 +21,11 @@ const RootLayout = () => {
         >
           {/* Sidebar */}
           <aside className="bg-white border-r border-gray-200 overflow-y-auto">
+            <ToastContainer
+              position="bottom-right"
+              autoClose={1500}
+              theme="colored"
+            />
             <Navbar />
           </aside>
 

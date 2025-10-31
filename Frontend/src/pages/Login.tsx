@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context";
-import { validateSignIn } from "@/utils";
 
 type LoginFormState = {
   email: string;
@@ -28,20 +27,19 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const validationErrors = validateSignIn({ email, password });
-    if (Object.keys(validationErrors).length !== 0) {
-      return { error: validationErrors, success: false };
-    }
     try {
+      if (!email || !password) throw new Error("All fields are required");
+
       setLoading(true);
 
       await handleSignIn({ email, password });
 
       toast.success("Login successfully");
       navigate("/");
-    } catch (error: unknown) {
-      const message = (error as { message: string }).message;
-      toast.error(message);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong!";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

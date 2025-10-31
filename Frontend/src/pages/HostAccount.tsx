@@ -8,6 +8,7 @@ import {
 } from "@/data";
 import { useAuth, useUser } from "@/context";
 import { JobCard } from "@/components/UI";
+import { toast } from "react-toastify";
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -21,12 +22,12 @@ const HostAccount = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [jobOffers, setJobOffers] = useState<JobCardData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setOpenDropdown] = useState<string | null>(null);
 
   const { getUserProfile } = useUser();
 
-  const [saveMessage, setSaveMessage] = useState<{
+  const [, setSaveMessage] = useState<{
     text: string;
     type: "success" | "error";
   } | null>(null);
@@ -88,7 +89,7 @@ const HostAccount = () => {
         if (currentUser) {
           const dataCurrentUser = currentUser.userProfiles[0];
           const currentnUserProfil = dataCurrentUser.pictureURL;
-          console.log(currentnUserProfil);
+          // console.log(currentnUserProfil);
 
           if (currentnUserProfil) {
             setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
@@ -110,7 +111,7 @@ const HostAccount = () => {
       setLoading(true);
       try {
         const profile = await getUserProfile(user?._id ?? "");
-        console.log(profile);
+        // console.log(profile);
 
         if (!profile?.userProfiles[0]) {
           console.error("please created a account");
@@ -125,7 +126,7 @@ const HostAccount = () => {
             (job: JobData) => job.userProfileId === profile?.userProfiles[0]._id
           );
 
-          console.log(filteredJobs);
+          // console.log(filteredJobs);
 
           const mappedJobs: JobCardData[] = filteredJobs.map(
             (job: JobData) => ({
@@ -151,7 +152,7 @@ const HostAccount = () => {
     loadJobOffers();
   }, [user]);
 
-  console.log(jobOffers);
+  // console.log(jobOffers);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -173,12 +174,22 @@ const HostAccount = () => {
   };
 
   const handleSave = async () => {
-    if (!formData.continent || !formData.country || !formData.gender) {
+    if (
+      !formData.continent ||
+      !formData.country ||
+      !formData.gender ||
+      !formData.address ||
+      !formData.age ||
+      !formData.description ||
+      !formData.educations ||
+      !formData.skills ||
+      !formData.languages
+    ) {
       setSaveMessage({
         text: "Please fill all required fields.",
         type: "error",
       });
-      return;
+      throw new Error("All fields are required");
     }
 
     setIsSaving(true);
@@ -205,10 +216,6 @@ const HostAccount = () => {
       formData.skills?.forEach((ski) => data.append("skills", ski));
       formData.languages.forEach((lan) => data.append("languages", lan));
 
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
-
       let updatedUser;
       if (profileId) {
         updatedUser = await updateUserDetails(profileId, data);
@@ -224,11 +231,15 @@ const HostAccount = () => {
 
       // const updatedUser = await addUserDetails(data);
 
-      console.log(updatedUser);
+      // console.log(updatedUser);
+
+      toast.success("Your Host Profile is successfully created");
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong!";
+      toast.error(errorMessage);
       setSaveMessage({ text: "Error while saving changes.", type: "error" });
     } finally {
       setIsSaving(false);
@@ -302,7 +313,7 @@ const HostAccount = () => {
         </section>
 
         {/* 2-COLUMN DASHBOARD GRID */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section className="grid grid-cols-1 justify-center lg:grid-cols-2 gap-6">
           {/* --- Basic Information --- */}
           <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 flex flex-col gap-4">
             <div>
@@ -564,42 +575,18 @@ const HostAccount = () => {
             </select>
           </div>
 
-          {/* --- Job Offers --- */}
+          {/* --- Add Job Offers --- */}
           <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 flex flex-col gap-4">
             <div>
               <h3 className="text-base font-semibold text-gray-900">
-                Job Offers
+                Add Job Offers
               </h3>
               <p className="text-sm text-gray-500">
                 Current opportunities you've received
               </p>
             </div>
 
-            {/* Job Offers List */}
-            {/* {loading ? (
-                <p className="text-gray-500 text-sm">Loading your offers…</p>
-              ) : (
-                <div className="space-y-4">
-                  {jobOffers.slice(0, 2).map((job) => (
-                    <div
-                      key={job._id}
-                      className="rounded-xl border border-gray-200 p-4 flex flex-col gap-2"
-                    >
-                      <div className="text-sm font-semibold text-gray-900">
-                        {job.title}
-                      </div>
-                      <div className="text-sm text-gray-600">{job.location}</div>
-
-                      <button
-                        className="w-full text-center rounded-lg bg-black text-white text-sm font-medium py-2 hover:bg-gray-800"
-                        onClick={() => navigate(`/job/${job._id}`)}
-                      >
-                        View Details
-                      </button>
-                    </div>
-                  ))}
-
-                  {/* Add job card */}
+            {/* Add job card */}
             <div
               onClick={() => navigate("/create-job")}
               className="cursor-pointer border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center py-8 hover:bg-gray-50 transition"
@@ -623,13 +610,25 @@ const HostAccount = () => {
               </p>
             </div>
           </div>
+
+          {/* Save Button under the grid */}
+          <div className="col-span-full w-full flex items-center justify-center mt-4 mb-4">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-xl bg-black px-8 py-3 text-white text-sm font-medium shadow-sm hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-black/20 disabled:opacity-50"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
         </section>
 
         {/* Job Offers — responsive grid */}
         <section className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
           <h2 className="text-xl font-semibold mb-4">Your Job Offers</h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 mt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
             {jobOffers.map((job) => (
               <JobCard
                 key={job._id}
@@ -663,17 +662,6 @@ const HostAccount = () => {
             </div> */}
           </div>
         </section>
-
-        {/* Save Button under the grid */}
-        <div className="flex justify-center">
-          <button
-            className="inline-flex items-center justify-center rounded-xl bg-black px-8 py-3 text-white text-sm font-medium shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black/20 disabled:opacity-50"
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            {isSaving ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
       </div>
     </div>
   );

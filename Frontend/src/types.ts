@@ -41,7 +41,7 @@ declare global {
   };
 
   type UserContextType = {
-    allUsers: UserProfileFormData[];
+    allUsers: UserProfileData[];
     getUserProfile: (id: string) => Promise<UserProfilesResponse | null>;
   };
 
@@ -91,12 +91,14 @@ declare global {
   type ChatInputType = {
     image?: string;
     message?: string;
-    receiverId: string;
-    senderId: string;
-    seen: boolean;
   };
 
-  type ChatType = DBEntry & ChatInputType;
+  type ChatType = DBEntry &
+    ChatInputType & {
+      receiverId: string;
+      senderId: string;
+      seen: boolean;
+    };
 
   type Socket = {
     connected: boolean;
@@ -106,6 +108,10 @@ declare global {
   type UserProfilesResponse = {
     message: string;
     userProfiles: UserProfileData[];
+  };
+
+  type ChatsResponse = {
+    chats: ChatType[];
   };
 
   type UserProfileResp = {

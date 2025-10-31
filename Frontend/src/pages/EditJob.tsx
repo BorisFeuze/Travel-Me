@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getJobOffers, updateJobOffers, deleteJobOffer } from "@/data";
 import { useAuth, useUser } from "@/context";
 import { Calendar02 } from "@/components/UI/Calendar02";
+import { toast } from "react-toastify";
 
 const EditJob = () => {
   const { id } = useParams<{ id: string }>();
@@ -97,10 +98,12 @@ const EditJob = () => {
           return;
         }
 
-        if (!profile.userProfiles[0]) {
+        if (!profile?.userProfiles[0]) {
           console.error("please created a account");
         }
-        const response = await getJobOffers(profile.userProfiles[0]._id);
+        const response = await getJobOffers(
+          profile?.userProfiles[0]._id as string
+        );
         if (!response?.jobOffers || response.jobOffers.length === 0) {
           setError("No job offers found.");
           return;
@@ -168,23 +171,23 @@ const EditJob = () => {
       data.append("description", job.description);
       data.append("userProfileId", job.userProfileId);
       (job.needs || []).forEach((need) => data.append("needs", need));
-      (job.languages || []).forEach((lang) => data.append("languages", lang));      
+      (job.languages || []).forEach((lang) => data.append("languages", lang));
       data.append("availability", JSON.stringify(availabilityParsed));
 
       const existingUrls = previewUrls.filter(
         (url) => typeof url === "string"
       ) as string[];
-      
+
       const newFiles = previewUrls.filter(
         (url) => url instanceof File
       ) as File[];
 
       // Sende bestehende URLs als JSON-String
       if (existingUrls.length > 0) {
-      existingUrls.forEach(url => {
-        data.append("existingPictureURLs", url);
-      });
-    }
+        existingUrls.forEach((url) => {
+          data.append("existingPictureURLs", url);
+        });
+      }
 
       // Sende neue Files als Files
       newFiles.forEach((file) => {
@@ -202,7 +205,7 @@ const EditJob = () => {
 
       // load job data new
       const updatedResponse = await getJobOffers(user._id);
-      
+
       const updatedJob = updatedResponse?.jobOffers?.find(
         (j: JobData) => j._id === id
       );
@@ -210,7 +213,11 @@ const EditJob = () => {
         setJob(updatedJob);
         setPreviewUrls(updatedJob.pictureURL || []);
       }
+      toast.success("Your Jod Offer is successfully updated");
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error updating job offer!";
+      toast.error(errorMessage);
       console.error("Error updating job offer:", error);
       setSaveMessage({
         type: "error",
@@ -235,7 +242,11 @@ const EditJob = () => {
       setSaveMessage({ type: "success", text: "Job offer got deleted!" });
       setJob(null);
       setPreviewUrls([]);
+      toast.success("The Jod Offer is deleted");
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error deleting job offer!";
+      toast.error(errorMessage);
       console.error("Error deleting job offer:", error);
       setSaveMessage({
         type: "error",
@@ -277,7 +288,7 @@ const EditJob = () => {
                       : URL.createObjectURL(previewUrls[currentImage])
                   }
                   alt="Job Image"
-                  className="h-[40rem] w-auto object-cover"
+                  className="h-160 w-auto object-cover"
                 />
                 <button
                   onClick={prevImage}

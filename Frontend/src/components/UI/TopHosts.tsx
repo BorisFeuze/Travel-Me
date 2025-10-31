@@ -1,4 +1,4 @@
-import { type User } from "@/library/usersMock";
+// import { type User } from "@/library/usersMock";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getUsers } from "@/data";
@@ -9,8 +9,8 @@ type HostSummary = {
   firstName: string;
   email: string;
 };
-const initials = (u: User) =>
-  `${u.firstName?.[0] ?? ""}${u.lastName?.[0] ?? ""}`.toUpperCase();
+// const initials = (u: User) =>
+//   `${u.firstName?.[0] ?? ""}${u.lastName?.[0] ?? ""}`.toUpperCase();
 
 const TopHosts = () => {
   const [displayedHosts, setDisplayedHosts] = useState<HostSummary[]>([]);

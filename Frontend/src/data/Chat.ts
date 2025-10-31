@@ -17,14 +17,14 @@ export const getMessages = async (id: string) => {
     method: "GET",
   });
   if (!res.ok) throw new Error("Failed to get the Messages");
-  const data = await res.json();
+  const data: ChatsResponse = await res.json();
   // console.log(data);
   return data;
 };
 
 export const sendMessages = async (
   selectedUserId: string,
-  messageData: ChatType
+  messageData: ChatInputType
 ) => {
   const res = await fetch(`${baseURL}/send/${selectedUserId}`, {
     method: "POST",
@@ -34,7 +34,7 @@ export const sendMessages = async (
     body: JSON.stringify(messageData),
   });
   if (!res.ok) throw new Error("Failed to send the Message");
-  const data = await res.json();
+  const data: ChatType = await res.json();
   // console.log(data);
   return data;
 };

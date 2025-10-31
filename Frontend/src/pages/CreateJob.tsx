@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { addJobOffers } from "@/data/jobOffers";
 import { useAuth, useUser } from "@/context";
 import { Calendar02 } from "@/components/UI/Calendar02";
-import { type DateRange } from "react-day-picker";
+import { toast } from "react-toastify";
 
 const CreateJob = () => {
   const { user } = useAuth();
@@ -19,9 +19,11 @@ const CreateJob = () => {
           console.error("please created a account");
         }
         setProfile(profile?.userProfiles[0]._id);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     })();
-  }, []);
+  }, [user?._id, getUserProfile]);
 
   console.log(profile);
 
@@ -35,7 +37,7 @@ const CreateJob = () => {
     description: "",
     needs: [],
     languages: [],
-    availability: [] as DateRange[],
+    availability: [],
   });
 
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -144,18 +146,26 @@ const CreateJob = () => {
 
   // Save the job offer
   const handleSave = async () => {
-    if (!formData.location || !formData.description) {
+    if (
+      !formData.location ||
+      !formData.description ||
+      !formData.title ||
+      !formData.country ||
+      !formData.needs ||
+      !formData.languages
+    ) {
       setSaveMessage({
         text: "Please fill all required fields.",
         type: "error",
       });
-      return;
+      throw new Error("All fields are required");
     }
 
     setIsSaving(true);
     setSaveMessage(null);
 
-    formData.userProfileId = profile;
+    if (!profile) throw new Error("please save you profile");
+    formData.userProfileId = profile ?? "";
 
     try {
       const data = new FormData();
@@ -171,10 +181,6 @@ const CreateJob = () => {
       formData.languages.forEach((lang) => data.append("languages", lang));
       data.append("availability", JSON.stringify(formData.availability));
       formData.pictureURL.forEach((file) => data.append("pictureURL", file));
-
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
 
       await addJobOffers(data);
 
@@ -193,8 +199,11 @@ const CreateJob = () => {
       });
       setPreviewUrls([]);
       setCurrentIndex(0);
-    } catch (err) {
-      console.error(err);
+      toast.success("Your Job Offer is successfully created");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong!";
+      toast.error(errorMessage);
       setSaveMessage({
         text: "Error while creating job offer.",
         type: "error",
@@ -358,7 +367,9 @@ const CreateJob = () => {
           </label>
           <div className="relative mb-4">
             <details
-              ref={(el) => {(dropdownRefs.current[0] = el)}}
+              ref={(el) => {
+                dropdownRefs.current[0] = el;
+              }}
               className="dropdown dropdown-top w-full"
               onClick={() => handleDropdownToggle(0)}
             >
@@ -409,7 +420,9 @@ const CreateJob = () => {
           </label>
           <div className="relative mb-6">
             <details
-              ref={(el) => {(dropdownRefs.current[1] = el)}}
+              ref={(el) => {
+                dropdownRefs.current[1] = el;
+              }}
               className="dropdown dropdown-top w-full"
               onClick={() => handleDropdownToggle(1)}
             >
@@ -463,7 +476,15 @@ const CreateJob = () => {
               multiRange={true}
               selectedRanges={formData.availability}
               onMultiRangeSelect={(ranges) =>
-                handleInputChange("availability", ranges)
+                handleInputChange(
+                  "availability",
+                  ranges
+                    .filter(
+                      (r): r is { from: Date; to: Date } =>
+                        r.from !== undefined && r.to !== undefined
+                    )
+                    .map((r) => ({ from: r.from, to: r.to }))
+                )
               }
             />
 

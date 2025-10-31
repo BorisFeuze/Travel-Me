@@ -24,7 +24,7 @@ const formMiddleWare: RequestHandler = (request, response, next) => {
       // console.log(files);
 
       const uploadedFiles = files.pictureURL || files.newPictures;
-      
+
       // if (request.method === 'POST' && !uploadedFiles) {
       //   throw new Error('Please upload a file', { cause: { status: 400 } });
       // }
