@@ -13,7 +13,7 @@ const Chat = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [chatUsers, setChatUsers] = useState<User[]>([]);
   const [messages, setMessages] = useState<ChatType[]>([]);
-  const [unseenMessages, setUnseenMessages] = useState({});
+  const [, setUnseenMessages] = useState({});
   const { /*socket,*/ user, onlineUsers } = useAuth();
 
   useEffect(() => {
@@ -34,8 +34,8 @@ const Chat = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await getMessages(selectedUser?._id);
-        console.log("Data", data);
+        const data = await getMessages(selectedUser?._id as string);
+        // console.log("Data", data);
         if (data) {
           setMessages(data.chats);
         }
@@ -45,14 +45,17 @@ const Chat = () => {
     })();
   }, [messages]);
 
-  const sendMessage = async (selectedUserId: string, message: string) => {
+  const sendMessage = async (
+    selectedUserId: string,
+    messageData: ChatInputType
+  ) => {
     try {
-      const data = await sendMessages(selectedUserId, message);
-      console.log("Data", data);
+      const data = await sendMessages(selectedUserId, messageData);
+      // console.log("Data", data);
       if (data) {
         setMessages((prev) => [...prev, data]);
       } else {
-        console.error(data.message);
+        console.error(data);
       }
     } catch (error) {
       console.error(error);
@@ -94,17 +97,17 @@ const Chat = () => {
       >
         <Sidebar
           users={chatUsers}
-          unseenMessages={unseenMessages}
-          selectedUser={selectedUser}
+          // unseenMessages={unseenMessages}
+          selectedUser={selectedUser!}
           setSelectedUser={setSelectedUser}
         />
         <ChatContainer
-          selectedUser={selectedUser}
+          selectedUser={selectedUser!}
           setSelectedUser={setSelectedUser}
           messages={messages}
           sendMessage={sendMessage}
           onlineUsers={onlineUsers}
-          user={user}
+          user={user!}
         />
       </div>
     </div>

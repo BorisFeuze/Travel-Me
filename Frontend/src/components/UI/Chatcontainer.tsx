@@ -18,18 +18,14 @@ import { getUserDetails } from "@/data";
 
 type ChatContainerType = {
   selectedUser: User;
-  setSelectedUser: Dispatch<SetStateAction<User>>;
-  messages: Chat[];
+  setSelectedUser: Dispatch<SetStateAction<User | null>>;
+  messages: ChatType[];
   sendMessage: (
     selectedUserId: string,
-    { message }: { message: string }
+    messageData: ChatInputType
   ) => Promise<void>;
   onlineUsers: string[];
   user: User;
-};
-
-type DataType = {
-  userProfiles?: UserProfileFormData[];
 };
 
 const ChatContainer = ({
@@ -40,19 +36,19 @@ const ChatContainer = ({
   onlineUsers,
   user,
 }: ChatContainerType) => {
-  const scrollEnd = useRef();
+  const scrollEnd = useRef<HTMLDivElement | null>(null);
   const [input, setInput] = useState("");
-  const [info, setInfo] = useState<UserProfileFormData | null>(null);
-  const [userInfo, setUserInfo] = useState([]);
-  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<UserProfileData | null>(null);
+  const [userInfo, setUserInfo] = useState<UserProfileData | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const { userProfiles } = await getUserDetails(selectedUser?._id);
+        const data = await getUserDetails(selectedUser?._id);
 
-        if (userProfiles) {
-          const userInfo = userProfiles[0];
+        if (data) {
+          const userInfo = data.userProfiles[0];
 
           // console.log(userInfo);
 
@@ -64,8 +60,8 @@ const ChatContainer = ({
     })();
   }, [selectedUser]);
 
-  console.log(selectedUser);
-  console.log(user);
+  // console.log(selectedUser);
+  // console.log(user);
 
   useEffect(() => {
     (async () => {
@@ -73,7 +69,7 @@ const ChatContainer = ({
         const data = await getUserDetails(user?._id);
 
         if (data) {
-          console.log(data);
+          // console.log(data);
 
           const userInfo = data.userProfiles[0];
 
@@ -87,16 +83,18 @@ const ChatContainer = ({
     })();
   }, [messages]);
 
-  console.log(messages);
-  console.log(userInfo);
-
   // Handle sending a message
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = async (
+    e:
+      | React.MouseEvent<HTMLImageElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ): Promise<null | undefined> => {
     e.preventDefault();
     if (input.trim() === "") return null;
-    console.log(selectedUser._id);
-    console.log(input);
-    await sendMessage(selectedUser?._id, { message: input.trim() });
+    // console.log(input);
+    await sendMessage(selectedUser?._id, {
+      message: input.trim(),
+    });
     setInput("");
   };
 
@@ -117,7 +115,9 @@ const ChatContainer = ({
 
   useEffect(() => {
     if (scrollEnd.current && messages) {
-      scrollEnd.current.scrollIntoView({ behavior: "smooth" });
+      scrollEnd.current?.lastElementChild?.scrollIntoView({
+        behavior: "smooth",
+      });
     }
   }, [messages]);
 
@@ -126,7 +126,7 @@ const ChatContainer = ({
       {/*-------header-------*/}
       <div className="flex items-center gap-3 py-3 mx-4 border-b border-stone-500">
         <img
-          src={info?.pictureURL || avatar_icon}
+          src={(info?.pictureURL || avatar_icon) as string}
           alt=""
           className="w-8 rounded-full"
         />
@@ -154,9 +154,9 @@ const ChatContainer = ({
             <div className="text-center text-xs">
               <img
                 src={
-                  msg.senderId === user?._id
+                  (msg.senderId === user?._id
                     ? userInfo?.pictureURL || avatar_icon
-                    : info?.pictureURL || avatar_icon
+                    : info?.pictureURL || avatar_icon) as string
                 }
                 alt=""
                 className="w-7 rounded-full"
@@ -188,7 +188,9 @@ const ChatContainer = ({
           <input
             onChange={(e) => setInput(e.target.value)}
             value={input}
-            onKeyDown={(e) => (e.key === "Enter" ? handleSendMessage(e) : null)}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+              e.key === "Enter" ? handleSendMessage(e) : null
+            }
             type="text"
             placeholder="Send a message"
             className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-black

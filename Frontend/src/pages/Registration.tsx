@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context";
-import { validateRegistration } from "@/utils";
 
 type Role = "volunteer" | "host";
 
@@ -50,19 +49,16 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const validationErrors = validateRegistration({
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword,
-      phoneNumber,
-    });
-    if (Object.keys(validationErrors).length !== 0) {
-      return { error: validationErrors, success: false };
-    }
-
     try {
+      if (
+        !firstName ||
+        !lastName ||
+        !email ||
+        !password ||
+        !confirmPassword ||
+        !phoneNumber
+      )
+        throw new Error("All fields are required");
       if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
@@ -87,11 +83,10 @@ const Register = () => {
 
       toast.success("Successfully registered!");
       navigate("/login");
-    } catch (error: unknown) {
-      const message =
-        (error as { message: string }).message ?? "Registration failed";
-      toast.error(message);
-      console.error(error);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong!";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
