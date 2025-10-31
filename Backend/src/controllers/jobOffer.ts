@@ -61,27 +61,53 @@ export const getSingleJobOffer: RequestHandler<{ id: string }, JobOfferType> = a
 };
 
 export const updateJobOffer: RequestHandler<{ id: string }, JobOfferType, JobOfferInputDTO> = async (req, res) => {
+
   const {
     params: { id },
-    body: { title, continent, country, location, userProfileId, pictureURL, description, needs, languages },
+    body: { title, continent, country, location, pictureURL, userProfileId, description, needs, languages },
     jobOffer
   } = req;
 
-  const [{ from, to } = {} as AvailabilityType] = req.body.availability ?? [];
+  const existingPictureURLs = (req.body as any).existingPictureURLs;
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   if (!jobOffer) throw new Error(`jobOffer with id of ${id} doesn't exist`, { cause: 404 });
+
+  let pictureURLs: string[] = [];
+
+  if (existingPictureURLs) {
+    try {
+      const existing = typeof existingPictureURLs === 'string' 
+        ? JSON.parse(existingPictureURLs) 
+        : existingPictureURLs;
+      pictureURLs = Array.isArray(existing) ? existing : [];
+    } catch (e) {
+      console.error('Error parsing existingPictureURLs:', e);
+    }
+  }
+
+  if (req.body.pictureURL && Array.isArray(req.body.pictureURL)) {
+    const newUrls = req.body.pictureURL;
+    pictureURLs = [...pictureURLs, ...newUrls];
+  }
 
   jobOffer.title = title;
   jobOffer.continent = continent;
   jobOffer.country = country;
   jobOffer.location = location;
   jobOffer.userProfileId = userProfileId as Types.ObjectId;
-  jobOffer.pictureURL = pictureURL || [];
+  jobOffer.pictureURL = pictureURLs;
   jobOffer.description = description;
   jobOffer.needs = needs || [];
   jobOffer.languages = languages || [];
-  jobOffer.availability.push({ from: from, to: to });
+
+  if (Array.isArray(req.body.availability)) {
+    jobOffer.availability.splice(0, jobOffer.availability.length, ...req.body.availability);
+  } else if (req.body.availability) {
+    jobOffer.availability.splice(0, jobOffer.availability.length, req.body.availability);
+  } else {
+    jobOffer.availability.splice(0, jobOffer.availability.length); 
+  }
 
   await jobOffer.save();
 
