@@ -14,8 +14,12 @@ const cloudUploader: RequestHandler = async (request, response, next) => {
 
   const fileArray = request.pictureURL;
 
-  if (!fileArray) throw new Error('please upload the pictures', { cause: { status: 400 } });
+  // if (!fileArray) throw new Error('please upload the pictures', { cause: { status: 400 } });
 
+  if (!fileArray) {
+    return next();
+  }
+  
   const files = Array.isArray(fileArray) ? fileArray : [fileArray];
 
   for (const file of files) {
