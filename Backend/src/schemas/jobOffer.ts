@@ -76,6 +76,10 @@ export const jobOfferInputSchema = z.strictObject({
   availability: z.preprocess(coerceAvailabilityArray, z.array(availabilityItemSchema)).optional()
 });
 
+  export const jobOfferUpdateSchema = jobOfferInputSchema.extend({
+    existingPictureURLs: z.array(z.string()).optional(),
+  }).partial();
+
 export const jobOfferSchema = z.strictObject({
   ...jobOfferInputSchema.shape,
   ...dbEntrySchema.shape
