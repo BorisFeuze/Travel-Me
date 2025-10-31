@@ -1,105 +1,124 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useAuth, useUser } from "@/context";
 import logo from "../../assets/images/pngwing.com.png";
 
-const Navbar = () => {
+const Sidebar = () => {
   const { signedIn, handleSignOut, user } = useAuth();
   const { allUsers } = useUser();
+  const location = useLocation();
 
   const currUserProfile = allUsers.find((u: UserProfileData) => {
     return u.userId === user?._id;
   });
 
-  return (
-    <header className="fixed top-0 left-0 w-full z-50">
-      <div
-        className="max-w-400 mx-auto mt-3
-                   flex items-center justify-between gap-3
-                   px-4 sm:px-6 py-3
-                   rounded-2xl
-                   bg-white/70 dark:bg-neutral-900/30
-                   backdrop-blur-lg backdrop-saturate-150
-                   border border-black/80 shadow-md
-                   transition-all duration-300"
-      >
-        <nav className="flex items-center gap-4 text-sm font-medium">
-          <Link to="/" className="hover:opacity-80 transition">
-            Home
-          </Link>
-        </nav>
+  // helper per evidenziare la voce attiva
+  const isActive = (path: string) => location.pathname === path;
 
+  return (
+    // wrapper sidebar
+    <aside
+      className="
+        fixed top-0 left-0 h-screen w-60
+        bg-white border-r border-gray-200
+        flex flex-col
+        z-50
+      "
+    >
+      {/* header logo */}
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100">
+        <img src={logo} alt="TravelMe Logo" className="h-10 w-auto m-auto" />
+      </div>
+
+      {/* menu */}
+      <nav className="flex-1 flex flex-col gap-1 px-3 py-4">
         <Link
           to="/"
-          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
+          className={`
+            flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium
+            transition
+            ${isActive("/") ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-100"}
+          `}
         >
-          <img
-            src={logo}
-            alt="TravelMe Logo"
-            className="h-10 sm:h-12 w-auto object-contain"
-          />
+          {/* qui potresti mettere un'icona */}
+          <span>Home</span>
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-          {/* Searchbar
-          <div className="hidden md:block w-40 lg:w-64">
-            <Searchbar />
-          </div> */}
+        {signedIn && (
+          <Link
+            to="/chat"
+            className={`
+              flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium
+              transition
+              ${isActive("/chat") ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-100"}
+            `}
+          >
+            <span>Chat</span>
+          </Link>
+        )}
 
-          {signedIn ? (
-            <>
-              <Link
-                to="/chat"
-                className="px-3 py-2 text-sm font-medium hover:opacity-80 transition"
-              >
-                Chat
-              </Link>
+        {signedIn && (
+          <Link
+            to={
+              user?.roles?.[0] === "host" ? "/hostAccount" : "/volunteerAccount"
+            }
+            className={`
+              flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium
+              transition
+              ${
+                isActive(
+                  user?.roles?.[0] === "host"
+                    ? "/hostAccount"
+                    : "/volunteerAccount"
+                )
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-700 hover:bg-gray-100"
+              }
+            `}
+          >
+            <span>Profile</span>
+          </Link>
+        )}
+      </nav>
 
-              {user?.roles?.[0] === "host" ? (
-                <Link
-                  to="/hostAccount"
-                  className="px-3 py-2 text-sm font-medium hover:opacity-80 transition"
-                >
-                  Profile
-                </Link>
-              ) : (
-                <Link
-                  to="/volunteerAccount"
-                  className="px-3 py-2 text-sm font-medium hover:opacity-80 transition"
-                >
-                  Profile
-                </Link>
-              )}
+      {/* footer / user area */}
+      <div className="px-4 py-4 border-t border-gray-100 mt-auto">
+        {signedIn ? (
+          <div className="flex items-center gap-3">
+            {currUserProfile?.pictureURL ? (
+              <img
+                src={currUserProfile.pictureURL as string}
+                alt="User"
+                className="w-10 h-10 rounded-full object-cover border"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gray-200" />
+            )}
 
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-gray-800">
+                {user?.name || "User"}
+              </p>
               <button
                 onClick={handleSignOut}
-                className="px-4 sm:px-5 py-2 text-sm font-semibold rounded-full
-                           bg-neutral-900 text-white dark:bg-white dark:text-neutral-900
-                           hover:opacity-90 active:opacity-100 transition"
+                className="text-xs text-red-500 hover:text-red-600"
               >
-                Sign Out
+                Sign out
               </button>
-
-              {currUserProfile?.pictureURL && (
-                <img
-                  src={currUserProfile.pictureURL as string}
-                  alt="User"
-                  className="w-9 h-9 object-cover"
-                />
-              )}
-            </>
-          ) : (
-            <Link
-              to="/login"
-              className="px-4 sm:px-5 py-2 text-sm font-semibold rounded-full
-                         bg-neutral-900 text-white dark:bg-white dark:text-neutral-900
-                         hover:opacity-90 active:opacity-100 transition"
-            >
-              Login
-            </Link>
-          )}
-        </div>
+            </div>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="w-full inline-flex items-center justify-center
+                       px-4 py-2 rounded-xl bg-blue-600 text-white text-sm
+                       font-semibold hover:bg-blue-700 transition"
+          >
+            Login
+          </Link>
+        )}
       </div>
-    </header>
+    </aside>
   );
 };
-export default Navbar;
+
+export default Sidebar;

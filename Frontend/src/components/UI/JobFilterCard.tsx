@@ -3,6 +3,7 @@ import { getAllJobOffers } from "@/data";
 import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useAuth } from "@/context";
 
 type JobOffersListProps = {
   initial?: Partial<{
@@ -21,10 +22,17 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
     skills: [] as string[],
     ...initial,
   });
+  const [visibleCount, setVisibleCount] = useState(3);
 
-  const [visibleCount, setVisibleCount] = useState(8);
-
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  // 👇 username
+  const userName = user?.firstName || "Traveller";
+
+  // 👇 ruolo: prendo il primo dell’array se esiste
+  const userRole = Array.isArray(user?.roles) ? user!.roles[0] : undefined;
+  // valori possibili che hai detto tu: "volunteer" oppure "host"
 
   useEffect(() => {
     const run = async () => {
@@ -43,7 +51,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
   }, []);
 
   useEffect(() => {
-    setVisibleCount(8);
+    setVisibleCount(3);
   }, [filters]);
 
   const filteredJobs = jobs.filter((job) => {
@@ -68,127 +76,157 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
 
   if (loading) {
     return (
-      <p className="text-center p-10 text-gray-500">Loading job offers...</p>
+      <div className="min-h-screen bg-white text-black flex items-center justify-center text-sm">
+        Loading job offers...
+      </div>
     );
   }
   if (error) {
-    return <p className="text-center p-10 text-red-500">{error}</p>;
+    return (
+      <div className="min-h-screen bg-white text-red-500 flex items-center justify-center text-sm">
+        {error}
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">Job Offers</h1>
-          <button
-            onClick={() => setFilters({ skills: [] })}
-            className="text-sm px-3 py-1.5 rounded-full border border-gray-300 hover:bg-gray-100 transition"
-          >
-            Reset
-          </button>
-        </div>
+    <div className=" mx-auto max-w-full bg-white">
+      {/* header */}
+      <header className="flex items-center justify-between px-5 pt-5 pb-2">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-[3rem] font-semibold text-black leading-none">
+              Hello {userName}!
+            </h1>
 
-        <div className="mb-4">
+            {/* badge ruolo */}
+            {userRole && (
+              <span
+                className={`text-xs px-3 py-1 rounded-full font-medium ${
+                  userRole === "volunteer"
+                    ? "bg-lime-500 text-white"
+                    : "bg-pink-500 text-white"
+                }`}
+              >
+                {userRole === "volunteer" ? "Volunteer" : "Host"}
+              </span>
+            )}
+          </div>
+          <p className="text-[1rem] text-slate-400 mt-1">
+            Welcome to Travel 👋
+          </p>
+        </div>
+      </header>
+
+      {/* filters */}
+      <div className="px-5 mb-3">
+        <div className="rounded-xl p-3">
           <Filters initial={filters} onChange={(f) => setFilters(f)} />
         </div>
-
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm text-gray-600">
-            {filteredJobs.length} result{filteredJobs.length === 1 ? "" : "s"}
-          </p>
-        </div>
-
-        {visibleJobs.length === 0 ? (
-          <p className="text-center p-10 text-gray-500">
-            No job offers match your filters.
-          </p>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {visibleJobs.map((job) => (
-                <article
-                  key={job._id}
-                  className="relative bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition"
-                >
-                  {job.pictureURL?.length ? (
-                    <img
-                      src={
-                        typeof job.pictureURL[0] === "string"
-                          ? (job.pictureURL[0] as string)
-                          : URL.createObjectURL(job.pictureURL[0] as File)
-                      }
-                      alt={job.title}
-                      className="h-40 w-full object-cover capitalize"
-                    />
-                  ) : (
-                    <div className="h-40 w-full bg-gray-200" />
-                  )}
-
-                  <div className="p-4">
-                    <h2 className="text-lg font-semibold text-gray-900 line-clamp-1 capitalize">
-                      {job.title}
-                    </h2>
-
-                    <p className="text-sm text-gray-500 mt-2 capitalize">
-                      {job.continent && job.country
-                        ? `${job.continent}, ${job.country}`
-                        : job.country || job.continent}
-                    </p>
-                    <p className="text-sm text-gray-500 mb-3">
-                      {job.location ?? ""}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {(job.needs || []).slice(0, 4).map((need, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-md text-xs font-medium"
-                        >
-                          {need}
-                        </span>
-                      ))}
-                      {job.needs?.length > 4 && (
-                        <span className="text-xs text-gray-500">
-                          +{job.needs.length - 4}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex justify-between items-center pt-2">
-                      <button
-                        onClick={() => navigate(`/job/${job._id}`)}
-                        className="text-sm px-3 py-1.5 rounded-full border border-gray-300 hover:bg-gray-100 transition"
-                      >
-                        Details
-                      </button>
-                      <button
-                        onClick={() =>
-                          console.log("Navigate to chat", job.userProfileId)
-                        }
-                        className="flex items-center gap-1 text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-full transition"
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                        Contact
-                      </button>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {visibleCount < filteredJobs.length && (
-              <div className="flex justify-center mt-8">
-                <button
-                  onClick={() => setVisibleCount((prev) => prev + 4)}
-                  className="px-4 py-2 text-sm font-medium bg-black border text-white border-gray-200 rounded-full shadow-sm hover:bg-gray-50 hover:text-black hover:border-black transition cursor-pointer"
-                >
-                  See more...
-                </button>
-              </div>
-            )}
-          </>
-        )}
       </div>
+
+      {/* subtitle */}
+      <div className="px-5 mb-2 flex items-center justify-between">
+        <h2 className="text-base font-medium text-black">
+          {filteredJobs.length} result{filteredJobs.length === 1 ? "" : "s"}
+        </h2>
+        <button
+          onClick={() => setVisibleCount(filteredJobs.length)}
+          className="text-xs text-black hover:text-gray-800"
+        >
+          View all
+        </button>
+      </div>
+
+      {/* job grid */}
+      {visibleJobs.length === 0 ? (
+        <p className="text-center text-black py-8 text-sm">
+          No job offers match your filters.
+        </p>
+      ) : (
+        <>
+          <div className="px-5 grid grid-cols-1 md:grid-cols-3 gap-5 pb-8">
+            {visibleJobs.map((job) => (
+              <article
+                key={job._id}
+                className="bg-white border rounded-2xl overflow-hidden hover:border-pink-400/60 transition shadow-md"
+              >
+                {job.pictureURL?.length ? (
+                  <img
+                    src={
+                      typeof job.pictureURL[0] === "string"
+                        ? (job.pictureURL[0] as string)
+                        : URL.createObjectURL(job.pictureURL[0] as File)
+                    }
+                    alt={job.title}
+                    className="h-36 w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-36 w-full bg-slate-200" />
+                )}
+
+                <div className="p-4 space-y-2">
+                  <h3 className="text-md font-semibold text-black line-clamp-1 capitalize">
+                    {job.title}
+                  </h3>
+
+                  <p className="text-md text-black capitalize">
+                    {job.continent && job.country
+                      ? `${job.continent}, ${job.country}`
+                      : job.country || job.continent}
+                  </p>
+                  <p className="text-xs text-slate-500">{job.location ?? ""}</p>
+
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {(job.needs || []).slice(0, 3).map((need, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-1 bg-pink-600 text-white rounded-full text-xs"
+                      >
+                        {need}
+                      </span>
+                    ))}
+                    {job.needs?.length > 3 && (
+                      <span className="text-[10px] text-slate-500">
+                        +{job.needs.length - 3}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => navigate(`/job/${job._id}`)}
+                      className="text-sm px-3 py-1 rounded-full bg-black text-white hover:bg-white hover:text-black transition"
+                    >
+                      Details
+                    </button>
+                    <button
+                      onClick={() =>
+                        console.log("Navigate to chat", job.userProfileId)
+                      }
+                      className="flex items-center gap-1 text-sm px-3 py-1 rounded-full bg-black text-white hover:bg-white hover:text-black transition"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      Contact
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          {visibleCount < filteredJobs.length && (
+            <div className="flex justify-center pb-8">
+              <button
+                onClick={() => setVisibleCount((prev) => prev + 3)}
+                className="px-3 py-1.5 text-sm font-medium border bg-slate-100 text-slate-950 rounded-full hover:bg-black hover:text-white transition"
+              >
+                Show more...
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -53,14 +53,17 @@ const TopHosts = () => {
   }
 
   return (
-    <section id="TopHosts" className="mx-auto max-w-6xl px-4 pt-20 pb-10">
-      <div className="mb-4 flex items-end justify-between">
+    <section
+      id="TopHosts"
+      className="mx-auto max-w-full px-4 pt-20 pb-10 bg-white"
+    >
+      <div className="mb-4 flex items-end justify-between bg-white">
         <h2 className="text-xl font-semibold">Top Hosts</h2>
         <a className="text-sm text-slate-600 hover:text-slate-900" href="#">
           See all
         </a>
       </div>
-      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 justify-items-center">
+      <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 justify-items-center bg-white">
         {displayedHosts.map((h) => {
           return (
             <Link
