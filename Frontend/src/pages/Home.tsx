@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import heroBg from "@/assets/images/image1.jpg"; // or ../../assets/images/image1.jpg
+
 import {
-  Heroheader,
-  Features,
+  // Heroheader,
+  // Features,
   TopHosts,
-  Continents,
-  Requiredskills,
-  Joinus,
-  Footer,
+  // Continents,
+  // Requiredskills,
+  // Joinus,
+  // Footer,
   JobFilterCard,
 } from "@/components/UI";
-import RightPanel from "@/components/UI/RightPanel";
+// import RightPanel from "@/components/UI/RightPanel";
 import JobSectionsTabs from "@/components/UI/JobSelectionTab";
 
 const Home = () => {
