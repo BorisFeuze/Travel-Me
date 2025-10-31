@@ -14,10 +14,6 @@ type JobOffer = {
   continent?: string;
 };
 
-type ContinentCompactProps = {
-  jobs: JobFormData[];
-};
-
 const CONTINENTS = [
   { key: "Europe", label: "Europe", img: europe, color: "bg-sky-100" },
   { key: "Africa", label: "Africa", img: africa, color: "bg-amber-100" },
@@ -37,8 +33,7 @@ const CONTINENTS = [
   { key: "Oceania", label: "Oceania", img: oceania, color: "bg-cyan-100" },
 ];
 
-const ContinentCompact = ({ jobs }: ContinentCompactProps) => {
-  console.log(jobs);
+const ContinentCompact = () => {
   const [offers, setOffers] = useState<JobOffer[]>([]);
   const [loading, setLoading] = useState(true);
 
