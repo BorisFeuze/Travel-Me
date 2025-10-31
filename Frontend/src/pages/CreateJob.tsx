@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, type ChangeEvent } from "react";
 import { addJobOffers } from "@/data/jobOffers";
 import { useAuth, useUser } from "@/context";
 import { Calendar02 } from "@/components/UI/Calendar02";
-import { type DateRange } from "react-day-picker";
 
 const CreateJob = () => {
   const { user } = useAuth();
@@ -19,9 +18,11 @@ const CreateJob = () => {
           console.error("please created a account");
         }
         setProfile(profile?.userProfiles[0]._id);
-      } catch (error) {}
-    })();
-  }, []);
+    } catch (error) {
+      console.log(error)
+    }
+  })();
+}, [user?._id, getUserProfile]);
 
   console.log(profile);
 
@@ -35,7 +36,7 @@ const CreateJob = () => {
     description: "",
     needs: [],
     languages: [],
-    availability: [] as DateRange[],
+    availability: [],
   });
 
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -155,7 +156,7 @@ const CreateJob = () => {
     setIsSaving(true);
     setSaveMessage(null);
 
-    formData.userProfileId = profile;
+    formData.userProfileId = profile ?? "";
 
     try {
       const data = new FormData();
@@ -171,10 +172,6 @@ const CreateJob = () => {
       formData.languages.forEach((lang) => data.append("languages", lang));
       data.append("availability", JSON.stringify(formData.availability));
       formData.pictureURL.forEach((file) => data.append("pictureURL", file));
-
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
 
       await addJobOffers(data);
 
@@ -463,8 +460,13 @@ const CreateJob = () => {
               multiRange={true}
               selectedRanges={formData.availability}
               onMultiRangeSelect={(ranges) =>
-                handleInputChange("availability", ranges)
-              }
+              handleInputChange(
+                "availability",
+                ranges
+                  .filter((r): r is { from: Date; to: Date } => r.from !== undefined && r.to !== undefined)
+                  .map(r => ({ from: r.from, to: r.to }))
+                  )
+                }
             />
 
             {formData.availability && formData.availability.length > 0 && (
