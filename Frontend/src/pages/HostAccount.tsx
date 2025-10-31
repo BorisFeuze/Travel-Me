@@ -21,12 +21,12 @@ const HostAccount = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [jobOffers, setJobOffers] = useState<JobCardData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setOpenDropdown] = useState<string | null>(null);
 
   const { getUserProfile } = useUser();
 
-  const [saveMessage, setSaveMessage] = useState<{
+  const [, setSaveMessage] = useState<{
     text: string;
     type: "success" | "error";
   } | null>(null);
@@ -204,10 +204,6 @@ const HostAccount = () => {
       formData.educations.forEach((edu) => data.append("educations", edu));
       formData.skills?.forEach((ski) => data.append("skills", ski));
       formData.languages.forEach((lan) => data.append("languages", lan));
-
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
 
       let updatedUser;
       if (profileId) {
