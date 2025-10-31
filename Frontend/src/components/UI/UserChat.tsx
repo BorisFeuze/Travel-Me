@@ -11,8 +11,8 @@ type UserChatType = {
 };
 
 const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<UserProfileData | null>(null);
 
   const { onlineUsers } = useAuth();

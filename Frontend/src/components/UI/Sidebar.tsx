@@ -15,7 +15,7 @@ import UserChat from "./UserChat";
 type SidebarType = {
   users: User[];
   selectedUser: User;
-  setSelectedUser: Dispatch<SetStateAction<User>>;
+  setSelectedUser: Dispatch<SetStateAction<User | null>>;
 };
 
 const Sidebar = ({

@@ -22,12 +22,12 @@ const HostAccount = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [jobOffers, setJobOffers] = useState<JobCardData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [_loading, setLoading] = useState(true);
+  const [_openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const { getUserProfile } = useUser();
 
-  const [saveMessage, setSaveMessage] = useState<{
+  const [_saveMessage, setSaveMessage] = useState<{
     text: string;
     type: "success" | "error";
   } | null>(null);
@@ -89,7 +89,7 @@ const HostAccount = () => {
         if (currentUser) {
           const dataCurrentUser = currentUser.userProfiles[0];
           const currentnUserProfil = dataCurrentUser.pictureURL;
-          console.log(currentnUserProfil);
+          // console.log(currentnUserProfil);
 
           if (currentnUserProfil) {
             setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
@@ -111,7 +111,7 @@ const HostAccount = () => {
       setLoading(true);
       try {
         const profile = await getUserProfile(user?._id ?? "");
-        console.log(profile);
+        // console.log(profile);
 
         if (!profile?.userProfiles[0]) {
           console.error("please created a account");
@@ -126,7 +126,7 @@ const HostAccount = () => {
             (job: JobData) => job.userProfileId === profile?.userProfiles[0]._id
           );
 
-          console.log(filteredJobs);
+          // console.log(filteredJobs);
 
           const mappedJobs: JobCardData[] = filteredJobs.map(
             (job: JobData) => ({
@@ -152,7 +152,7 @@ const HostAccount = () => {
     loadJobOffers();
   }, [user]);
 
-  console.log(jobOffers);
+  // console.log(jobOffers);
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -174,12 +174,18 @@ const HostAccount = () => {
   };
 
   const handleSave = async () => {
-    if (!formData.continent || !formData.country || !formData.gender) {
-      setSaveMessage({
-        text: "Please fill all required fields.",
-        type: "error",
-      });
-      return;
+    if (
+      !formData.continent ||
+      !formData.country ||
+      !formData.gender ||
+      !formData.address ||
+      !formData.age ||
+      !formData.description ||
+      !formData.educations ||
+      !formData.skills ||
+      !formData.languages
+    ) {
+      throw new Error("All fields are required");
     }
 
     setIsSaving(true);
@@ -225,13 +231,15 @@ const HostAccount = () => {
 
       // const updatedUser = await addUserDetails(data);
 
-      console.log(updatedUser);
+      // console.log(updatedUser);
 
-      toast.success("successfully Registered");
+      toast.success("Your Host Profile is successfully created");
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong!";
+      toast.error(errorMessage);
       setSaveMessage({ text: "Error while saving changes.", type: "error" });
     } finally {
       setIsSaving(false);

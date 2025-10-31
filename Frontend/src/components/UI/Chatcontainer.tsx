@@ -18,11 +18,11 @@ import { getUserDetails } from "@/data";
 
 type ChatContainerType = {
   selectedUser: User;
-  setSelectedUser: Dispatch<SetStateAction<User>>;
+  setSelectedUser: Dispatch<SetStateAction<User | null>>;
   messages: ChatType[];
   sendMessage: (
     selectedUserId: string,
-    { message }: { message: string }
+    messageData: ChatInputType
   ) => Promise<void>;
   onlineUsers: string[];
   user: User;
@@ -40,7 +40,7 @@ const ChatContainer = ({
   const [input, setInput] = useState("");
   const [info, setInfo] = useState<UserProfileData | null>(null);
   const [userInfo, setUserInfo] = useState<UserProfileData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -60,8 +60,8 @@ const ChatContainer = ({
     })();
   }, [selectedUser]);
 
-  console.log(selectedUser);
-  console.log(user);
+  // console.log(selectedUser);
+  // console.log(user);
 
   useEffect(() => {
     (async () => {
@@ -69,7 +69,7 @@ const ChatContainer = ({
         const data = await getUserDetails(user?._id);
 
         if (data) {
-          console.log(data);
+          // console.log(data);
 
           const userInfo = data.userProfiles[0];
 
@@ -84,10 +84,17 @@ const ChatContainer = ({
   }, [messages]);
 
   // Handle sending a message
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = async (
+    e:
+      | React.MouseEvent<HTMLImageElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ): Promise<null | undefined> => {
     e.preventDefault();
     if (input.trim() === "") return null;
-    await sendMessage(selectedUser?._id, { message: input.trim() });
+    // console.log(input);
+    await sendMessage(selectedUser?._id, {
+      message: input.trim(),
+    });
     setInput("");
   };
 
@@ -181,7 +188,9 @@ const ChatContainer = ({
           <input
             onChange={(e) => setInput(e.target.value)}
             value={input}
-            onKeyDown={(e) => (e.key === "Enter" ? handleSendMessage(e) : null)}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+              e.key === "Enter" ? handleSendMessage(e) : null
+            }
             type="text"
             placeholder="Send a message"
             className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-black

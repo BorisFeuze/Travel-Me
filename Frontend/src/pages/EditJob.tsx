@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getJobOffers, updateJobOffers, deleteJobOffer } from "@/data";
 import { useAuth, useUser } from "@/context";
 import { Calendar02 } from "@/components/UI/Calendar02";
+import { toast } from "react-toastify";
 
 const EditJob = () => {
   const { id } = useParams<{ id: string }>();
@@ -91,7 +92,11 @@ const EditJob = () => {
       try {
         setLoading(true);
         const profile = await getUserProfile(user?._id ?? "");
-        console.log(profile);
+        if (!profile) {
+          setError("User profile not found.");
+          setLoading(false);
+          return;
+        }
 
         if (!profile?.userProfiles[0]) {
           console.error("please created a account");
@@ -117,7 +122,7 @@ const EditJob = () => {
       }
     };
     fetchJob();
-  }, [user, id]);
+  }, [user, id, getUserProfile]);
 
   const prevImage = () =>
     setCurrentImage((prev) => (prev === 0 ? previewUrls.length - 1 : prev - 1));
@@ -150,9 +155,9 @@ const EditJob = () => {
 
     try {
       // cange availability in ISO-Strings
-      const availabilityParsed = (job.availability ?? []).map((range) => ({
-        from: new Date(range.from),
-        to: new Date(range.to),
+      const availabilityParsed = availability.map((r) => ({
+        from: r.from.toISOString(),
+        to: r.to.toISOString(),
       }));
 
       // create formdata
@@ -165,32 +170,29 @@ const EditJob = () => {
       data.append("location", job.location);
       data.append("description", job.description);
       data.append("userProfileId", job.userProfileId);
-
-      // arrays as json string
-      // formData.skills?.forEach((ski) => data.append("skills", ski));
-      // formData.languages.forEach((lan) => data.append("languages", lan));
-      data.append("needs", JSON.stringify(job.needs || []));
-      data.append("languages", JSON.stringify(job.languages || []));
+      (job.needs || []).forEach((need) => data.append("needs", need));
+      (job.languages || []).forEach((lang) => data.append("languages", lang));
       data.append("availability", JSON.stringify(availabilityParsed));
 
-      // add new pictures
-      previewUrls.forEach((url) => {
-        if (url instanceof File) {
-          data.append("pictureURL", url);
-        }
-      });
-
-      // if needed add existing picture urls
       const existingUrls = previewUrls.filter(
         (url) => typeof url === "string"
       ) as string[];
+
+      const newFiles = previewUrls.filter(
+        (url) => url instanceof File
+      ) as File[];
+
+      // Sende bestehende URLs als JSON-String
       if (existingUrls.length > 0) {
-        data.append("pictureURL", JSON.stringify(existingUrls));
+        existingUrls.forEach((url) => {
+          data.append("existingPictureURLs", url);
+        });
       }
 
-      for (let [key, value] of data.entries()) {
-        console.log(key, value);
-      }
+      // Sende neue Files als Files
+      newFiles.forEach((file) => {
+        data.append("newPictures", file);
+      });
 
       // update request to the backend
       const result = await updateJobOffers(id, data);
@@ -203,6 +205,7 @@ const EditJob = () => {
 
       // load job data new
       const updatedResponse = await getJobOffers(user._id);
+
       const updatedJob = updatedResponse?.jobOffers?.find(
         (j: JobData) => j._id === id
       );
@@ -210,7 +213,11 @@ const EditJob = () => {
         setJob(updatedJob);
         setPreviewUrls(updatedJob.pictureURL || []);
       }
+      toast.success("Your Jod Offer is successfully updated");
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error updating job offer!";
+      toast.error(errorMessage);
       console.error("Error updating job offer:", error);
       setSaveMessage({
         type: "error",
@@ -233,9 +240,13 @@ const EditJob = () => {
     try {
       await deleteJobOffer(id);
       setSaveMessage({ type: "success", text: "Job offer got deleted!" });
-      setJob(null); // Formular leeren / anzeigen, dass kein Job mehr existiert
+      setJob(null);
       setPreviewUrls([]);
+      toast.success("The Jod Offer is deleted");
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error deleting job offer!";
+      toast.error(errorMessage);
       console.error("Error deleting job offer:", error);
       setSaveMessage({
         type: "error",

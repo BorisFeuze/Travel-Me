@@ -23,12 +23,18 @@ const formMiddleWare: RequestHandler = (request, response, next) => {
 
       // console.log(files);
 
-      if (!files || !files.pictureURL) throw new Error('Please upload a file', { cause: { status: 400 } });
+      const uploadedFiles = files.pictureURL || files.newPictures;
 
-      const fileArray = Array.isArray(files.pictureURL) ? files.pictureURL : [files.pictureURL];
+      // if (request.method === 'POST' && !uploadedFiles) {
+      //   throw new Error('Please upload a file', { cause: { status: 400 } });
+      // }
+
+      if (uploadedFiles) {
+        const fileArray = Array.isArray(uploadedFiles) ? uploadedFiles : [uploadedFiles];
+        request.pictureURL = fileArray;
+      }
 
       request.body = fields;
-      request.pictureURL = fileArray;
 
       next();
     });

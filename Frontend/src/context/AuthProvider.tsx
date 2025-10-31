@@ -19,7 +19,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const handleRegister = async (formState: Omit<RegisterData, "_id">) => {
     await register(formState);
-    setSignedIn(true);
+    // setSignedIn(true);
     setCheckSession(true);
   };
 
@@ -65,15 +65,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         userId: userData._id,
       },
     });
-    console.log(newSocket);
+    // console.log(newSocket);
     newSocket.connect();
-    setSocket(newSocket);
+    setSocket(newSocket as unknown as Socket);
     newSocket.on("getOnlineUser", (userIds) => {
       setOnlineUsers(userIds);
     });
   };
 
-  console.log(onlineUsers);
   // console.log(onlineUsers);
 
   const value: AuthContextType = {

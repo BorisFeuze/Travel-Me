@@ -19,7 +19,7 @@ const app = express();
 const server = http.createServer(app);
 
 //initiallize socket.io server
-export const io = new Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
+export const io = new Server(server, { cors: { origin: CLIENT_BASE_URL, methods: ['GET', 'POST'] } });
 
 // store online users
 

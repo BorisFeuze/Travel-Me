@@ -100,7 +100,11 @@ const DetailJob = () => {
           <div className="flex flex-col items-center gap-2">
             <div
               className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105 mt-2"
-              onClick={() => navigate(`/host/${hostProfile?.userId?._id}`)}
+              onClick={() =>
+                navigate(
+                  `/host/${(hostProfile?.userId as unknown as { _id: string })?._id}`
+                )
+              }
               title="Go to host profile"
             >
               {hostProfile?.pictureURL ? (
@@ -116,7 +120,7 @@ const DetailJob = () => {
             <div>
               <h3 className="text-gray-600 text-sm text-center">
                 {hostProfile
-                  ? `${hostProfile.userId?.firstName ?? ""} ${hostProfile.userId?.lastName ?? ""}`.trim()
+                  ? `${(hostProfile.userId as unknown as { firstName: string })?.firstName ?? ""} ${(hostProfile.userId as unknown as { lastName: string })?.lastName ?? ""}`.trim()
                   : "Host"}
               </h3>
             </div>
