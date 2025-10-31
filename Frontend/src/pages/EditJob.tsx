@@ -90,13 +90,15 @@ const EditJob = () => {
       if (!user?._id || !id) return;
       try {
         setLoading(true);
-        const profile: UserProfileData = await getUserProfile(user?._id ?? "");
+        const profile = await getUserProfile(user?._id ?? "");
         console.log(profile);
 
-        if (!profile.userProfiles[0]) {
+        if (!profile?.userProfiles[0]) {
           console.error("please created a account");
         }
-        const response = await getJobOffers(profile.userProfiles[0]._id);
+        const response = await getJobOffers(
+          profile?.userProfiles[0]._id as string
+        );
         if (!response?.jobOffers || response.jobOffers.length === 0) {
           setError("No job offers found.");
           return;
@@ -275,7 +277,7 @@ const EditJob = () => {
                       : URL.createObjectURL(previewUrls[currentImage])
                   }
                   alt="Job Image"
-                  className="h-[40rem] w-auto object-cover"
+                  className="h-160 w-auto object-cover"
                 />
                 <button
                   onClick={prevImage}

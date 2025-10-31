@@ -20,7 +20,7 @@ const Chat = () => {
     (async () => {
       try {
         const data = await getChatUsers();
-        // console.log("Data", data);
+        console.log("Data", data);
         if (data) {
           setChatUsers(data.users);
           setUnseenMessages(data.unseenMessages);
@@ -34,7 +34,7 @@ const Chat = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await getMessages(selectedUser?._id);
+        const data = await getMessages(selectedUser?._id as string);
         console.log("Data", data);
         if (data) {
           setMessages(data.chats);
@@ -45,7 +45,10 @@ const Chat = () => {
     })();
   }, [messages]);
 
-  const sendMessage = async (selectedUserId: string, message: string) => {
+  const sendMessage = async (
+    selectedUserId: string,
+    message: ChatInputType
+  ) => {
     try {
       const data = await sendMessages(selectedUserId, message);
       console.log("Data", data);

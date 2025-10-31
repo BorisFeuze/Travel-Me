@@ -13,7 +13,7 @@ type UserChatType = {
 const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<UserProfile | null>(null);
+  const [info, setInfo] = useState<UserProfileData | null>(null);
 
   const { onlineUsers } = useAuth();
 
@@ -41,7 +41,7 @@ const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
   return (
     <>
       <img
-        src={info?.pictureURL || avatar_icon}
+        src={(info?.pictureURL || avatar_icon) as string}
         alt=""
         className="w-[35px] aspect-square rounded-full"
       />

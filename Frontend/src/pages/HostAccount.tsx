@@ -8,6 +8,7 @@ import {
 } from "@/data";
 import { useAuth, useUser } from "@/context";
 import { JobCard } from "@/components/UI";
+import { toast } from "react-toastify";
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -225,6 +226,8 @@ const HostAccount = () => {
       // const updatedUser = await addUserDetails(data);
 
       console.log(updatedUser);
+
+      toast.success("successfully Registered");
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (err) {

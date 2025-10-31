@@ -24,7 +24,7 @@ export const getMessages = async (id: string) => {
 
 export const sendMessages = async (
   selectedUserId: string,
-  messageData: ChatType
+  messageData: ChatInputType
 ) => {
   const res = await fetch(`${baseURL}/send/${selectedUserId}`, {
     method: "POST",

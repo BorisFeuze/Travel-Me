@@ -19,17 +19,13 @@ import { getUserDetails } from "@/data";
 type ChatContainerType = {
   selectedUser: User;
   setSelectedUser: Dispatch<SetStateAction<User>>;
-  messages: Chat[];
+  messages: ChatType[];
   sendMessage: (
     selectedUserId: string,
     { message }: { message: string }
   ) => Promise<void>;
   onlineUsers: string[];
   user: User;
-};
-
-type DataType = {
-  userProfiles?: UserProfileFormData[];
 };
 
 const ChatContainer = ({
@@ -40,19 +36,19 @@ const ChatContainer = ({
   onlineUsers,
   user,
 }: ChatContainerType) => {
-  const scrollEnd = useRef();
+  const scrollEnd = useRef<HTMLDivElement | null>(null);
   const [input, setInput] = useState("");
-  const [info, setInfo] = useState<UserProfileFormData | null>(null);
-  const [userInfo, setUserInfo] = useState([]);
+  const [info, setInfo] = useState<UserProfileData | null>(null);
+  const [userInfo, setUserInfo] = useState<UserProfileData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const { userProfiles } = await getUserDetails(selectedUser?._id);
+        const data = await getUserDetails(selectedUser?._id);
 
-        if (userProfiles) {
-          const userInfo = userProfiles[0];
+        if (data) {
+          const userInfo = data.userProfiles[0];
 
           // console.log(userInfo);
 
@@ -87,15 +83,10 @@ const ChatContainer = ({
     })();
   }, [messages]);
 
-  console.log(messages);
-  console.log(userInfo);
-
   // Handle sending a message
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (input.trim() === "") return null;
-    console.log(selectedUser._id);
-    console.log(input);
     await sendMessage(selectedUser?._id, { message: input.trim() });
     setInput("");
   };
@@ -117,7 +108,9 @@ const ChatContainer = ({
 
   useEffect(() => {
     if (scrollEnd.current && messages) {
-      scrollEnd.current.scrollIntoView({ behavior: "smooth" });
+      scrollEnd.current?.lastElementChild?.scrollIntoView({
+        behavior: "smooth",
+      });
     }
   }, [messages]);
 
@@ -126,7 +119,7 @@ const ChatContainer = ({
       {/*-------header-------*/}
       <div className="flex items-center gap-3 py-3 mx-4 border-b border-stone-500">
         <img
-          src={info?.pictureURL || avatar_icon}
+          src={(info?.pictureURL || avatar_icon) as string}
           alt=""
           className="w-8 rounded-full"
         />
@@ -154,9 +147,9 @@ const ChatContainer = ({
             <div className="text-center text-xs">
               <img
                 src={
-                  msg.senderId === user?._id
+                  (msg.senderId === user?._id
                     ? userInfo?.pictureURL || avatar_icon
-                    : info?.pictureURL || avatar_icon
+                    : info?.pictureURL || avatar_icon) as string
                 }
                 alt=""
                 className="w-7 rounded-full"

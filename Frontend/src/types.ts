@@ -41,7 +41,7 @@ declare global {
   };
 
   type UserContextType = {
-    allUsers: UserProfileFormData[];
+    allUsers: UserProfileData[];
     getUserProfile: (id: string) => Promise<UserProfilesResponse | null>;
   };
 
