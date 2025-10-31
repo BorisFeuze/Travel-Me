@@ -11,9 +11,9 @@ const VolunteerAccount = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [, setOpenDropdown] = useState<string | null>(null);
 
-  const [saveMessage, setSaveMessage] = useState<{
+  const [, setSaveMessage] = useState<{
     text: string;
     type: "success" | "error";
   } | null>(null);
