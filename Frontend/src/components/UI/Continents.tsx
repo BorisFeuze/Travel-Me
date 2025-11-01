@@ -74,17 +74,19 @@ const ContinentCompact = () => {
             key={key}
             to={`/continent/${key}`}
             className="
-              group flex items-center gap-4
-              rounded-2xl border border-slate-300 bg-white
+              flex flex-col md:flex-row gap-4
+              rounded-2xl border border-slate-200 bg-white
               hover:border-slate-600 hover:shadow-md
               transition cursor-pointer
               p-3
             "
           >
-            {/* avatar/immagine tonda */}
+            {/* immagine con badge */}
             <div
               className={`
-                w-40 h-40 rounded-2xl overflow-hidden flex items-center justify-center
+                relative
+                w-full md:w-32 h-28 md:h-24
+                rounded-2xl overflow-hidden flex items-center justify-center
                 ${color}
               `}
             >
@@ -93,28 +95,33 @@ const ContinentCompact = () => {
                 alt={label}
                 className="w-full h-full object-cover rounded-2xl"
               />
+
+              {/* badge numero */}
+              {count > 0 && (
+                <span
+                  className="
+                    absolute top-2 right-2
+                    bg-blue-600 text-white text-xs font-semibold
+                    px-2 py-[2px] rounded-full shadow-sm
+                  "
+                >
+                  {count}
+                </span>
+              )}
             </div>
 
             {/* testo */}
-            <div className="flex-1 min-w-0">
-              <p className="text-[1.3rem] font-semibold text-slate-900 truncate">
+            <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+              <p className="text-base md:text-[1.1rem] font-semibold text-slate-900 truncate">
                 {label}
               </p>
-              <p className="text-md text-slate-500 flex items-center gap-1">
-                {count} Opportunities
+              <p className="text-sm text-slate-500 flex items-center gap-1">
+                {count} opportunities
               </p>
-              <span className="inline-flex items-center gap-1 text-[0.8rem] border text-slate-900/70 bg-slate-100 px-3 mt-5 py-1 rounded-full  group-hover:bg-slate-900 group-hover:text-white transition">
+              <span className="inline-flex w-fit items-center gap-1 text-xs border text-slate-900/70 bg-slate-100 px-3 py-1 rounded-full group-hover:bg-slate-900 group-hover:text-white transition">
                 Explore
                 <span aria-hidden>→</span>
               </span>
-            </div>
-
-            {/* numero a destra */}
-            <div className="flex flex-col text-center">
-              <p className="text-md font-semibold text-slate-900">
-                {count || 0}
-              </p>
-              <p className="text-[1rem] text-slate-400">Jobs</p>
             </div>
           </Link>
         );

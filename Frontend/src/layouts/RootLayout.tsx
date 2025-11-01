@@ -1,50 +1,72 @@
 import { Outlet, useLocation } from "react-router";
-
 import { ToastContainer } from "react-toastify";
-import { AuthProvider, UserProvider } from "@/context";
-import Navbar from "@/components/UI/Navbar";
+import { AuthProvider, UserProvider, useAuth } from "@/context";
+import TopNav from "@/components/UI/Navbar";
 import RightPanel from "@/components/UI/RightPanel";
+import VolunteerInfoBox from "@/components/UI/VolunteerInfoBox";
+import { useState } from "react";
 
 const RootLayout = () => {
-  const location = useLocation();
-  const isHome = location.pathname === "/"; // 👈 solo nella home 3 colonne
-
   return (
     <AuthProvider>
       <UserProvider>
-        <div
-          className={`grid h-screen overflow-hidden ${
-            isHome
-              ? "grid-cols-[240px_1fr_320px]" // home
-              : "grid-cols-[240px_1fr]" // tutte le altre pubbliche
-          }`}
-        >
-          {/* Sidebar */}
-          <aside className="bg-white border-r border-gray-200 overflow-y-auto">
-            <ToastContainer
-              position="bottom-right"
-              autoClose={1500}
-              theme="colored"
-            />
-            <Navbar />
-          </aside>
-
-          {/* Main */}
-          <main className="bg-white  overflow-y-auto">
-            <div className="max-w-full p-10 mx-auto ">
-              <Outlet />
-            </div>
-          </main>
-
-          {/* RightPanel solo nella home */}
-          {isHome && (
-            <aside className=" bg-slate-900/80 border-l border-slate-800 overflow-y-auto">
-              <RightPanel />
-            </aside>
-          )}
-        </div>
+        <LayoutContent />
       </UserProvider>
     </AuthProvider>
+  );
+};
+
+const LayoutContent = () => {
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+  const [isRightOpen, setIsRightOpen] = useState(true);
+
+  const { user } = useAuth();
+  const role = Array.isArray(user?.roles) ? user!.roles[0] : undefined;
+  const isHost = role === "host";
+
+  return (
+    <div className="flex h-screen bg-white overflow-hidden">
+      {/* Sidebar sinistra */}
+      <aside
+        className="
+          hidden sm:flex sm:flex-col
+          w-60 min-w-60
+          border-r border-gray-200 bg-white
+          shrink-0
+        "
+      >
+        <TopNav />
+      </aside>
+
+      {/* Contenuto centrale */}
+      <main
+        className="
+          flex-1 overflow-y-auto
+          bg-white px-6 py-8
+          relative
+        "
+      >
+        <div className="max-w-6xl mx-auto relative">
+          {!isHost && <VolunteerInfoBox />}
+          <Outlet />
+        </div>
+      </main>
+
+      {/* Pannello destro: solo host in home */}
+      {isHome && isHost && (
+        <RightPanel
+          isOpen={isRightOpen}
+          onToggle={() => setIsRightOpen((p) => !p)}
+        />
+      )}
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1500}
+        theme="colored"
+      />
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getAllJobOffers } from "@/data";
 import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
@@ -14,6 +14,22 @@ type JobOffersListProps = {
   }>;
 };
 
+// skeleton
+const JobCardSkeleton = () => (
+  <div className="bg-white border rounded-2xl overflow-hidden shadow-sm animate-pulse flex flex-col">
+    <div className="w-full aspect-[16/9] bg-slate-200" />
+    <div className="p-4 space-y-3 flex-1 flex flex-col">
+      <div className="h-4 bg-slate-200 rounded w-2/3" />
+      <div className="h-3 bg-slate-200 rounded w-1/2" />
+      <div className="h-3 bg-slate-100 rounded w-1/3" />
+      <div className="flex gap-2 mt-auto">
+        <div className="h-8 bg-slate-200 rounded-full flex-1" />
+        <div className="h-8 bg-slate-100 rounded-full flex-1" />
+      </div>
+    </div>
+  </div>
+);
+
 const JobFilterCard = ({ initial }: JobOffersListProps) => {
   const [jobs, setJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,17 +38,18 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
     skills: [] as string[],
     ...initial,
   });
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // 👇 username
   const userName = user?.firstName || "Traveller";
-
-  // 👇 ruolo: prendo il primo dell’array se esiste
   const userRole = Array.isArray(user?.roles) ? user!.roles[0] : undefined;
-  // valori possibili che hai detto tu: "volunteer" oppure "host"
+
+  // 👇 MEMOIZZATO → non cambia ad ogni render
+  const handleFiltersChange = useCallback((f: any) => {
+    setFilters(f);
+  }, []);
 
   useEffect(() => {
     const run = async () => {
@@ -50,8 +67,9 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
     run();
   }, []);
 
+  // quando cambiano i filtri, resetto il numero
   useEffect(() => {
-    setVisibleCount(3);
+    setVisibleCount(6);
   }, [filters]);
 
   const filteredJobs = jobs.filter((job) => {
@@ -74,35 +92,18 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
 
   const visibleJobs = filteredJobs.slice(0, visibleCount);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white text-black flex items-center justify-center text-sm">
-        Loading job offers...
-      </div>
-    );
-  }
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white text-red-500 flex items-center justify-center text-sm">
-        {error}
-      </div>
-    );
-  }
-
   return (
-    <div className=" mx-auto max-w-full bg-white">
+    <div className="mx-auto max-w-6xl bg-white pb-10">
       {/* header */}
-      <header className="flex items-center justify-between px-5 pt-5 pb-2">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 pt-6 pb-3">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-[3rem] font-semibold text-black leading-none">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl sm:text-4xl font-semibold text-black leading-tight">
               Hello {userName}!
             </h1>
-
-            {/* badge ruolo */}
             {userRole && (
               <span
-                className={`text-xs px-3 py-1 rounded-full font-medium ${
+                className={`text-xs px-3 py-1 rounded-full font-medium whitespace-nowrap ${
                   userRole === "volunteer"
                     ? "bg-lime-500 text-white"
                     : "bg-pink-500 text-white"
@@ -112,91 +113,112 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
               </span>
             )}
           </div>
-          <p className="text-[1rem] text-slate-400 mt-1">
+          <p className="text-sm sm:text-base text-slate-400 mt-1">
             Welcome to Travel 👋
           </p>
         </div>
       </header>
 
       {/* filters */}
-      <div className="px-5 mb-3">
-        <div className="rounded-xl p-3">
-          <Filters initial={filters} onChange={(f) => setFilters(f)} />
+      <div className="px-4 mb-4">
+        <div className="rounded-xl p-3 bg-white">
+          <Filters initial={filters} onChange={handleFiltersChange} />
         </div>
       </div>
 
       {/* subtitle */}
-      <div className="px-5 mb-2 flex items-center justify-between">
-        <h2 className="text-base font-medium text-black">
-          {filteredJobs.length} result{filteredJobs.length === 1 ? "" : "s"}
+      <div className="px-4 mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-sm sm:text-base font-medium text-black">
+          {loading
+            ? "Loading results…"
+            : `${filteredJobs.length} result${
+                filteredJobs.length === 1 ? "" : "s"
+              }`}
         </h2>
-        <button
-          onClick={() => setVisibleCount(filteredJobs.length)}
-          className="text-xs text-black hover:text-gray-800"
-        >
-          View all
-        </button>
+        {!loading && filteredJobs.length > visibleCount && (
+          <button
+            onClick={() => setVisibleCount(filteredJobs.length)}
+            className="text-xs sm:text-sm text-black/80 hover:text-black"
+          >
+            View all
+          </button>
+        )}
       </div>
 
-      {/* job grid */}
-      {visibleJobs.length === 0 ? (
+      {/* jobs */}
+      {error ? (
+        <div className="text-red-500 px-4 py-10 text-sm text-center">
+          {error}
+        </div>
+      ) : loading ? (
+        <div className="px-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <JobCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : visibleJobs.length === 0 ? (
         <p className="text-center text-black py-8 text-sm">
           No job offers match your filters.
         </p>
       ) : (
         <>
-          <div className="px-5 grid grid-cols-1 md:grid-cols-3 gap-5 pb-8">
+          <div className="px-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {visibleJobs.map((job) => (
               <article
                 key={job._id}
-                className="bg-white border rounded-2xl overflow-hidden hover:border-pink-400/60 transition shadow-md"
+                className="bg-white border rounded-2xl overflow-hidden hover:border-pink-400/70 transition shadow-sm flex flex-col"
               >
                 {job.pictureURL?.length ? (
-                  <img
-                    src={
-                      typeof job.pictureURL[0] === "string"
-                        ? (job.pictureURL[0] as string)
-                        : URL.createObjectURL(job.pictureURL[0] as File)
-                    }
-                    alt={job.title}
-                    className="h-36 w-full object-cover"
-                  />
+                  <div className="relative w-full aspect-[16/9] bg-slate-200">
+                    <img
+                      src={
+                        typeof job.pictureURL[0] === "string"
+                          ? (job.pictureURL[0] as string)
+                          : URL.createObjectURL(job.pictureURL[0] as File)
+                      }
+                      alt={job.title}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
                 ) : (
-                  <div className="h-36 w-full bg-slate-200" />
+                  <div className="w-full aspect-[16/9] bg-slate-100" />
                 )}
 
-                <div className="p-4 space-y-2">
-                  <h3 className="text-md font-semibold text-black line-clamp-1 capitalize">
+                <div className="p-4 flex flex-col gap-2 flex-1">
+                  <h3 className="text-base font-semibold text-black line-clamp-1 capitalize">
                     {job.title}
                   </h3>
 
-                  <p className="text-md text-black capitalize">
+                  <p className="text-sm text-black capitalize">
                     {job.continent && job.country
                       ? `${job.continent}, ${job.country}`
                       : job.country || job.continent}
                   </p>
-                  <p className="text-xs text-slate-500">{job.location ?? ""}</p>
+                  {job.location ? (
+                    <p className="text-xs text-slate-500">{job.location}</p>
+                  ) : null}
 
-                  <div className="flex flex-wrap gap-2 mb-2">
+                  <div className="flex flex-wrap gap-2 mb-1">
                     {(job.needs || []).slice(0, 3).map((need, i) => (
                       <span
                         key={i}
-                        className="px-2 py-1 bg-pink-600 text-white rounded-full text-xs"
+                        className="px-2 py-1 bg-pink-600 text-white rounded-full text-[11px]"
                       >
                         {need}
                       </span>
                     ))}
                     {job.needs?.length > 3 && (
-                      <span className="text-[10px] text-slate-500">
+                      <span className="text-[10px] text-slate-500 self-center">
                         +{job.needs.length - 3}
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="mt-auto flex gap-2 pt-2">
                     <button
                       onClick={() => navigate(`/job/${job._id}`)}
-                      className="text-sm px-3 py-1 rounded-full bg-black text-white hover:bg-white hover:text-black transition"
+                      className="flex-1 text-sm px-3 py-1.5 rounded-full bg-black text-white hover:bg-white hover:text-black border border-transparent hover:border-black transition text-center"
                     >
                       Details
                     </button>
@@ -204,7 +226,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
                       onClick={() =>
                         console.log("Navigate to chat", job.userProfileId)
                       }
-                      className="flex items-center gap-1 text-sm px-3 py-1 rounded-full bg-black text-white hover:bg-white hover:text-black transition"
+                      className="flex-1 flex items-center justify-center gap-1 text-sm px-3 py-1.5 rounded-full bg-slate-100 text-black hover:bg-black hover:text-white transition"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       Contact
@@ -216,10 +238,10 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
           </div>
 
           {visibleCount < filteredJobs.length && (
-            <div className="flex justify-center pb-8">
+            <div className="flex justify-center pt-6">
               <button
-                onClick={() => setVisibleCount((prev) => prev + 3)}
-                className="px-3 py-1.5 text-sm font-medium border bg-slate-100 text-slate-950 rounded-full hover:bg-black hover:text-white transition"
+                onClick={() => setVisibleCount((prev) => prev + 6)}
+                className="px-4 py-2 text-sm font-medium border bg-white text-slate-950 rounded-full hover:bg-black hover:text-white transition"
               >
                 Show more...
               </button>
