@@ -5,9 +5,9 @@ import { continentFromLocation, type ContinentKey } from "@/utils/geo";
 
 type JobOffer = {
   _id: string;
-  location: string;
-  userProfileId: string;
-  pictureGallery?: string[];
+  location: string; // "Freiburg, Germany, Europe"
+  userProfileId: string; // ref to userProfile
+  pictureGallery?: string[]; // images
   description: string;
   needs?: string[];
   languages: string[];
@@ -23,6 +23,7 @@ const CONTINENT_ORDER: ContinentKey[] = [
   "Oceania",
 ];
 
+// Fallback sample job offers used when fetch fails (quick local mock)
 const SAMPLE_OFFERS: JobOffer[] = [
   {
     _id: "mock_1",
@@ -92,11 +93,19 @@ const JobByContinent = () => {
     (async () => {
       try {
         const response = await getAllUserProfiles();
-        // qui puoi decidere se filtrare o trasformare i dati reali
-        setOffers(SAMPLE_OFFERS); // per ora fallback
+        console.log(response);
+        const filteredEurope = response.userProfiles.filter(
+          (up: any) => up.continent === "Europe"
+        );
+        console.log(filteredEurope);
+        // Backend returns {message: '...', jobOffers: [...]}
+        // const data = response?.jobOffers || response;
+        // setOffers(Array.isArray(data) ? data : []);
       } catch (e) {
-        console.error("Failed to load job offers:", e);
+        console.error("Failed to load job offers from API:", e);
+        // fallback to local sample data so homepage still shows content
         setOffers(SAMPLE_OFFERS);
+        // do not set a fatal error so UI can render fallback; optionally set a non-fatal message
         setErr(null);
       } finally {
         setLoading(false);
@@ -104,7 +113,10 @@ const JobByContinent = () => {
     })();
   }, []);
 
+  // group offers by detected continent
   const grouped = useMemo(() => groupByContinent(offers), [offers]);
+
+  // read optional ?continent=Europe query param and show only that continent when present
   const [searchParams] = useSearchParams();
   const selectedRaw = searchParams.get("continent");
   const selected = selectedRaw ? decodeURIComponent(selectedRaw) : null;
@@ -126,86 +138,69 @@ const JobByContinent = () => {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 space-y-12">
-      <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">
-        🌍 Job Offers by Continent
-      </h1>
-
+      <h1 className="text-3xl font-bold">Job Offers by Continent</h1>
       {continents.map((continent) => {
         const jobs = grouped[continent]!;
         return (
           <div key={continent}>
-            {/* header */}
-            <div className="mb-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-1">
+            <div className="mb-4 flex items-end justify-between">
               <div>
-                <h2 className="text-2xl md:text-3xl font-semibold text-slate-800 dark:text-slate-100">
-                  {continent}
-                </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {jobs.length} opportunities available
+                <h2 className="text-2xl md:text-3xl font-bold">{continent}</h2>
+                <p className="text-sm text-base-content/60">
+                  {jobs.length} opportunities
                 </p>
               </div>
-              <Link
-                to={`/?continent=${continent}`}
-                className="text-sm text-lime-600 hover:text-lime-400 transition"
-              >
-                View all →
-              </Link>
             </div>
 
-            {/* responsive job grid */}
-            <div
-              className="
-                grid gap-4
-                grid-cols-1
-                sm:grid-cols-2
-                md:grid-cols-3
-                lg:grid-cols-4
-              "
-            >
+            <div className="no-scrollbar flex gap-4 overflow-x-auto pb-2">
               {jobs.map((job) => {
                 const img = job.pictureGallery?.[0];
                 return (
                   <article
                     key={job._id}
-                    className="
-                      bg-white dark:bg-slate-800
-                      rounded-2xl border border-slate-200 dark:border-slate-700
-                      overflow-hidden shadow-sm hover:shadow-md
-                      transition duration-200
-                      flex flex-col
-                    "
+                    className="card min-w-[270px] max-w-[300px] bg-base-100 shadow-sm hover:shadow-md transition-shadow"
                   >
                     {img && (
-                      <img
-                        src={img}
-                        alt={job.location}
-                        className="h-40 w-full object-cover"
-                      />
+                      <figure className="h-36 overflow-hidden">
+                        <img
+                          src={img}
+                          alt={job.location}
+                          className="h-full w-full object-cover"
+                        />
+                      </figure>
                     )}
-                    <div className="p-4 flex flex-col flex-1">
-                      <h3 className="font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">
+                    <div className="card-body p-4">
+                      <h3 className="font-semibold leading-tight line-clamp-2">
                         {job.location}
                       </h3>
 
-                      <p className="text-xs text-slate-500 dark:text-slate-300 line-clamp-3 mt-1">
+                      <p className="text-xs text-base-content/60 line-clamp-2">
                         {job.description}
                       </p>
 
-                      <div className="mt-3 flex flex-wrap gap-1">
+                      <div className="mt-3 flex flex-wrap gap-2">
                         {job.needs?.slice(0, 3).map((n) => (
                           <span
                             key={n}
-                            className="px-2 py-0.5 text-[11px] bg-lime-100 text-lime-800 rounded-full dark:bg-lime-900/40 dark:text-lime-300"
+                            className="badge badge-outline badge-sm"
                           >
                             {n}
                           </span>
                         ))}
+                        {job.languages?.slice(0, 2).map((lng) => (
+                          <span
+                            key={lng}
+                            className="badge badge-ghost badge-sm"
+                          >
+                            {lng}
+                          </span>
+                        ))}
                       </div>
 
-                      <div className="mt-auto pt-3">
+                      <div className="card-actions mt-4">
                         <Link
                           to={`/opportunity/${job._id}`}
-                          className="inline-block text-center w-full text-sm font-medium bg-lime-500 hover:bg-lime-400 text-white rounded-lg py-1.5 transition"
+                          className="btn btn-sm btn-primary w-full"
                         >
                           View Details
                         </Link>
