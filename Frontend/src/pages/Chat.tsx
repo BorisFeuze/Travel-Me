@@ -91,24 +91,30 @@ const Chat = () => {
   // }, [socket, selectedUser]);
 
   return (
-    <div className="border w-full h-screen sm:px-[15%] sm:py-[5%]">
+    <div className="w-full min-h-dvh overflow-x-hidden px-4 py-4 md:px-8 md:py-8">
       <div
-        className={`backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden h-full grid grid-cols-1 relative ${selectedUser ? "md:grid-cols-[1fr_1.5fr] xl:grid-cols-[1fr_2fr]" : "md:grid-cols-2"}`}
+        className={`mx-auto max-w-[1440px] h-[calc(100dvh-2rem)] md:h-[calc(100dvh-4rem)]
+                    grid grid-cols-1 md:grid-cols-[340px_minmax(0,1fr)] md:gap-x-8 xl:gap-x-12
+                    rounded-3xl border border-gray-200 bg-white shadow-md overflow-hidden`}
       >
         <Sidebar
           users={chatUsers}
-          // unseenMessages={unseenMessages}
           selectedUser={selectedUser!}
           setSelectedUser={setSelectedUser}
         />
-        <ChatContainer
-          selectedUser={selectedUser!}
-          setSelectedUser={setSelectedUser}
-          messages={messages}
-          sendMessage={sendMessage}
-          onlineUsers={onlineUsers}
-          user={user!}
-        />
+
+        <div className="relative h-full">
+          <div className="absolute inset-0">
+            <ChatContainer
+              selectedUser={selectedUser!}
+              setSelectedUser={setSelectedUser}
+              messages={messages}
+              sendMessage={sendMessage}
+              onlineUsers={onlineUsers}
+              user={user!}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

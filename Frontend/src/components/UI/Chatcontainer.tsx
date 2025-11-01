@@ -11,10 +11,11 @@ import help_icon from "../../assets/images/Chat/help_icon.png";
 import logo_icon from "../../assets/images/Chat/logo_icon.svg";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
 // import gallery_icon from "../../assets/images/Chat/gallery_icon.svg";
-import send_button from "../../assets/images/Chat/send_button.svg";
+// import send_button from "../../assets/images/Chat/send_button.svg";
 import { formatMessageTime } from "@/library";
 import { getUserDetails } from "@/data";
 // import { useAuth } from "@/context";
+import { Send } from "lucide-react";
 
 type ChatContainerType = {
   selectedUser: User;
@@ -122,69 +123,107 @@ const ChatContainer = ({
   }, [messages]);
 
   return selectedUser ? (
-    <div className="h-full overflow-scroll relative backdrop-blur-lg">
-      {/*-------header-------*/}
-      <div className="flex items-center gap-3 py-3 mx-4 border-b border-stone-500">
+    <div className="h-full flex flex-col bg-white">
+      {/* Header */}
+      <div className="flex items-center gap-3 h-16 px-4 md:px-6 border-b border-gray-200">
         <img
           src={(info?.pictureURL || avatar_icon) as string}
           alt=""
-          className="w-8 rounded-full"
+          className="w-9 h-9 rounded-full object-cover"
         />
-        <p className="flex-1 text-lg text-black flex items-center gap-2">
-          {selectedUser?.firstName} {selectedUser?.lastName}
-          {onlineUsers.includes(selectedUser._id) && (
-            <span className="w-2 h-2 rounded-full bg-green-500"></span>
-          )}
-        </p>
+        <div className="flex-1 min-w-0">
+          <p className="text-base md:text-lg text-gray-900 truncate">
+            {selectedUser?.firstName} {selectedUser?.lastName}
+          </p>
+          <div className="flex items-center gap-2">
+            {onlineUsers.includes(selectedUser._id) && (
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
+            )}
+            <span className="text-xs text-gray-500">
+              {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}
+            </span>
+          </div>
+        </div>
+
         <img
           onClick={() => setSelectedUser(null)}
           src={arrow_icon}
           alt=""
-          className="md:hidden max-w-7"
+          className="md:hidden w-6 h-6 cursor-pointer"
         />
-        <img src={help_icon} alt="" className="max-md:hidden max-w-5" />
+        <img
+          src={help_icon}
+          alt=""
+          className="max-md:hidden w-5 h-5 opacity-70"
+        />
       </div>
-      {/*------chat area-------*/}
-      <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex items-end gap-2 justify ${msg.senderId === user?._id && "flex-row-reverse"}`}
-          >
-            <div className="text-center text-xs">
-              <img
-                src={
-                  (msg.senderId === user?._id
-                    ? userInfo?.pictureURL || avatar_icon
-                    : info?.pictureURL || avatar_icon) as string
-                }
-                alt=""
-                className="w-7 rounded-full"
-              />
-              <p className="text-gray-500">
-                {formatMessageTime(msg.createdAt)}
-              </p>
-            </div>
-            {msg.image ? (
-              <img
-                src={msg.image}
-                alt=""
-                className="max-w-[230px] border border-gray-700 rounded-lg overflow-hidden mb-8"
-              />
-            ) : (
-              <p
-                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 breal-all bg-violet-500/30 text-black ${msg.senderId !== user?._id ? "rounded-bl-none" : "rounded-br-none"}`}
+
+      {/* Chat area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((msg, index) => {
+          const isMe = msg.senderId === user?._id;
+          const avatarSrc = (
+            isMe
+              ? userInfo?.pictureURL || avatar_icon
+              : info?.pictureURL || avatar_icon
+          ) as string;
+
+          return (
+            <div
+              key={index}
+              className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"}`}
+            >
+              {!isMe && (
+                <img
+                  src={avatarSrc}
+                  alt=""
+                  className="w-7 h-7 rounded-full object-cover"
+                />
+              )}
+
+              <div
+                className={`max-w-[75%] flex flex-col ${isMe ? "items-end" : "items-start"}`}
               >
-                {msg.message}
-              </p>
-            )}
-          </div>
-        ))}
-        <div ref={scrollEnd}></div>
+                {msg.image ? (
+                  <img
+                    src={msg.image}
+                    alt=""
+                    className={`max-w-[240px] border rounded-xl overflow-hidden ${
+                      isMe ? "border-pink-200" : "border-gray-200"
+                    }`}
+                  />
+                ) : (
+                  <p
+                    className={`px-3 py-2 text-sm leading-relaxed rounded-2xl break-all ${
+                      isMe
+                        ? "bg-pink-600 text-white rounded-br-sm"
+                        : "bg-slate-100 text-slate-900 rounded-bl-sm"
+                    }`}
+                  >
+                    {msg.message}
+                  </p>
+                )}
+                <span className="mt-1 text-[10px] text-gray-500">
+                  {formatMessageTime(msg.createdAt)}
+                </span>
+              </div>
+
+              {isMe && (
+                <img
+                  src={avatarSrc}
+                  alt=""
+                  className="w-7 h-7 rounded-full object-cover"
+                />
+              )}
+            </div>
+          );
+        })}
+        <div ref={scrollEnd} />
       </div>
-      {/*-------bottom area------ */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-3 p-3 ">
-        <div className="flex-1 flex items-center bg-gray-100/12 px-3 rounded-full">
+
+      {/* Composer (send only) */}
+      <div className="border-t border-gray-200 p-3">
+        <div className="flex items-center gap-2 bg-gray-50 rounded-full px-3 py-2">
           <input
             onChange={(e) => setInput(e.target.value)}
             value={input}
@@ -192,37 +231,24 @@ const ChatContainer = ({
               e.key === "Enter" ? handleSendMessage(e) : null
             }
             type="text"
-            placeholder="Send a message"
-            className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-black
-             placeholder-gray-400"
+            placeholder="Write a message…"
+            className="flex-1 text-sm bg-transparent outline-none placeholder-gray-400"
           />
-          {/* <input
-            onChange={handleSendImage}
-            type="file"
-            id="image"
-            accept="'image/png , image/jpeg"
-            hidden
-          />
-          <label htmlFor="image">
-            <img
-              src={gallery_icon}
-              alt=""
-              className="w-5 mr-2 bg-black cursor-pointer"
-            />
-          </label> */}
+          <button
+            type="button"
+            onClick={(e) => handleSendMessage(e as any)}
+            className="p-2 rounded-full bg-pink-600 hover:bg-pink-700 text-white transition"
+            aria-label="Send"
+          >
+            <Send className="w-5 h-5" />
+          </button>
         </div>
-        <img
-          onClick={handleSendMessage}
-          src={send_button}
-          alt=""
-          className="w-7 cursor-pointer"
-        />
       </div>
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center gap-2 text-gray-500 bg-white/10 max-md:hidden">
+    <div className="flex flex-col items-center justify-center pt-100 gap-2 text-gray-500 bg-white">
       <img src={logo_icon} alt="" className="max-w-16" />
-      <p className="text-lg font-medium text-whrite">Chat anytime, anywhere</p>
+      <p className="text-lg font-medium">Chat anytime, anywhere</p>
     </div>
   );
 };
