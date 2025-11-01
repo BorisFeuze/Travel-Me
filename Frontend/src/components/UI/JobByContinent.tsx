@@ -20,6 +20,7 @@ const CONTINENT_ORDER: ContinentKey[] = [
   "South America",
   "Oceania",
 ];
+
 // Fallback sample job offers used when fetch fails (quick local mock)
 const SAMPLE_OFFERS: JobOffer[] = [
   {
@@ -106,8 +107,10 @@ const JobByContinent = () => {
       }
     })();
   }, []);
+
   // group offers by detected continent
   const grouped = useMemo(() => groupByContinent(offers), [offers]);
+
   // read optional ?continent=Europe query param and show only that continent when present
   const [searchParams] = useSearchParams();
   const selectedRaw = searchParams.get("continent");
@@ -140,6 +143,7 @@ const JobByContinent = () => {
                 </p>
               </div>
             </div>
+
             <div className="no-scrollbar flex gap-4 overflow-x-auto pb-2">
               {jobs.map((job) => {
                 const img = job.pictureGallery?.[0];
@@ -161,9 +165,11 @@ const JobByContinent = () => {
                       <h3 className="font-semibold leading-tight line-clamp-2">
                         {job.location}
                       </h3>
+
                       <p className="text-xs text-base-content/60 line-clamp-2">
                         {job.description}
                       </p>
+
                       <div className="mt-3 flex flex-wrap gap-2">
                         {job.needs?.slice(0, 3).map((n) => (
                           <span
@@ -182,6 +188,7 @@ const JobByContinent = () => {
                           </span>
                         ))}
                       </div>
+
                       <div className="card-actions mt-4">
                         <Link
                           to={`/opportunity/${job._id}`}
