@@ -28,25 +28,33 @@ const VolunteerInfoBox = () => {
   if (!user) return null;
 
   return (
-    <div className="absolute top-6 right-6 flex items-center gap-3 bg-white border border-slate-200 shadow-md rounded-md px-4 py-2">
+    <div
+      className={`
+        /* mobile: dentro il flow */
+        w-full max-w-full bg-white border border-slate-200 shadow-sm rounded-md
+        px-3 py-2 mb-4 flex items-center gap-3
+        /* desktop: torna assoluto in alto a destra */
+        md:absolute md:top-3 md:right-6 md:w-auto md:max-w-[200px] md:shadow-md
+      `}
+    >
       {info?.pictureURL ? (
         <img
           src={info.pictureURL as string}
           alt="Volunteer"
-          className="w-10 h-10 rounded-md object-cover border border-slate-200 cursor-pointer"
+          className="w-9 h-9 md:w-10 md:h-10 rounded-md object-cover border border-slate-200 cursor-pointer"
           onClick={handleGoToProfile}
         />
       ) : (
         <div
           onClick={handleGoToProfile}
-          className="w-10 h-10 rounded-md bg-slate-200 cursor-pointer"
+          className="w-9 h-9 md:w-10 md:h-10 rounded-md bg-slate-200 cursor-pointer"
         />
       )}
 
-      <div className="flex flex-col w-full max-w-[160px]">
+      <div className="flex-1 min-w-0">
         <p
           onClick={handleGoToProfile}
-          className="text-sm font-semibold text-slate-900 cursor-pointer hover:text-sky-600"
+          className="text-sm font-semibold text-slate-900 cursor-pointer hover:text-sky-600 truncate"
         >
           {user?.firstName} {user?.lastName}
         </p>
