@@ -90,7 +90,7 @@ const JobByContinent = () => {
         const response = await getAllUserProfiles();
         console.log(response);
         const filteredEurope = response.userProfiles.filter(
-          (up: any) => up.continent === "Europe"
+          (up) => up.continent === "Europe"
         );
         console.log(filteredEurope);
         // Backend returns {message: '...', jobOffers: [...]}
@@ -209,3 +209,4 @@ const JobByContinent = () => {
   );
 };
 export default JobByContinent;
+

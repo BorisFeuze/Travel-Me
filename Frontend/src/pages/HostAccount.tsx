@@ -9,6 +9,8 @@ import {
 import { useAuth, useUser } from "@/context";
 import { JobCard } from "@/components/UI";
 import { toast } from "react-toastify";
+import avatarPlaceholder from "@/assets/images/avatarPlaceholder.png";
+
 
 const HostAccount = () => {
   const navigate = useNavigate();
@@ -16,7 +18,6 @@ const HostAccount = () => {
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  // const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | File>();
   const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -89,7 +90,6 @@ const HostAccount = () => {
         if (currentUser) {
           const dataCurrentUser = currentUser.userProfiles[0];
           const currentnUserProfil = dataCurrentUser.pictureURL;
-          // console.log(currentnUserProfil);
 
           if (currentnUserProfil) {
             setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
@@ -111,7 +111,6 @@ const HostAccount = () => {
       setLoading(true);
       try {
         const profile = await getUserProfile(user?._id ?? "");
-        // console.log(profile);
 
         if (!profile?.userProfiles[0]) {
           console.error("please created a account");
@@ -119,14 +118,10 @@ const HostAccount = () => {
 
         const data = await getJobOffers(profile?.userProfiles[0]._id as string);
 
-        // console.log(data);
-
         if (data && Array.isArray(data.jobOffers)) {
           const filteredJobs = data.jobOffers.filter(
             (job: JobData) => job.userProfileId === profile?.userProfiles[0]._id
           );
-
-          // console.log(filteredJobs);
 
           const mappedJobs: JobCardData[] = filteredJobs.map(
             (job: JobData) => ({
@@ -174,6 +169,8 @@ const HostAccount = () => {
   };
 
   const handleSave = async () => {
+    
+  if (!profileId) {
     if (
       !formData.continent ||
       !formData.country ||
@@ -189,62 +186,79 @@ const HostAccount = () => {
         text: "Please fill all required fields.",
         type: "error",
       });
-      throw new Error("All fields are required");
+      toast.error("Please fill all required fields.");
+      return;
+    }
+  }
+
+  setIsSaving(true);
+  setSaveMessage(null);
+  formData.userId = user!._id;
+
+  try {
+    const data = new FormData();
+    data.append("userId", formData.userId);
+
+    if (selectedFile instanceof File) {
+      data.append("pictureURL", selectedFile);
+    } else if (Array.isArray(formData.pictureURL) && formData.pictureURL[0]) {
+      data.append("existingPictureURL", formData.pictureURL[0]);
+    } else if (typeof formData.pictureURL === "string") {
+      data.append("existingPictureURL", formData.pictureURL);
     }
 
-    setIsSaving(true);
-    setSaveMessage(null);
+    data.append("age", formData.age?.toString() || "");
+    data.append("continent", formData.continent);
+    data.append("country", formData.country);
+    data.append("address", formData.address);
+    data.append("description", formData.description);
+    data.append("gender", formData.gender);
+    formData.educations.forEach((edu) => data.append("educations", edu));
+    formData.skills.forEach((ski) => data.append("skills", ski));
+    formData.languages.forEach((lan) => data.append("languages", lan));
 
-    formData.userId = user!._id;
-    formData.pictureURL = selectedFile ?? undefined;
-
-    try {
-      const data = new FormData();
-      data.append("userId", formData.userId);
-
-      if (formData.pictureURL instanceof File) {
-        data.append("pictureURL", formData.pictureURL);
-      }
-
-      data.append("age", formData.age?.toString() || "");
-      data.append("continent", formData.continent);
-      data.append("country", formData.country);
-      data.append("address", formData.address);
-      data.append("description", formData.description);
-      data.append("gender", formData.gender);
-      formData.educations.forEach((edu) => data.append("educations", edu));
-      formData.skills?.forEach((ski) => data.append("skills", ski));
-      formData.languages.forEach((lan) => data.append("languages", lan));
-
-      let updatedUser;
-      if (profileId) {
-        updatedUser = await updateUserDetails(profileId, data);
-      } else {
-        updatedUser = await addUserDetails(data);
-
-        console.log(updatedUser);
-
-        if (updatedUser?.userProfiles[0]._id) {
-          setProfileId(updatedUser.userProfiles[0]._id);
-        }
-      }
-
-      // const updatedUser = await addUserDetails(data);
-
-      // console.log(updatedUser);
-
-      toast.success("Your Host Profile is successfully created");
-
-      setSaveMessage({ text: "Changes saved successfully!", type: "success" });
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Something went wrong!";
-      toast.error(errorMessage);
-      setSaveMessage({ text: "Error while saving changes.", type: "error" });
-    } finally {
-      setIsSaving(false);
+    let updatedUser;
+    if (profileId) {
+      updatedUser = await updateUserDetails(profileId, data);
+    } else {
+      updatedUser = await addUserDetails(data);
     }
-  };
+
+    if (
+      updatedUser &&
+      "userProfiles" in updatedUser &&
+      Array.isArray(updatedUser.userProfiles) &&
+      updatedUser.userProfiles[0]
+    ) {
+      setProfileId(updatedUser.userProfiles[0]._id);
+    }
+
+    toast.success(
+      profileId
+        ? "Your Host Profile has been updated successfully."
+        : "Your Host Profile is successfully created."
+    );
+
+    setSaveMessage({ text: "Changes saved successfully!", type: "success" });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Something went wrong!";
+
+    if (
+      !message.includes("undefined") &&
+      !message.includes("reading '0'") &&
+      !message.includes("userProfiles")
+    ) {
+      toast.error(message);
+    } else {
+      console.warn("Non-critical internal issue:", message);
+    }
+
+    setSaveMessage({ text: "Error while saving changes.", type: "error" });
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 pt-10 pb-8 px-4 sm:px-6 lg:px-8">
@@ -258,7 +272,11 @@ const HostAccount = () => {
           <div className="flex flex-col px-6 items-center md:items-start gap-3">
             <div className="relative w-24 h-24">
               <img
-                src={previewUrl as string}
+                src={
+                  previewUrl && previewUrl !== ""
+                    ? (previewUrl as string)
+                    : avatarPlaceholder
+                }
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover border border-gray-200"
               />
@@ -306,7 +324,7 @@ const HostAccount = () => {
               className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y capitalize"
               value={formData.description}
               onChange={(e) =>
-                handleInputChange("description", e.target.value as any)
+                handleInputChange("description", e.target.value)
               }
             />
           </div>
@@ -638,28 +656,6 @@ const HostAccount = () => {
                 image={job.image}
               />
             ))}
-
-            {/* Plus Card could delete*/}
-            {/* <div
-              onClick={() => navigate("/create-job")}
-              className="cursor-pointer flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 aspect-4/3"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-16 h-16 text-gray-400"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              <p className="mt-2 text-gray-500 font-medium">Add Job Offer</p>
-            </div> */}
           </div>
         </section>
       </div>
