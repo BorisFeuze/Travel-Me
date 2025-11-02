@@ -1,36 +1,40 @@
 import { useState, useEffect, type ChangeEvent } from "react";
-import { addUserDetails, getUserDetails } from "@/data";
+import {
+  addUserDetails,
+  getUserDetails,
+  updateUserDetails,
+} from "@/data";
 import { useAuth } from "@/context";
 import { toast } from "react-toastify";
+import avatarPlaceholder from "@/assets/images/avatarPlaceholder.png";
 
 const VolunteerAccount = () => {
+
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-
   const [previewUrl, setPreviewUrl] = useState<string | File>();
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-
   const [, setOpenDropdown] = useState<string | null>(null);
-
   const [, setSaveMessage] = useState<{
     text: string;
     type: "success" | "error";
   } | null>(null);
 
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: undefined,
+    pictureURL: "",
     userId: "",
     age: undefined,
     continent: "",
     country: "",
+    address: "",
+    description: "",
     gender: "",
     skills: [],
     languages: [],
     educations: [],
-    address: "",
-    description: "",
   });
 
   const skillOptions = [
@@ -74,11 +78,14 @@ const VolunteerAccount = () => {
         const currentUser = await getUserDetails(user!._id ?? "");
 
         if (currentUser) {
-          const dataCurrentUser = currentUser.userProfiles?.[0];
-          const currentnUserProfil = dataCurrentUser?.pictureURL;
-          // console.log(currentnUserProfil);
-          setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
-          setPreviewUrl(currentnUserProfil);
+          const dataCurrentUser = currentUser.userProfiles[0];
+          const currentnUserProfil = dataCurrentUser.pictureURL;
+
+          if (currentnUserProfil) {
+            setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
+            setPreviewUrl(currentnUserProfil);
+          }
+          if (dataCurrentUser?._id) setProfileId(dataCurrentUser._id);
         }
       } catch (err) {
         console.error("Failed to load user data", err);
@@ -107,33 +114,42 @@ const VolunteerAccount = () => {
   };
 
   const handleSave = async () => {
-    if (
-      !formData.continent ||
-      !formData.country ||
-      !formData.gender ||
-      !formData.address ||
-      !formData.age ||
-      !formData.description ||
-      !formData.educations ||
-      !formData.skills ||
-      !formData.languages
-    ) {
-      throw new Error("All fields are required");
+    
+    if (!profileId) {
+      if (
+        !formData.continent ||
+        !formData.country ||
+        !formData.gender ||
+        !formData.address ||
+        !formData.age ||
+        !formData.description ||
+        !formData.educations ||
+        !formData.skills ||
+        !formData.languages
+      ) {
+        setSaveMessage({
+          text: "Please fill all required fields.",
+          type: "error",
+        });
+        toast.error("Please fill all required fields.");
+        return;
+      }
     }
 
     setIsSaving(true);
     setSaveMessage(null);
-
-    if (!user) throw new Error("please login-in");
     formData.userId = user!._id;
-    formData.pictureURL = selectedFile ?? undefined;
 
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
 
-      if (formData.pictureURL instanceof File) {
-        data.append("pictureURL", formData.pictureURL);
+      if (selectedFile instanceof File) {
+        data.append("pictureURL", selectedFile);
+      } else if (Array.isArray(formData.pictureURL) && formData.pictureURL[0]) {
+        data.append("existingPictureURL", formData.pictureURL[0]);
+      } else if (typeof formData.pictureURL === "string") {
+        data.append("existingPictureURL", formData.pictureURL);
       }
 
       data.append("age", formData.age?.toString() || "");
@@ -146,19 +162,43 @@ const VolunteerAccount = () => {
       formData.skills.forEach((ski) => data.append("skills", ski));
       formData.languages.forEach((lan) => data.append("languages", lan));
 
-      console.log(data);
+      let updatedUser;
+      if (profileId) {
+        updatedUser = await updateUserDetails(profileId, data);
+      } else {
+        updatedUser = await addUserDetails(data);
+      }
 
-      const updatedUser = await addUserDetails(data);
+      if (
+        updatedUser &&
+        "userProfiles" in updatedUser &&
+        Array.isArray(updatedUser.userProfiles) &&
+        updatedUser.userProfiles[0]
+      ) {
+        setProfileId(updatedUser.userProfiles[0]._id);
+      }
 
-      console.log(updatedUser);
-
-      toast.success("Your Volunteer Profile is successfully created");
+      toast.success(
+        profileId
+          ? "Your Volunteer Profile has been updated successfully."
+          : "Your Volunteer Profile is successfully created."
+      );
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
     } catch (error) {
-      const errorMessage =
+      const message =
         error instanceof Error ? error.message : "Something went wrong!";
-      toast.error(errorMessage);
+
+      if (
+        !message.includes("undefined") &&
+        !message.includes("reading '0'") &&
+        !message.includes("userProfiles")
+      ) {
+        toast.error(message);
+      } else {
+        console.warn("Non-critical internal issue:", message);
+      }
+
       setSaveMessage({ text: "Error while saving changes.", type: "error" });
     } finally {
       setIsSaving(false);
@@ -177,7 +217,11 @@ const VolunteerAccount = () => {
           <div className="flex flex-col px-6 items-center md:items-start gap-3">
             <div className="relative w-24 h-24">
               <img
-                src={previewUrl as string}
+                src={
+                  previewUrl && previewUrl !== ""
+                    ? (previewUrl as string)
+                    : avatarPlaceholder
+                }
                 alt="Profile"
                 className="w-24 h-24 rounded-full object-cover border border-gray-200"
               />

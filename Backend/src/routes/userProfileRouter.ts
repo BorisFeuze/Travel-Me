@@ -7,7 +7,7 @@ import {
   getSingleUserProfile,
   updateUserProfile
 } from '#controllers';
-import { userProfileInputSchema, querySchema, paramSchema } from '#schemas';
+import { userProfileInputSchema, querySchema, paramSchema, userProfileUpdateSchema } from '#schemas';
 
 const userProfilesRouter = Router();
 
@@ -27,7 +27,7 @@ userProfilesRouter
     cloudUploader,
     authenticate('strict'),
     hasRole1('self', 'admin'),
-    validateZod(userProfileInputSchema, 'body'),
+    validateZod(userProfileUpdateSchema, 'body'),
     updateUserProfile
   )
   .delete(authenticate('strict'), hasRole1('self', 'admin'), deleteUserProfile);

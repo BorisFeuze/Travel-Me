@@ -59,3 +59,10 @@ export const userProfileSchema = z.strictObject({
   ...userProfileInputSchema.shape,
   ...dbEntrySchema.shape
 });
+
+export const userProfileUpdateSchema = userProfileInputSchema.extend({
+  existingPictureURL: z.union([
+    z.string(),
+    z.array(z.string())
+  ]).optional()
+});
