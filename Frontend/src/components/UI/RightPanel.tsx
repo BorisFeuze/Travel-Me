@@ -65,11 +65,25 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
     navigate("/create-job");
   };
 
+  // date
   const today = useMemo(() => new Date(), []);
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth(); // 0-11
   const monthLabel = today.toLocaleString("en-US", {
     month: "long",
     year: "numeric",
   });
+
+  // calendar generation
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const calendarCells: Array<{ day: number | null }> = [];
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    calendarCells.push({ day: null });
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    calendarCells.push({ day: d });
+  }
 
   if (loading) {
     return (
@@ -90,7 +104,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
         ${isOpen ? "translate-x-0" : "translate-x-[calc(100%-1.75rem)]"}
       `}
     >
-      {/* toggle laterale */}
+      {/* toggle */}
       <button
         onClick={onToggle}
         className="
@@ -100,7 +114,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
           flex items-center justify-center
           shadow-sm hover:bg-slate-50 transition
         "
-        title={isOpen ? "Chiudi" : "Apri"}
+        title={isOpen ? "Close panel" : "Open panel"}
       >
         {isOpen ? "›" : "‹"}
       </button>
@@ -137,7 +151,6 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
               </p>
               <p className="text-xs text-slate-500">{user?.email ?? ""}</p>
 
-              {/* bottone Logout */}
               <button
                 onClick={handleSignOut}
                 className="mt-3 w-full py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded-full transition cursor-pointer"
@@ -148,7 +161,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
 
             <button
               className="w-9 h-9 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center text-sm text-slate-500 hover:bg-slate-50"
-              title="Notifiche"
+              title="Notifications"
             >
               ●
             </button>
@@ -156,7 +169,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
         ) : (
           <div className="flex flex-col gap-2">
             <p className="text-base font-semibold text-slate-900">
-              You are not Log-in
+              You’re not logged in
             </p>
             <button
               onClick={() => navigate("/login")}
@@ -168,84 +181,13 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
         )}
       </div>
 
-      {/* contenuto */}
+      {/* content */}
       <div className="flex-1 overflow-y-auto bg-slate-50/50">
-        {/* sezione oggi */}
-        <div className="px-5 pt-4">
-          <div className="bg-white border border-slate-200 rounded-md px-4 py-3.5 flex items-center justify-between gap-3 shadow-sm/10">
-            <div>
-              <p className="text-xs text-slate-500">Today</p>
-              <p className="text-sm font-medium text-slate-900">
-                {today.toLocaleDateString("it-IT", {
-                  weekday: "short",
-                  day: "numeric",
-                  month: "short",
-                })}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleCreateJob}
-                disabled={!signedIn}
-                className={`text-xs px-3 py-1.5 rounded-sm transition ${
-                  signedIn
-                    ? "bg-sky-500 text-white hover:bg-sky-400"
-                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                }`}
-              >
-                + Job
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* calendario */}
+        {/* 1. YOUR JOB OFFERS */}
         <div className="px-5 pt-5">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-[13px] font-medium text-slate-800 tracking-tight">
-              {monthLabel}
-            </p>
-            <div className="flex gap-1">
-              <button className="text-xs px-2 py-1 bg-white border border-slate-200 rounded-sm hover:bg-slate-50">
-                {"‹"}
-              </button>
-              <button className="text-xs px-2 py-1 bg-white border border-slate-200 rounded-sm hover:bg-slate-50">
-                {"›"}
-              </button>
-            </div>
-          </div>
-          <div className="grid grid-cols-7 gap-1 text-[11px] text-center text-slate-400 mb-1">
-            {["D", "L", "M", "M", "G", "V", "S"].map((d) => (
-              <span key={d} className="py-1.5 font-medium">
-                {d}
-              </span>
-            ))}
-          </div>
-          <div className="grid grid-cols-7 gap-1 text-[12px] text-center">
-            {Array.from({ length: 30 }).map((_, i) => {
-              const day = i + 1;
-              const isToday = day === today.getDate();
-              return (
-                <span
-                  key={day}
-                  className={`py-2 rounded-md border text-center ${
-                    isToday
-                      ? "bg-sky-100 border-sky-200 text-slate-900 font-semibold"
-                      : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
-                  }`}
-                >
-                  {day}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* job offers */}
-        <div className="px-5 pt-5 pb-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-[14px] font-semibold text-slate-900">
-              Le tue job offers
+              Your job offers
             </h3>
             {signedIn && (
               <button
@@ -260,7 +202,9 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
           <div className="bg-white border border-slate-200 rounded-md p-3 max-h-56 overflow-y-auto space-y-2">
             {signedIn ? (
               jobs.length === 0 ? (
-                <p className="text-xs text-slate-500">You don't have any job</p>
+                <p className="text-xs text-slate-500">
+                  You don’t have any job yet.
+                </p>
               ) : (
                 <ul className="space-y-2">
                   {jobs.slice(0, 10).map((job) => (
@@ -285,7 +229,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
                           {job.title}
                         </p>
                         <p className="text-[11px] text-slate-500 truncate">
-                          {job.location || "Nessuna location"}
+                          {job.location || "No location provided"}
                         </p>
                       </div>
                       <span className="text-[14px] text-slate-400">›</span>
@@ -295,9 +239,85 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
               )
             ) : (
               <p className="text-xs text-slate-500">
-                Esegui l&apos;accesso per vedere le tue job offers.
+                Log in to view your job offers.
               </p>
             )}
+          </div>
+        </div>
+
+        {/* 2. TODAY BOX */}
+        <div className="px-5 pt-5">
+          <div className="bg-white border border-slate-200 rounded-md px-4 py-3.5 flex items-center justify-between gap-3 shadow-sm/10">
+            <div>
+              <p className="text-xs text-slate-500">Today</p>
+              <p className="text-sm font-medium text-slate-900">
+                {today.toLocaleDateString("en-US", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                })}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateJob}
+                disabled={!signedIn}
+                className={`text-xs px-3 py-1.5 rounded-sm transition ${
+                  signedIn
+                    ? "bg-sky-500 text-white hover:bg-sky-400"
+                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                }`}
+              >
+                + Job
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. CALENDAR */}
+        <div className="px-5 pt-5 pb-6">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[13px] font-medium text-slate-800 tracking-tight">
+              {monthLabel}
+            </p>
+            <div className="flex gap-1">
+              <button className="text-xs px-2 py-1 bg-white border border-slate-200 rounded-sm hover:bg-slate-50">
+                {"‹"}
+              </button>
+              <button className="text-xs px-2 py-1 bg-white border border-slate-200 rounded-sm hover:bg-slate-50">
+                {"›"}
+              </button>
+            </div>
+          </div>
+
+          {/* header giorni */}
+          <div className="grid grid-cols-7 gap-1 text-[11px] text-center text-slate-400 mb-1">
+            {["S", "M", "T", "W", "T", "F", "S"].map((d) => (
+              <span key={d} className="py-1.5 font-medium">
+                {d}
+              </span>
+            ))}
+          </div>
+
+          {/* days */}
+          <div className="grid grid-cols-7 gap-1 text-[12px] text-center">
+            {calendarCells.map((cell, idx) => {
+              const isToday = cell.day === today.getDate();
+              return cell.day ? (
+                <span
+                  key={idx}
+                  className={`py-2 rounded-md border text-center ${
+                    isToday
+                      ? "bg-sky-100 border-sky-200 text-slate-900 font-semibold"
+                      : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {cell.day}
+                </span>
+              ) : (
+                <span key={idx} className="py-2 rounded-md" />
+              );
+            })}
           </div>
         </div>
       </div>

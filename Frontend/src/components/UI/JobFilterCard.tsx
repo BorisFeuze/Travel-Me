@@ -38,7 +38,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
     skills: [] as string[],
     ...initial,
   });
-  const [visibleCount, setVisibleCount] = useState(8); // di base 8 per la griglia a 4
+  const [visibleCount, setVisibleCount] = useState(8);
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -66,7 +66,6 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
     run();
   }, []);
 
-  // quando cambiano i filtri, resetto il numero
   useEffect(() => {
     setVisibleCount(8);
   }, [filters]);
@@ -215,16 +214,28 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
                   </div>
 
                   <div className="mt-auto flex gap-1.5 pt-1">
+                    {/* Details button */}
                     <button
                       onClick={() => navigate(`/job/${job._id}`)}
                       className="flex-1 text-xs px-2 py-1.5 rounded-full bg-black text-white hover:bg-white hover:text-black border border-transparent hover:border-black transition text-center"
                     >
                       Details
                     </button>
+
+                    {/* Contact button (login check) */}
                     <button
-                      onClick={() =>
-                        console.log("Navigate to chat", job.userProfileId)
-                      }
+                      onClick={() => {
+                        if (user?._id) {
+                          navigate("/chat", {
+                            state: {
+                              to: job.userProfileId,
+                              jobId: job._id,
+                            },
+                          });
+                        } else {
+                          navigate("/login");
+                        }
+                      }}
                       className="flex-1 flex items-center justify-center gap-1 text-xs px-2 py-1.5 rounded-full bg-slate-100 text-black hover:bg-black hover:text-white transition"
                     >
                       <MessageSquare className="w-3 h-3" />
