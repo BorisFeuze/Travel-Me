@@ -73,8 +73,7 @@ const Sidebar = ({
 
   return (
     <div
-      className={`h-full bg-gray-50 text-gray-900 border-r border-gray-200
-                  px-4 py-4 md:px-5 md:py-5 overflow-y-auto ${selectedUser ? "max-md:hidden" : ""}`}
+      className={`h-full bg-gray-50 text-gray-900 border-r border-gray-200 px-4 py-4 md:px-5 md:py-5 overflow-y-auto ${selectedUser ? "max-md:hidden" : ""}`}
     >
       {/* Header + Search */}
       <div className="mb-4">
@@ -85,9 +84,7 @@ const Sidebar = ({
             onChange={(e) => setInput(e.target.value)}
             type="text"
             placeholder="Search user…"
-            className="w-full h-10 pl-9 pr-3 rounded-xl bg-gray-50 border border-gray-200
-                       text-sm placeholder:text-gray-400
-                       focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300"
+            className="w-full h-10 pl-9 pr-3 rounded-xl bg-gray-50 border border-gray-200 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-300"
           />
         </div>
       </div>
@@ -100,13 +97,8 @@ const Sidebar = ({
             <button
               key={index}
               onClick={() => setSelectedUser(user)}
-              className={`relative w-full text-left flex items-center gap-3
-                          px-3 py-2.5 rounded-xl transition
-                          ${
-                            active
-                              ? "bg-indigo-100/70 border border-indigo-200"
-                              : "hover:bg-gray-100"
-                          }`}
+              className={`relative w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl transition
+               ${active ? "bg-indigo-100/70 border border-indigo-200" : "hover:bg-gray-100"}`}
             >
               <UserChat
                 id={user._id}
