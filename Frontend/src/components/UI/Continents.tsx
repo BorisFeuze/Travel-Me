@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import JobOffersAPI from "@/library/api";
 import europe from "@/assets/images/continents/europe.jpg";
 import africa from "@/assets/images/continents/africa.jpg";
@@ -15,15 +15,25 @@ type JobOffer = {
 };
 
 const CONTINENTS = [
-  { key: "Europe", label: "Europe", img: europe },
-  { key: "Africa", label: "Africa", img: africa },
-  { key: "South America", label: "South America", img: southamerica },
-  { key: "North America", label: "North America", img: northamerica },
-  { key: "Asia", label: "Asia", img: asia },
-  { key: "Oceania", label: "Oceania", img: oceania },
+  { key: "Europe", label: "Europe", img: europe, color: "bg-sky-100" },
+  { key: "Africa", label: "Africa", img: africa, color: "bg-amber-100" },
+  {
+    key: "South America",
+    label: "South America",
+    img: southamerica,
+    color: "bg-emerald-100",
+  },
+  {
+    key: "North America",
+    label: "North America",
+    img: northamerica,
+    color: "bg-indigo-100",
+  },
+  { key: "Asia", label: "Asia", img: asia, color: "bg-pink-100" },
+  { key: "Oceania", label: "Oceania", img: oceania, color: "bg-cyan-100" },
 ];
 
-const Continent = () => {
+const ContinentCompact = () => {
   const [offers, setOffers] = useState<JobOffer[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,36 +48,86 @@ const Continent = () => {
     })();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-
   const getCount = (continent: string) =>
     offers.filter((o) => o.continent === continent).length;
 
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[...Array(3)].map((_, i) => (
+          <div
+            key={i}
+            className="h-20 rounded-2xl bg-slate-100 animate-pulse"
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <section className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-4xl font-extrabold mb-8">
-        🌎 Discover opportunities across every continent
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-        {CONTINENTS.map(({ key, label, img }) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      {CONTINENTS.map(({ key, label, img, color }) => {
+        const count = getCount(key);
+
+        return (
           <Link
             key={key}
             to={`/continent/${key}`}
-            className="relative h-64 rounded-2xl overflow-hidden hover:shadow-xl transform transition-transform duration-300 hover:scale-105"
+            className="
+              flex flex-col md:flex-row gap-4
+              rounded-2xl border border-slate-200 bg-white
+              hover:border-slate-600 hover:shadow-md
+              transition cursor-pointer
+              p-3
+            "
           >
+            {/* immagine con badge */}
             <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${img})` }}
-            />
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="relative z-10 p-4 text-white font-bold text-xl">
-              {label} ({getCount(key)})
+              className={`
+                relative
+                w-full md:w-32 h-28 md:h-24
+                rounded-2xl overflow-hidden flex items-center justify-center
+                ${color}
+              `}
+            >
+              <img
+                src={img}
+                alt={label}
+                className="w-full h-full object-cover rounded-2xl"
+              />
+
+              {/* badge numero */}
+              {count > 0 && (
+                <span
+                  className="
+                    absolute top-2 right-2
+                    bg-blue-600 text-white text-xs font-semibold
+                    px-2 py-[2px] rounded-full shadow-sm
+                  "
+                >
+                  {count}
+                </span>
+              )}
+            </div>
+
+            {/* testo */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+              <p className="text-base md:text-[1.1rem] font-semibold text-slate-900 truncate">
+                {label}
+              </p>
+              <p className="text-sm text-slate-500 flex items-center gap-1">
+                {count} opportunities
+              </p>
+              <span className="inline-flex w-fit items-center gap-1 text-xs border text-slate-900/70 bg-slate-100 px-3 py-1 rounded-full group-hover:bg-slate-900 group-hover:text-white transition">
+                Explore
+                <span aria-hidden>→</span>
+              </span>
             </div>
           </Link>
-        ))}
-      </div>
-    </section>
+        );
+      })}
+    </div>
   );
 };
 
-export default Continent;
+export default ContinentCompact;

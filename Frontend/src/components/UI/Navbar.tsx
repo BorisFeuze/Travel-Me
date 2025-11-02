@@ -1,109 +1,115 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useAuth } from "@/context";
-import logo from "../../assets/images/pngwing.com.png"; 
+import { Home, MessageSquare, User, LogIn } from "lucide-react";
+import logo from "@/assets/images/pngwing.com.png";
 
-const Navbar = () => {
-  const { signedIn, handleSignOut, user } = useAuth();
+const Sidebar = () => {
+  const { signedIn, user } = useAuth();
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50">
-      <div
-        className="max-w-[100rem] mx-auto mt-3
-                   flex items-center justify-between gap-3
-                   px-4 sm:px-6 py-3
-                   rounded-2xl
-                   bg-white/70 dark:bg-neutral-900/30
-                   backdrop-blur-lg backdrop-saturate-150
-                   border border-black/80 shadow-md
-                   transition-all duration-300"
-      >
-        <nav className="flex items-center gap-4 text-sm font-medium">
-          <Link to="/" className="hover:opacity-80 transition">
-            Home
-          </Link>
-          <Link to="/explore" className="hover:opacity-80 transition">
-            Explore
-          </Link>
-          <Link to="/about" className="hover:opacity-80 transition">
-            About
-          </Link>
-          <Link to="/contact" className="hover:opacity-80 transition">
-            Contact
-          </Link>
-        </nav>
-
-        <Link
-          to="/"
-          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
-        >
-          <img
-            src={logo}
-            alt="TravelMe Logo"
-            className="h-10 sm:h-12 w-auto object-contain"
-          />
-        </Link>
-
-        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-          {/* Searchbar
-          <div className="hidden md:block w-40 lg:w-64">
-            <Searchbar />
-          </div> */}
-
-          {signedIn ? (
-            <>
-              <Link
-                to="/chat"
-                className="px-3 py-2 text-sm font-medium hover:opacity-80 transition"
-              >
-                Chat
-              </Link>
-
-              {user?.roles?.[0] === "host" ? (
-                <Link
-                  to="/hostAccount"
-                  className="px-3 py-2 text-sm font-medium hover:opacity-80 transition"
-                >
-                  Profile
-                </Link>
-              ) : (
-                <Link
-                  to="/volunteerAccount"
-                  className="px-3 py-2 text-sm font-medium hover:opacity-80 transition"
-                >
-                  Profile
-                </Link>
-              )}
-
-              <button
-                onClick={handleSignOut}
-                className="px-4 sm:px-5 py-2 text-sm font-semibold rounded-full
-                           bg-neutral-900 text-white dark:bg-white dark:text-neutral-900
-                           hover:opacity-90 active:opacity-100 transition"
-              >
-                Sign Out
-              </button>
-
-              {user?.photoURL && (
-                <img
-                  src={user.photoURL}
-                  alt="User"
-                  className="w-9 h-9 object-cover"
-                />
-              )}
-            </>
-          ) : (
-            <Link
-              to="/login"
-              className="px-4 sm:px-5 py-2 text-sm font-semibold rounded-full
-                         bg-neutral-900 text-white dark:bg-white dark:text-neutral-900
-                         hover:opacity-90 active:opacity-100 transition"
-            >
-              Login
-            </Link>
-          )}
-        </div>
+    <aside
+      className="
+        fixed top-0 left-0 h-screen w-[100px]
+        bg-white border-r border-gray-200
+        flex flex-col items-center
+        py-4 gap-4
+        z-50
+      "
+    >
+      {/* Logo */}
+      <div className="p-2 mb-4">
+        <img src={logo} alt="TravelMe Logo" className="h-9 w-auto" />
       </div>
-    </header>
+
+      {/* Menu icons */}
+      <nav className="flex flex-col items-center gap-4 flex-1">
+        <SidebarLink
+          to="/"
+          icon={<Home className="w-5 h-5" />}
+          active={isActive("/")}
+          label="Home"
+        />
+
+        {signedIn && (
+          <SidebarLink
+            to="/chat"
+            icon={<MessageSquare className="w-5 h-5" />}
+            active={isActive("/chat")}
+            label="Chat"
+          />
+        )}
+
+        {signedIn && (
+          <SidebarLink
+            to={
+              user?.roles?.[0] === "host" ? "/hostAccount" : "/volunteerAccount"
+            }
+            icon={<User className="w-5 h-5" />}
+            active={isActive(
+              user?.roles?.[0] === "host" ? "/hostAccount" : "/volunteerAccount"
+            )}
+            label="Profile"
+          />
+        )}
+      </nav>
+
+      {/* Footer: login if not signed in */}
+      {!signedIn && (
+        <div className="pb-4">
+          <SidebarLink
+            to="/login"
+            icon={<LogIn className="w-5 h-5" />}
+            active={isActive("/login")}
+            label="Login"
+          />
+        </div>
+      )}
+    </aside>
   );
 };
-export default Navbar;
+
+export default Sidebar;
+
+/* 🔹 Component per singolo link (con tooltip) */
+type SidebarLinkProps = {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+};
+
+const SidebarLink = ({ to, icon, label, active }: SidebarLinkProps) => (
+  <div className="relative group">
+    <Link
+      to={to}
+      className={`
+        flex items-center justify-center
+        w-10 h-10 rounded-xl
+        transition-colors duration-200
+        ${
+          active
+            ? "bg-blue-50 text-blue-600"
+            : "text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+        }
+      `}
+    >
+      {icon}
+    </Link>
+
+    {/* Tooltip */}
+    <span
+      className="
+        absolute left-14 top-1/2 -translate-y-1/2
+        bg-gray-800 text-white text-xs rounded-md px-2 py-1
+        opacity-0 group-hover:opacity-100
+        pointer-events-none whitespace-nowrap
+        transition-opacity duration-200
+      "
+    >
+      {label}
+    </span>
+  </div>
+);

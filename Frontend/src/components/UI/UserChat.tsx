@@ -11,21 +11,24 @@ type UserChatType = {
 };
 
 const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState({});
+  const [, setLoading] = useState(true);
+  const [, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<UserProfileData | null>(null);
 
   const { onlineUsers } = useAuth();
 
   useEffect(() => {
+    if (!id) {
+      setError("Invalid user id.");
+      setLoading(false);
+      return;
+    }
     (async () => {
       try {
         const data = await getUserDetails(id);
 
-        const userInfo = data?.userProfiles[0];
-
-        if (userInfo) {
-          setInfo(userInfo);
+        if (data) {
+          setInfo(data.userProfiles[0]);
         }
       } catch {
         setError("Error fetching userProfile of Host");
@@ -38,7 +41,7 @@ const UserChat = ({ id, firstName, /* index,*/ lastName }: UserChatType) => {
   return (
     <>
       <img
-        src={info?.pictureURL || avatar_icon}
+        src={(info?.pictureURL || avatar_icon) as string}
         alt=""
         className="w-[35px] aspect-square rounded-full"
       />

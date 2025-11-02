@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getJobOfferById, getUserDetails } from "@/data";
+import { getJobOfferById, getSingleUserProfile } from "@/data";
 import { Calendar02 } from "@/components/UI/Calendar02";
 import { ArrowLeft, ArrowRight, MessageSquare } from "lucide-react";
 import { useAuth } from "@/context";
@@ -9,8 +9,8 @@ const DetailJob = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth?.() ?? { user: null };
-  const [job, setJob] = useState<JobFormData | null>(null);
-  const [host, setHost] = useState<UserProfileFormData | null>(null);
+  const [job, setJob] = useState<JobData | null>(null);
+  const [hostProfile, setHostProfile] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState(0);
@@ -25,20 +25,38 @@ const DetailJob = () => {
       try {
         setLoading(true);
         const res = await getJobOfferById(id);
-        const jobData: JobFormData | null = res?.jobOffer ?? null;
+        const jobData: JobData = res?.jobOffer ?? null;
         if (!jobData) {
           setError("Job offer not found.");
           return;
         }
+        console.log(jobData);
         setJob(jobData);
 
-        if (jobData.userProfileId) {
-          const hostData = await getUserDetails(jobData.userProfileId);
-          setHost(hostData?.userProfiles?.[0] || null);
+        if (!jobData.userProfileId) {
+          setError("userProfileId not found.");
+          return;
         }
-      } catch (e: any) {
-        console.error(e);
-        setError(e?.message || "Failed to load job offer.");
+
+        console.log(jobData.userProfileId);
+        const hostData = await getSingleUserProfile(jobData.userProfileId);
+
+        console.log(hostData);
+
+        setHostProfile(hostData.userProfile);
+
+        if (!hostData.userProfile.userId) {
+          setError("userId not found.");
+          return;
+        }
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.error(e);
+          setError(e.message);
+        } else {
+          console.error(e);
+          setError("An unknown error occurred.");
+        }
       } finally {
         setLoading(false);
       }
@@ -69,7 +87,7 @@ const DetailJob = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-10 flex justify-center">
+    <div className="min-h-screen bg-linear-to-b from-blue-50 to-purple-50 p-10 flex justify-center">
       <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl p-10 ">
         {/* TITLE + HOST */}
         <div className="flex justify-between items-start">
@@ -84,36 +102,46 @@ const DetailJob = () => {
             </p>
           </div>
 
-  {/* HOST SECTION */}
-  <div className="flex flex-col items-center gap-2">
-    <div
-      className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105 mt-2"
-      onClick={() => console.log("Navigate to host profile")}
-    >
-      <img
-        src={host?.pictureURL?.[0]}
-        alt="Host"
-        className="object-cover w-full h-full"
-      />
-    </div>
-    <div>
-      <h3 className="text-gray-600 text-sm text-center">
-        {host ? `${user.firstName} ${user.lastName}` : "Host Name"}
-      </h3>
-    </div>
-  </div>
-</div>
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 cursor-pointer transition-transform duration-300 hover:scale-105 mt-2"
+              onClick={() =>
+                navigate(
+                  `/host/${(hostProfile?.userId as unknown as { _id: string })?._id}`
+                )
+              }
+              title="Go to host profile"
+            >
+              {hostProfile?.pictureURL ? (
+                <img
+                  src={hostProfile.pictureURL as string}
+                  alt="Host"
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-200" />
+              )}
+            </div>
+            <div>
+              <h3 className="text-gray-600 text-sm text-center">
+                {hostProfile
+                  ? `${(hostProfile.userId as unknown as { firstName: string })?.firstName ?? ""} ${(hostProfile.userId as unknown as { lastName: string })?.lastName ?? ""}`.trim()
+                  : "Host"}
+              </h3>
+            </div>
+          </div>
+        </div>
 
-    {/* IMAGE GALLERY */}
-    {job.pictureURL.length > 0 && (
-      <div className="relative flex justify-center items-center mt-6">
-        {/* LEFT BUTTON */}
-        <button
-          onClick={prevImage}
-          className="absolute left-0 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition z-10"
-        >
-          <ArrowLeft className="w-6 h-6" />
-        </button>
+        {/* IMAGE GALLERY */}
+        {job.pictureURL.length > 0 && (
+          <div className="relative flex justify-center items-center mt-6">
+            {/* LEFT BUTTON */}
+            <button
+              onClick={prevImage}
+              className="absolute left-0 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 transition z-10"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
 
             <div className="overflow-hidden rounded-3xl shadow-xl transition-transform duration-500 hover:scale-105">
               <img
@@ -123,7 +151,7 @@ const DetailJob = () => {
                     : URL.createObjectURL(job.pictureURL[currentImage] as File)
                 }
                 alt="Job"
-                className="h-[40rem] w-auto object-cover"
+                className="h-160 w-auto object-cover"
               />
             </div>
 
@@ -136,15 +164,10 @@ const DetailJob = () => {
             </button>
           </div>
         )}
-
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end  mt-6">
           <button
-            onClick={() =>
-              user
-                ? navigate(`/chat/${host?._id ?? job.userProfileId}`)
-                : navigate(`/login?redirect=/job/${job._id}`)
-            }
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transition-transform"
+            onClick={() => (user ? navigate(`/chat`) : navigate(`/login`))}
+            className="flex items-center gap-2 bg-linear-to-r border border-blue-600 cursor-pointer bg-blue-600 hover:bg-white hover:text-blue-700 hover:border-blue text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transition-transform"
           >
             <MessageSquare className="w-5 h-5" />
             {user ? "Contact" : "Login to contact"}
@@ -236,7 +259,7 @@ const DetailJob = () => {
                 ? navigate(`/book/${job._id}`)
                 : navigate(`/login?redirect=/book/${job._id}`)
             }
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold px-10 py-3 rounded-full shadow-lg hover:scale-105 transition-transform"
+            className="bg-linear-to-r from-blue-600 to-purple-600 text-white font-semibold px-10 py-3 rounded-full shadow-lg hover:scale-105 transition-transform"
           >
             Book
           </button>

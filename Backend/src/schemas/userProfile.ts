@@ -25,24 +25,32 @@ export const userProfileInputSchema = z.strictObject({
       .default(
         'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'
       )
-  ),
-  userId: z.preprocess(
-    coercedString,
-    z.union([
-      z
-        .string('userId must be a string')
-        .min(1, 'userId is required')
-        .refine(val => {
-          return isValidObjectId(val);
-        }, 'Invalid user ID'),
-      z.instanceof(Types.ObjectId)
-    ])
-  ),
+  )
+  .optional() 
+  .default([  
+      'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg'
+    ]),
+  userId: z
+    .preprocess(
+      coercedString,
+      z.union([
+        z
+          .string('userId must be a string')
+          .min(1, 'userId is required')
+          .refine(val => {
+            return isValidObjectId(val);
+          }, 'Invalid user ID'),
+        z.instanceof(Types.ObjectId)
+      ])
+    )
+    .optional(),
   age: z.preprocess(coercedNumber, z.coerce.number().default(18)),
+  address: z.preprocess(coercedString, z.string()),
+  description: z.preprocess(coercedString, z.string()),
   continent: z.preprocess(coercedString, z.string()),
   country: z.preprocess(coercedString, z.string()),
   gender: z.preprocess(coercedString, z.string().min(1)),
-  skills: z.array(z.string()),
+  skills: z.array(z.string()).optional(),
   languages: z.array(z.string()),
   educations: z.array(z.string())
 });
@@ -50,4 +58,11 @@ export const userProfileInputSchema = z.strictObject({
 export const userProfileSchema = z.strictObject({
   ...userProfileInputSchema.shape,
   ...dbEntrySchema.shape
+});
+
+export const userProfileUpdateSchema = userProfileInputSchema.extend({
+  existingPictureURL: z.union([
+    z.string(),
+    z.array(z.string())
+  ]).optional()
 });

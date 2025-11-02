@@ -31,5 +31,5 @@ export {
   DisplayHost,
   DetailContinent,
   DetailSkill,
-  EditJob
+  EditJob,
 };

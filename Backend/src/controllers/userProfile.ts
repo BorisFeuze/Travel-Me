@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import { isValidObjectId, Types } from 'mongoose';
 import { UserProfile } from '#models';
 import { type z } from 'zod/v4';
-import type { userProfileInputSchema, userProfileSchema } from '#schemas';
+import type { userProfileInputSchema, userProfileSchema, userProfileUpdateSchema } from '#schemas';
 
 type UserProfileInputDTO = z.input<typeof userProfileInputSchema>;
 type UserProfileDTO = z.infer<typeof userProfileSchema>;
@@ -23,13 +23,13 @@ export const getAllUserProfiles: RequestHandler<{}, GetUserProfilesType> = async
 
 export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputDTO> = async (req, res) => {
   const {
-    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations }
+    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations, address, description }
   } = req;
 
   // console.log(req.body);
   let userProfile: UserProfileDTO;
   const userProfiles = await UserProfile.find();
-  const isProfile = userProfiles.some(c => c.userId.toString() === userId.toString());
+  const isProfile = userProfiles.some(c => c.userId.toString() === userId?.toString());
   if (!isProfile) {
     userProfile = await UserProfile.create({
       pictureURL,
@@ -40,7 +40,9 @@ export const createUserProfile: RequestHandler<{}, SuccessMsg, UserProfileInputD
       gender,
       skills,
       languages,
-      educations
+      educations,
+      address,
+      description
     });
 
     res.status(201).json({ message: 'userProfile created' });
@@ -59,33 +61,47 @@ export const getSingleUserProfile: RequestHandler<{ id: string }, UserProfileTyp
   res.json({ message: 'userProfile created', userProfile });
 };
 
-export const updateUserProfile: RequestHandler<{ id: string }, UserProfileType, UserProfileInputDTO> = async (
-  req,
-  res
-) => {
-  const {
-    params: { id },
-    body: { pictureURL, userId, age, continent, country, gender, skills, languages, educations },
-    userProfile
-  } = req;
+export const updateUserProfile: RequestHandler<
+  { id: string },
+  UserProfileType,
+  z.input<typeof userProfileUpdateSchema>
+> = async (req, res) => {
+  const { params: { id }, body, userProfile } = req;
+
+  const { existingPictureURL, userId, age, continent, country, gender, skills, languages, educations, address, description, pictureURL } = body;
 
   if (!isValidObjectId(id)) throw new Error('Invalid id', { cause: 400 });
   if (!userProfile) throw new Error(`UserProfile with id of ${id} doesn't exist`, { cause: 404 });
 
-  userProfile.pictureURL = pictureURL as string[];
+  let finalPictureURL: string = '';
+
+  const isDefaultUrl = pictureURL && Array.isArray(pictureURL) && pictureURL[0]?.includes('default-avatar-icon');
+
+  if (pictureURL && Array.isArray(pictureURL) && !isDefaultUrl && pictureURL[0]) {
+    finalPictureURL = pictureURL[0];
+  } else if (existingPictureURL) {
+    finalPictureURL = Array.isArray(existingPictureURL) ? existingPictureURL[0] || '' : existingPictureURL;
+  } else {
+    finalPictureURL = userProfile.pictureURL[0] || '';
+  }
+
+  userProfile.pictureURL = finalPictureURL ? [finalPictureURL] : userProfile.pictureURL;
   userProfile.userId = userId as unknown as Types.ObjectId;
   userProfile.age = age as number;
   userProfile.continent = continent as string;
   userProfile.country = country as string;
   userProfile.gender = gender as string;
   userProfile.skills = skills || [];
+  userProfile.address = address as string;
+  userProfile.description = description as string;
   userProfile.languages = languages || [];
   userProfile.educations = educations || [];
 
   await userProfile.save();
 
-  res.json({ message: 'userProfile created', userProfile });
+  res.json({ message: 'userProfile updated', userProfile });
 };
+
 
 export const deleteUserProfile: RequestHandler<{ id: string }, SuccessMsg> = async (req, res) => {
   const {

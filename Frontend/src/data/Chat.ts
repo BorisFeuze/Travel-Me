@@ -12,17 +12,20 @@ export const getChatUsers = async () => {
   return data;
 };
 
-export const getMessages = async (id) => {
+export const getMessages = async (id: string) => {
   const res = await fetch(`${baseURL}/${id}`, {
     method: "GET",
   });
   if (!res.ok) throw new Error("Failed to get the Messages");
-  const data = await res.json();
+  const data: ChatsResponse = await res.json();
   // console.log(data);
   return data;
 };
 
-export const sendMessages = async (selectedUserId, messageData) => {
+export const sendMessages = async (
+  selectedUserId: string,
+  messageData: ChatInputType
+) => {
   const res = await fetch(`${baseURL}/send/${selectedUserId}`, {
     method: "POST",
     headers: {
@@ -31,12 +34,12 @@ export const sendMessages = async (selectedUserId, messageData) => {
     body: JSON.stringify(messageData),
   });
   if (!res.ok) throw new Error("Failed to send the Message");
-  const data = await res.json();
+  const data: ChatType = await res.json();
   // console.log(data);
   return data;
 };
 
-export const updateNewMessages = async (newMessageId) => {
+export const updateNewMessages = async (newMessageId: string) => {
   const res = await fetch(`${baseURL}/mark/${newMessageId}`, {
     method: "PUT",
   });

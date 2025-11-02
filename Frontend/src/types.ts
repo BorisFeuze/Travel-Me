@@ -1,21 +1,29 @@
 import type { Dispatch, SetStateAction } from "react";
 
 declare global {
-  type User = {
+  export type DBEntry = {
     _id: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
+
+  type UserformData = {
     firstName: string;
     lastName: string;
-    phoneNumber?: string;
+    phoneNumber: string;
     email: string;
     roles: string[];
   };
+
+  type User = DBEntry & UserformData;
 
   type LoginData = {
     email: string;
     password: string;
   };
 
-  type RegisterData = User & {
+  type RegisterData = UserformData & {
     password: string;
     confirmPassword: string;
   };
@@ -32,20 +40,33 @@ declare global {
     socket: Socket | null;
   };
 
+  type UserContextType = {
+    allUsers: UserProfileData[];
+    getUserProfile: (id: string) => Promise<UserProfilesResponse | null>;
+  };
+
   type UserProfileFormData = {
-    pictureURL?: string;
+    pictureURL?: string | File | undefined;
     userId: string;
     age?: number;
     continent: string;
     country: string;
+    address: string;
     gender: string;
+    description: string;
     skills: string[];
     languages: string[];
     educations: string[];
   };
 
+  type UserProfileData = DBEntry & UserProfileFormData;
+
+  type DateRange = {
+    from: Date;
+    to: Date;
+  };
+
   type JobFormData = {
-    _id: string;
     title: string;
     continent: string;
     country: string;
@@ -55,11 +76,10 @@ declare global {
     description: string;
     needs: string[];
     languages: string[];
-    availability: {
-      from: Date;
-      to: Date;
-    }[];
+    availability: DateRange[];
   };
+
+  type JobData = DBEntry & JobFormData;
 
   type JobCardData = {
     _id: string;
@@ -68,18 +88,35 @@ declare global {
     location: string;
   };
 
-  type Chat = {
+  type ChatInputType = {
     image?: string;
     message?: string;
-    receiverId: string;
-    senderId: string;
-    seen: boolean;
-    createdAt: Date;
   };
+
+  type ChatType = DBEntry &
+    ChatInputType & {
+      receiverId: string;
+      senderId: string;
+      seen: boolean;
+    };
 
   type Socket = {
     connected: boolean;
     disconnect: () => Promise<void>;
+  };
+
+  type UserProfilesResponse = {
+    message: string;
+    userProfiles: UserProfileData[];
+  };
+
+  type ChatsResponse = {
+    chats: ChatType[];
+  };
+
+  type UserProfileResp = {
+    message: string;
+    userProfile: UserProfileData;
   };
 
   type SuccessRes = { message: string };
@@ -87,12 +124,16 @@ declare global {
 
 export type {
   AuthContextType,
+  UserformData,
   User,
   LoginData,
   RegisterData,
   JobFormData,
   JobCardData,
   UserProfileFormData,
-  Chat,
+  UserProfileData,
+  ChatType,
   Socket,
+  UserContextType,
+  JobData,
 };

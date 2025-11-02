@@ -1,30 +1,36 @@
 import { useState, useEffect, type ChangeEvent } from "react";
-import { addUserDetails, getUserDetails } from "@/data";
+import {
+  addUserDetails,
+  getUserDetails,
+  updateUserDetails,
+} from "@/data";
 import { useAuth } from "@/context";
+import { toast } from "react-toastify";
+import avatarPlaceholder from "@/assets/images/avatarPlaceholder.png";
 
 const VolunteerAccount = () => {
 
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
-  
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | File>();
+  const [profileId, setProfileId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-
-  const [saveMessage, setSaveMessage] = useState<{
+  const [, setOpenDropdown] = useState<string | null>(null);
+  const [, setSaveMessage] = useState<{
     text: string;
     type: "success" | "error";
   } | null>(null);
 
   const [formData, setFormData] = useState<UserProfileFormData>({
-    pictureURL: undefined,
+    pictureURL: "",
     userId: "",
     age: undefined,
     continent: "",
     country: "",
+    address: "",
+    description: "",
     gender: "",
     skills: [],
     languages: [],
@@ -48,24 +54,23 @@ const VolunteerAccount = () => {
   const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
-//for dropedown closing
- useEffect(() => {
-  const handleClickOutside = (e: MouseEvent) => {
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
+  //for dropedown closing
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
 
-    if (!target.closest(".dropdown")) {
-      setOpenDropdown(null);
-    }
-  };
+      if (!target.closest(".dropdown")) {
+        setOpenDropdown(null);
+      }
+    };
 
-  document.addEventListener("click", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
 
-  return () => {
-    document.removeEventListener("click", handleClickOutside);
-  };
-}, []); 
-
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -73,11 +78,14 @@ const VolunteerAccount = () => {
         const currentUser = await getUserDetails(user!._id ?? "");
 
         if (currentUser) {
-          const dataCurrentUser = currentUser.userProfiles?.[0];
-          const currentnUserProfil = dataCurrentUser?.pictureURL?.[0];
-          console.log(currentnUserProfil);
-          setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
-          setPreviewUrl(currentnUserProfil || null);
+          const dataCurrentUser = currentUser.userProfiles[0];
+          const currentnUserProfil = dataCurrentUser.pictureURL;
+
+          if (currentnUserProfil) {
+            setFormData((prev) => ({ ...prev, ...dataCurrentUser }));
+            setPreviewUrl(currentnUserProfil);
+          }
+          if (dataCurrentUser?._id) setProfileId(dataCurrentUser._id);
         }
       } catch (err) {
         console.error("Failed to load user data", err);
@@ -85,7 +93,6 @@ const VolunteerAccount = () => {
     };
     loadUser();
   }, []);
-
 
   const handleInputChange = <K extends keyof VolunteerFormData>(
     field: K,
@@ -107,42 +114,91 @@ const VolunteerAccount = () => {
   };
 
   const handleSave = async () => {
-  if (!formData.continent || !formData.country || !formData.gender) {
-  setSaveMessage({ text: "Please fill all required fields.", type: "error" });
-  return;
-}
+    
+    if (!profileId) {
+      if (
+        !formData.continent ||
+        !formData.country ||
+        !formData.gender ||
+        !formData.address ||
+        !formData.age ||
+        !formData.description ||
+        !formData.educations ||
+        !formData.skills ||
+        !formData.languages
+      ) {
+        setSaveMessage({
+          text: "Please fill all required fields.",
+          type: "error",
+        });
+        toast.error("Please fill all required fields.");
+        return;
+      }
+    }
 
     setIsSaving(true);
     setSaveMessage(null);
-
     formData.userId = user!._id;
-    formData.pictureURL = selectedFile ?? undefined;
 
     try {
       const data = new FormData();
       data.append("userId", formData.userId);
 
-    if (formData.pictureURL instanceof File) {
-      data.append("pictureURL", formData.pictureURL);
-    }
-      
+      if (selectedFile instanceof File) {
+        data.append("pictureURL", selectedFile);
+      } else if (Array.isArray(formData.pictureURL) && formData.pictureURL[0]) {
+        data.append("existingPictureURL", formData.pictureURL[0]);
+      } else if (typeof formData.pictureURL === "string") {
+        data.append("existingPictureURL", formData.pictureURL);
+      }
+
       data.append("age", formData.age?.toString() || "");
       data.append("continent", formData.continent);
       data.append("country", formData.country);
+      data.append("address", formData.address);
+      data.append("description", formData.description);
       data.append("gender", formData.gender);
-      formData.educations.forEach(edu => data.append("educations", edu))
-      formData.skills.forEach(ski => data.append("skills", ski))
-      formData.languages.forEach(lan => data.append("languages", lan))
+      formData.educations.forEach((edu) => data.append("educations", edu));
+      formData.skills.forEach((ski) => data.append("skills", ski));
+      formData.languages.forEach((lan) => data.append("languages", lan));
 
-      console.log(data);
+      let updatedUser;
+      if (profileId) {
+        updatedUser = await updateUserDetails(profileId, data);
+      } else {
+        updatedUser = await addUserDetails(data);
+      }
 
-      const updatedUser = await addUserDetails(data);
+      if (
+        updatedUser &&
+        "userProfiles" in updatedUser &&
+        Array.isArray(updatedUser.userProfiles) &&
+        updatedUser.userProfiles[0]
+      ) {
+        setProfileId(updatedUser.userProfiles[0]._id);
+      }
 
-      console.log(updatedUser);
+      toast.success(
+        profileId
+          ? "Your Volunteer Profile has been updated successfully."
+          : "Your Volunteer Profile is successfully created."
+      );
 
       setSaveMessage({ text: "Changes saved successfully!", type: "success" });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong!";
+
+      if (
+        !message.includes("undefined") &&
+        !message.includes("reading '0'") &&
+        !message.includes("userProfiles")
+      ) {
+        toast.error(message);
+      } else {
+        console.warn("Non-critical internal issue:", message);
+      }
+
       setSaveMessage({ text: "Error while saving changes.", type: "error" });
     } finally {
       setIsSaving(false);
@@ -150,382 +206,351 @@ const VolunteerAccount = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8 pt-30">
-      <div className="flex flex-col lg:flex-row min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-6 gap-8">
-        {/* Left Side: Profile Picture */}
-        <div className="w-full lg:w-1/3 flex flex-col items-center gap-6 bg-white rounded-2xl shadow-xl p-6">
-          <div className="avatar mb-4">
-            <div className="w-44 h-44 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center transition-transform duration-300 hover:scale-105">
-              {previewUrl ? (
-                <img
-                  src={previewUrl}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="flex items-center justify-center w-full h-full">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-1/2 h-1/2 text-gray-400"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
-                  </svg>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <label className="btn btn-neutral btn-outline w-40 bg-black text-white transition">
-            Add Picture
-            <input
-              type="file"
-              name="picture"
-              accept="image/*"
-              className="hidden"
-              onChange={handlePictureUpload}
-            />
-          </label>
-
-          <div className="bg-purple-50/70 backdrop-blur-sm p-4 rounded-xl w-full text-center flex flex-col gap-1">
-            <h2 className="text-xl font-semibold">
-              {user!.firstName} {user!.lastName}
-            </h2>
-
-            <div className="flex items-center justify-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
-                />
-              </svg>
-              <p className="text-gray-600">{user!.email}</p>
-            </div>
-
-            <div className="flex items-center justify-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
-                />
-              </svg>
-              <p className="text-gray-600">{user!.phoneNumber}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: Form */}
-        <div className="w-full lg:w-2/3">
-          <div className="card bg-white shadow-2xl rounded-2xl">
-            <div className="card-body p-8">
-              <h2 className="card-title text-3xl mb-6 font-bold text-black">
-                Edit Volunteer Profile
-              </h2>
-
-              {saveMessage && (
-                <div
-                  className={`alert mb-6 ${
-                    saveMessage.type === "success"
-                      ? "alert-success"
-                      : "alert-error"
-                  }`}
-                >
-                  <span>{saveMessage.text}</span>
-                </div>
-              )}
-
-              {/* Age */}
-              <label className="label">
-                <span className="label-text font-medium text-gray-700">
-                  Age
-                </span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
-                placeholder="Enter your age"
-                value={formData.age ?? ""}
-                onChange={(e) =>
-                  handleInputChange(
-                    "age",
-                    e.target.value === "" ? undefined : Number(e.target.value)
-                  )
+    <div className="min-h-screen bg-gray-50 pt-10 pb-8 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-6 space-y-6">
+        <h1 className="mx-auto w-full max-w-7xl text-center text-4xl font-bold text-gray-900">
+          Volunteer Account Details
+        </h1>
+        {/* PROFILE HEADER CARD stays first, full width */}
+        <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-200 grid grid-cols-1 md:grid-cols-[160px_1fr] gap-2 items-start">
+          {/* left column: avatar + name + contact */}
+          <div className="flex flex-col px-6 items-center md:items-start gap-3">
+            <div className="relative w-24 h-24">
+              <img
+                src={
+                  previewUrl && previewUrl !== ""
+                    ? (previewUrl as string)
+                    : avatarPlaceholder
                 }
+                alt="Profile"
+                className="w-24 h-24 rounded-full object-cover border border-gray-200"
               />
 
-              {/* Country */}
-              <label className="label">
-                <span className="label-text font-medium text-gray-700">
-                  Country
-                </span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
-                placeholder="Enter your country"
-                value={formData.country}
-                onChange={(e) => handleInputChange("country", e.target.value)}
-              />
-
-              {/* Continent */}
-              <label className="label">
-                <span className="label-text font-medium text-gray-700">
-                  Continent
-                </span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
-                placeholder="Enter your continent"
-                value={formData.continent}
-                onChange={(e) => handleInputChange("continent", e.target.value)}
-              />
-
-              {/* Gender */}
-              <label className="label">
-                <span className="label-text font-medium text-gray-700">Gender</span>
-              </label>
-              <div className="relative mb-4">
-                <details
-                  className="dropdown dropdown-top w-full"
-                  open={openDropdown === "gender"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenDropdown(openDropdown === "gender" ? null : "gender");
-                  }}
+              <label className="absolute bottom-0 right-0 bg-black text-white rounded-full p-2 cursor-pointer hover:bg-gray-800 transition">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePictureUpload}
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-4 h-4"
                 >
-                  <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
-                    <span className="flex-1 text-left">
-                      {formData.gender || "Select gender"}
-                    </span>
-                  </summary>
-                  <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
-                    {genderOptions.map((gender) => (
-                      <li key={gender}>
-                        <label
-                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={() => {
-                            handleInputChange("gender", gender.toLowerCase());
-                            setOpenDropdown(null);
-                          }}
-                        >
-                          <span className="flex-1">{gender}</span>
-                          {formData.gender === gender.toLowerCase() && (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </div>
-
-              {/* Education */}
-              <label className="label">
-                <span className="label-text font-medium text-gray-700">Education</span>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
               </label>
-              <div className="relative mb-4">
-                <details
-                  className="dropdown dropdown-top w-full"
-                  open={openDropdown === "education"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenDropdown(openDropdown === "education" ? null : "education");
-                  }}
-                >
-                  <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
-                    <span className="flex-1 text-left">
-                      {formData.educations[0] || "Select education"}
-                    </span>
-                  </summary>
-                  <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
-                    {educationOptions.map((edu) => (
-                      <li key={edu}>
-                        <label
-                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={() => {
-                            handleInputChange("educations", [edu]);
-                            setOpenDropdown(null);
-                          }}
-                        >
-                          <span className="flex-1">{edu}</span>
-                          {formData.educations[0] === edu && (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </div>
+            </div>
 
-              {/* Skills */}
-              <label className="label">
-                <span className="label-text font-medium text-gray-700">Skills</span>
-              </label>
-              <div className="relative mb-4">
-                <details
-                  className="dropdown dropdown-top w-full"
-                  open={openDropdown === "skills"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenDropdown(openDropdown === "skills" ? null : "skills");
-                  }}
-                >
-                  <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
-                    <span className="flex-1 text-left">
-                      {formData.skills.length > 0
-                        ? formData.skills.join(", ")
-                        : "Select skills"}
-                    </span>
-                  </summary>
-                  <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
-                    {skillOptions.map((ski) => (
-                      <li key={ski}>
-                        <label
-                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleInputChange(
-                              "skills",
-                              formData.skills.includes(ski)
-                                ? formData.skills.filter((s) => s !== ski)
-                                : [...formData.skills, ski]
-                            );
-                          }}
-                        >
-                          <span className="flex-1">{ski}</span>
-                          {formData.skills.includes(ski) && (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </div>
-
-              {/* Languages */}
-              <label className="label">
-                <span className="label-text font-medium text-gray-700">Languages</span>
-              </label>
-              <div className="relative mb-4">
-                <details
-                  className="dropdown dropdown-top w-full"
-                  open={openDropdown === "languages"}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setOpenDropdown(openDropdown === "languages" ? null : "languages");
-                  }}
-                >
-                  <summary className="select select-bordered w-full shadow-sm focus:ring-2 focus:ring-gray-400 transition cursor-pointer flex items-center justify-between">
-                    <span className="flex-1 text-left">
-                      {formData.languages.length > 0
-                        ? formData.languages.join(", ")
-                        : "Select languages"}
-                    </span>
-                  </summary>
-                  <ul className="dropdown-content menu p-2 shadow bg-gray-100 rounded-box w-full z-10 max-h-60 overflow-y-auto">
-                    {languageOptions.map((lang) => (
-                      <li key={lang}>
-                        <label
-                          className="cursor-pointer flex items-center justify-between hover:bg-base-200 px-3 py-2"
-                          onClick={() => {
-                            handleInputChange(
-                              "languages",
-                              formData.languages.includes(lang.toLowerCase())
-                                ? formData.languages.filter((l) => l !== lang.toLowerCase())
-                                : [...formData.languages, lang.toLowerCase()]
-                            );
-                          }}
-                        >
-                          <span className="flex-1">{lang}</span>
-                          {formData.languages.includes(lang.toLowerCase()) && (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          )}
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              </div>
-
-              <button
-                className="btn bg-black hover:bg-black-700 text-white w-full py-3 rounded-xl transition shadow-lg"
-                onClick={handleSave}
-                disabled={isSaving}
-              >
-                {isSaving ? "Saving..." : "Save Changes"}
-              </button>
+            <div className="text-center md:text-left">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {user?.firstName} {user?.lastName}
+              </h2>
+              <p className="text-gray-600 text-sm">{user?.email}</p>
+              <p className="text-gray-600 text-sm">{user?.phoneNumber}</p>
             </div>
           </div>
+
+          {/* right column: description stretches across remaining space */}
+          <div>
+            <label className="text-base font-semibold text-gray-900 block mb-1">
+              Description
+            </label>
+            <textarea
+              placeholder="Please introduce yourself as a host and describe your place."
+              className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y capitalize"
+              value={formData.description}
+              onChange={(e) =>
+                handleInputChange("description", e.target.value)
+              }
+            />
+          </div>
+        </section>
+
+        {/* 2-COLUMN DASHBOARD GRID */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* --- Basic Information --- */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 flex flex-col gap-4">
+            <div>
+              <h3 className="text-base font-semibold text-gray-900">
+                Basic Information
+              </h3>
+              <p className="text-sm text-gray-500">Your personal details</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-gray-700">Full Name</label>
+                <input
+                  disabled
+                  value={`${user?.firstName ?? ""} ${user?.lastName ?? ""}`}
+                  className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 disabled:opacity-100"
+                  placeholder="Full Name"
+                  title="Full Name"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-gray-700">Age</label>
+                <input
+                  type="number"
+                  placeholder="Enter your age"
+                  title="Age"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  value={formData.age ?? ""}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "age",
+                      e.target.value === "" ? undefined : Number(e.target.value)
+                    )
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-700">Gender</label>
+              <select
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+                value={formData.gender || ""}
+                title="Select gender"
+                aria-label="Select gender"
+                onChange={(e) => handleInputChange("gender", e.target.value)}
+              >
+                <option value="">Select gender</option>
+                {genderOptions.map((g) => (
+                  <option key={g} value={g.toLowerCase()}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* --- Education --- */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 flex flex-col gap-4">
+            <div>
+              <h3 className="text-base font-semibold text-gray-900">
+                Education
+              </h3>
+              <p className="text-sm text-gray-500">
+                Your educational background
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="education-select"
+                className="text-sm text-gray-700"
+              >
+                Highest Level
+              </label>
+              <select
+                id="education-select"
+                title="Highest Level"
+                aria-label="Highest Level"
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+                value={formData.educations[0] || ""}
+                onChange={(e) =>
+                  handleInputChange("educations", [e.target.value])
+                }
+              >
+                <option value="" disabled>
+                  Select highest level
+                </option>
+                {educationOptions.map((edu) => (
+                  <option key={edu} value={edu}>
+                    {edu}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* --- Location --- */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 flex flex-col gap-4">
+            <div>
+              <h3 className="text-base font-semibold text-gray-900">
+                Location
+              </h3>
+              <p className="text-sm text-gray-500">Where you're based</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-gray-700">Country</label>
+                <input
+                  type="text"
+                  placeholder="Enter your country"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 capitalize"
+                  value={formData.country}
+                  onChange={(e) => handleInputChange("country", e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-gray-700">Address</label>
+                <input
+                  type="text"
+                  placeholder="Enter your address"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 capitalize"
+                  value={formData.address}
+                  onChange={(e) => handleInputChange("address", e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-gray-700">Continent</label>
+                <input
+                  type="text"
+                  placeholder="Enter your continent"
+                  title="Continent"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 capitalize"
+                  value={formData.continent}
+                  onChange={(e) =>
+                    handleInputChange("continent", e.target.value)
+                  }
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* --- Skills --- */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 flex flex-col gap-4">
+            <div>
+              <h3 className="text-base font-semibold text-gray-900">Skills</h3>
+              <p className="text-sm text-gray-500">Your professional skills</p>
+            </div>
+
+            {/* current chips */}
+            <div className="flex flex-wrap gap-2">
+              {formData.skills.length === 0 && (
+                <p className="text-sm text-gray-400">No skills yet</p>
+              )}
+
+              {formData.skills.map((s) => (
+                <span
+                  key={s}
+                  className="bg-gray-100 border border-gray-300 rounded-full text-sm text-gray-800 flex items-center gap-2 px-3 py-1"
+                >
+                  {s}
+                  <button
+                    className="text-gray-500 hover:text-gray-900"
+                    onClick={() =>
+                      handleInputChange(
+                        "skills",
+                        formData.skills.filter((x) => x !== s)
+                      )
+                    }
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+
+            {/* add new skill */}
+            <select
+              title="Add a new skill"
+              aria-label="Add a new skill"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val && !formData.skills.includes(val)) {
+                  handleInputChange("skills", [...formData.skills, val]);
+                }
+              }}
+            >
+              <option value="">Add a new skill</option>
+              {skillOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* --- Languages --- */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200 flex flex-col gap-4">
+            <div>
+              <h3 className="text-base font-semibold text-gray-900">
+                Languages
+              </h3>
+              <p className="text-sm text-gray-500">Languages you speak</p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {formData.languages.length === 0 && (
+                <p className="text-sm text-gray-400">No languages yet</p>
+              )}
+
+              {formData.languages.map((l) => (
+                <span
+                  key={l}
+                  className="bg-gray-100 border border-gray-300 rounded-full text-sm text-gray-800 flex items-center gap-2 px-3 py-1"
+                >
+                  {l}
+                  <button
+                    type="button"
+                    className="text-gray-500 hover:text-gray-900"
+                    onClick={() =>
+                      handleInputChange(
+                        "languages",
+                        formData.languages.filter((x) => x !== l)
+                      )
+                    }
+                    aria-label={`Remove ${l}`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+
+            <select
+              title="Add language"
+              aria-label="Add language"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20"
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val && !formData.languages.includes(val.toLowerCase())) {
+                  handleInputChange("languages", [
+                    ...formData.languages,
+                    val.toLowerCase(),
+                  ]);
+                }
+              }}
+            >
+              <option value="">Add language</option>
+              {languageOptions.map((l) => (
+                <option key={l} value={l}>
+                  {l}
+                </option>
+              ))}
+            </select>
+          </div>
+        </section>
+        {/* Save Button under the grid */}
+        <div className="flex justify-center">
+          <button
+            className="inline-flex items-center justify-center rounded-xl bg-black px-8 py-3 text-white text-sm font-medium shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black/20 disabled:opacity-50"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </button>
         </div>
       </div>
     </div>
-
-
-)};
-      
+  );
+};
 
 export default VolunteerAccount;
