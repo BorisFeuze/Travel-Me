@@ -21,7 +21,9 @@ const envSchema = z.object({
 
   CLOUD_NAME: z.string(),
   API_KEY: z.string(),
-  API_SECRET: z.string()
+  API_SECRET: z.string(),
+
+  NODE_ENV: z.string()
 });
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -44,5 +46,6 @@ export const {
   AI_URL,
   CLOUD_NAME,
   API_KEY,
-  API_SECRET
+  API_SECRET,
+  NODE_ENV
 } = data;
