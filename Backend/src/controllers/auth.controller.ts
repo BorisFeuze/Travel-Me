@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { randomUUID } from 'node:crypto';
 import type { RequestHandler } from 'express';
 import { User, RefreshToken } from '#models';
-import { ACCESS_JWT_SECRET, ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL, SALT_ROUNDS } from '#config';
+import { ACCESS_JWT_SECRET, ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL, SALT_ROUNDS, NODE_ENV } from '#config';
 import type { RegisterInputDTO, LoginInputDTO, UserProfileAuthSchemaDTO, UserAuthInputDTO } from '../types/types.ts';
 
 type MeType = SuccessMsg & { user: UserProfileAuthSchemaDTO };
@@ -40,7 +40,7 @@ export const register: RequestHandler<{}, SuccessMsg, RegisterInputDTO> = async 
   const accessToken = jwt.sign(payload, secret, tokenOptions);
   // console.log(accessToken);
   //add access token to cookie
-  const isProduction = process.env.NODE_env === 'production';
+  const isProduction = NODE_ENV === 'production';
   const cookieOptions = {
     httponly: true,
     sameSite: isProduction ? ('none' as const) : ('lax' as const),
