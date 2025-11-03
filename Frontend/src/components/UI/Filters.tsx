@@ -40,7 +40,6 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
 
   const [open, setOpen] = useState(false);
 
-  // carico le job offers per popolare i menu
   useEffect(() => {
     const run = async () => {
       try {

@@ -34,12 +34,12 @@ const LayoutContent = () => {
         {/* 👇 spazio per la sidebar: stessa larghezza della sidebar */}
         <main
           className="
-            flex-1 overflow-y-auto bg-white relative
+            flex-1 overflow-y-auto bg-white relative 
             pl-[72px]   /* larghezza sidebar */
           "
         >
           {/* padding interno lo gestisci tu */}
-          <div className="relative w-[90%] m-auto p-7 sm:p-10 lg:p-16">
+          <div className="relative w-[95%] m-auto p-7 sm:p-10 lg:p-16 ">
             {isHome && !isHost && <VolunteerInfoBox />}
             <Outlet />
           </div>
