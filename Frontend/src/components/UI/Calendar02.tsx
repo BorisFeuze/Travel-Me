@@ -1,8 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { DayPicker, type DateRange, type OnSelectHandler } from "react-day-picker";
-import { cn } from "@/lib/utils";
+import {
+  DayPicker,
+  type DateRange,
+  type OnSelectHandler,
+} from "react-day-picker";
+import { cn } from "@/lib";
 import "react-day-picker/dist/style.css";
 
 export type CalendarProps = {
@@ -27,14 +31,17 @@ export function Calendar02({
   showOutsideDays = true,
 }: CalendarProps) {
   const [month, setMonth] = React.useState(new Date());
-  const [currentRange, setCurrentRange] = React.useState<DateRange | undefined>();
+  const [currentRange, setCurrentRange] = React.useState<
+    DateRange | undefined
+  >();
 
   // convert selectedRanges to individual dates for modifiers
   const savedDates = React.useMemo(() => {
     const dates: Date[] = [];
     selectedRanges.forEach((range) => {
       if (range?.from && range?.to) {
-        const fromDate = range.from instanceof Date ? range.from : new Date(range.from);
+        const fromDate =
+          range.from instanceof Date ? range.from : new Date(range.from);
         const toDate = range.to instanceof Date ? range.to : new Date(range.to);
         const current = new Date(fromDate);
         while (current <= toDate) {
@@ -54,13 +61,19 @@ export function Calendar02({
         selected={currentRange}
         onSelect={(range: DateRange | undefined) => {
           setCurrentRange(range);
-          if (range?.from && range?.to && range.from.getTime() !== range.to.getTime()) {
+          if (
+            range?.from &&
+            range?.to &&
+            range.from.getTime() !== range.to.getTime()
+          ) {
             onMultiRangeSelect?.([...selectedRanges, range]);
             setTimeout(() => setCurrentRange(undefined), 200);
           }
         }}
         modifiers={{ savedRange: savedDates }}
-        modifiersClassNames={{ savedRange: "bg-blue-500 text-white hover:bg-blue-600" }}
+        modifiersClassNames={{
+          savedRange: "bg-blue-500 text-white hover:bg-blue-600",
+        }}
         month={month}
         onMonthChange={setMonth}
         numberOfMonths={2}
@@ -90,7 +103,9 @@ export function Calendar02({
       selected={selectedDate}
       onSelect={onDateSelect as OnSelectHandler<Date>}
       modifiers={{ savedRange: savedDates }}
-      modifiersClassNames={{ savedRange: "bg-blue-500 text-white hover:bg-blue-600" }}
+      modifiersClassNames={{
+        savedRange: "bg-blue-500 text-white hover:bg-blue-600",
+      }}
       month={month}
       onMonthChange={setMonth}
       numberOfMonths={2}
