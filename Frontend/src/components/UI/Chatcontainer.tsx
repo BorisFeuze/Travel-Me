@@ -188,7 +188,7 @@ const ChatContainer = ({
                   <img
                     src={msg.image}
                     alt=""
-                    className={`max-w-[240px] border rounded-xl overflow-hidden ${
+                    className={`max-w-60 border rounded-xl overflow-hidden ${
                       isMe ? "border-pink-200" : "border-gray-200"
                     }`}
                   />
