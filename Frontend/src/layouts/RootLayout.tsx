@@ -3,7 +3,7 @@ import { ToastContainer } from "react-toastify";
 import { AuthProvider, UserProvider, useAuth } from "@/context";
 import RightPanel from "@/components/UI/RightPanel";
 import VolunteerInfoBox from "@/components/UI/VolunteerInfoBox";
-import Sidebar from "@/components/UI/Navbar"; // 👈 la tua nuova sidebar compatta
+import Sidebar from "@/components/UI/Navbar";
 import { useState } from "react";
 
 const RootLayout = () => {

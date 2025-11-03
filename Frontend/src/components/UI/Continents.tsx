@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import JobOffersAPI from "@/library/api";
+import { getAllJobOffers } from "@/data/jobOffers";
+
 import europe from "@/assets/images/continents/europe.jpg";
 import africa from "@/assets/images/continents/africa.jpg";
 import southamerica from "@/assets/images/continents/southamerica.jpg";
@@ -36,16 +37,22 @@ const CONTINENTS = [
 const ContinentCompact = () => {
   const [offers, setOffers] = useState<JobOffer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
+    const run = async () => {
       try {
-        const data = await JobOffersAPI.JobOffersAPI.fetchJobOffers();
-        setOffers(Array.isArray(data.jobOffers) ? data.jobOffers : []);
+        setLoading(true);
+        const res = await getAllJobOffers();
+        setOffers(res?.jobOffers ?? []);
+      } catch (e: any) {
+        console.error(e);
+        setError(e?.message || "Failed to load job offers.");
       } finally {
         setLoading(false);
       }
-    })();
+    };
+    run();
   }, []);
 
   const getCount = (continent: string) =>
@@ -62,6 +69,10 @@ const ContinentCompact = () => {
         ))}
       </div>
     );
+  }
+
+  if (error) {
+    return <p className="text-sm text-red-600">{error}</p>;
   }
 
   return (
@@ -96,7 +107,6 @@ const ContinentCompact = () => {
                 className="w-full h-full object-cover rounded-2xl"
               />
 
-              {/* badge numero */}
               {count > 0 && (
                 <span
                   className="
