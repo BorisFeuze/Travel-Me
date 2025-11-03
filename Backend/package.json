@@ -1,5 +1,5 @@
 {
-  "name": "wbs-travel-journal-api",
+  "name": "travel-me",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,6 @@
     "dev": "node --watch --conditions development --experimental-transform-types --disable-warning=ExperimentalWarning --env-file=.env.development.local src/index.ts",
     "prebuild": "rm -rf dist",
     "build": "tsc",
-    "prestart": "npm run build",
     "start": "node --env-file=.env.production.local dist/index.js"
   },
   "keywords": [],
