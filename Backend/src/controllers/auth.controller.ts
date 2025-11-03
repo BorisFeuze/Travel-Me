@@ -87,7 +87,7 @@ export const login: RequestHandler<{}, SuccessMsg, LoginInputDTO> = async (req, 
   };
   const accessToken = jwt.sign(payload, secret, tokenOptions);
   //add access token to cookie
-  const isProduction = process.env.NODE_env === 'production';
+  const isProduction = NODE_ENV === 'production';
   const cookieOptions = {
     httponly: true,
     sameSite: isProduction ? ('none' as const) : ('lax' as const),
@@ -130,7 +130,7 @@ export const refresh: RequestHandler<{}, SuccessMsg> = async (req, res) => {
   };
   const newAccessToken = jwt.sign(payload, secret, tokenOptions);
   //add access token to cookie
-  const isProduction = process.env.NODE_env === 'production';
+  const isProduction = NODE_ENV === 'production';
   const cookieOptions = {
     httponly: true,
     sameSite: isProduction ? ('none' as const) : ('lax' as const),
