@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router";
 import { useAuth } from "@/context";
 import { Home, MessageSquare, User, LogIn } from "lucide-react";
-import logo from "@/assets/images/pngwing.com.png";
+import logo from "@/assets/images/chatgpt_image_3._nov._2025__15_34_38-removebg-preview.png";
 
 const Sidebar = () => {
   const { signedIn, user } = useAuth();
@@ -21,7 +21,7 @@ const Sidebar = () => {
     >
       {/* Logo */}
       <div className="p-2 mb-4">
-        <img src={logo} alt="TravelMe Logo" className="h-9 w-auto" />
+        <img src={logo} alt="TravelMe Logo" className="h-20 w-auto" />
       </div>
 
       {/* Menu icons */}
@@ -91,8 +91,8 @@ const SidebarLink = ({ to, icon, label, active }: SidebarLinkProps) => (
         transition-colors duration-200
         ${
           active
-            ? "bg-blue-50 text-blue-600"
-            : "text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+            ? "bg-grey-50 text-pink-600"
+            : "text-gray-600 hover:bg-gray-100 hover:text-pink-600"
         }
       `}
     >

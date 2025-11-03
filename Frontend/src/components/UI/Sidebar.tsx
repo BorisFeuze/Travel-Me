@@ -97,7 +97,7 @@ const Sidebar = ({
             <button
               key={index}
               onClick={() => setSelectedUser(user)}
-              className={`relative w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl transition
+              className={`relative w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl transition cursor-pointer
                ${active ? "bg-indigo-100/70 border border-indigo-200" : "hover:bg-gray-100"}`}
             >
               <UserChat

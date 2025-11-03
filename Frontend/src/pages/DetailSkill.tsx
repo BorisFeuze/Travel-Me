@@ -6,7 +6,7 @@ const DetailSkill = () => {
   const skill = skillName || "";
 
   return (
-    <section className="min-h-screen bg-gray-50 px-4 py-10">
+    <section className="min-h-screen  px-4 py-10">
       <div className="mx-auto max-w-6xl">
         <h1 className="text-4xl font-extrabold mb-8 text-gray-900">
           🛠️ {skillName} – Job Opportunities

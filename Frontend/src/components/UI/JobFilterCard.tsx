@@ -4,6 +4,7 @@ import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/context";
+import video from "@/assets/images/3018669-hd_1920_1080_24fps.mp4";
 
 type JobOffersListProps = {
   initial?: Partial<{
@@ -92,8 +93,33 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
 
   return (
     <div className="max-w-full bg-white pb-10">
+      {/* 🔹 Banner sopra l'header */}
+      <div className="w-full mb-4 relative rounded-2xl overflow-hidden shadow-md border-2">
+        {/* 🔹 Video di sfondo */}
+        <video
+          src={video} // <-- assicurati che sia nella cartella public/
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-48 sm:h-184 object-cover"
+        ></video>
+
+        {/* 🔹 Testo centrato sopra il video */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <div className="flex flex-col">
+            <h2 className="text-white text-xl sm:text-5xl font-semibold text-center">
+              You're next adventure starts here!
+            </h2>
+            <h2 className="text-white text-md sm:text-3xl font-semibold text-center mt-3">
+              Find the perfect job for your Trip
+            </h2>
+          </div>
+        </div>
+      </div>
+
       {/* header */}
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-3 pt-5 pb-3">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-3 pt-10 pb-10">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl sm:text-3xl font-semibold text-black leading-tight">
@@ -111,7 +137,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
               </span>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-md sm:text-md text-slate-400 mt-3">
             Welcome to Travel 👋
           </p>
         </div>
@@ -129,18 +155,10 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
         <h2 className="text-sm sm:text-base font-medium text-black">
           {loading
             ? "Loading results…"
-            : `${filteredJobs.length} result${
-                filteredJobs.length === 1 ? "" : "s"
+            : `${filteredJobs.length} Job Offers found${
+                filteredJobs.length === 1 ? "" : ""
               }`}
         </h2>
-        {!loading && filteredJobs.length > visibleCount && (
-          <button
-            onClick={() => setVisibleCount(filteredJobs.length)}
-            className="text-xs sm:text-sm text-black/80 hover:text-black"
-          >
-            View all
-          </button>
-        )}
       </div>
 
       {/* jobs */}
@@ -160,7 +178,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
         </p>
       ) : (
         <>
-          <div className="px-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="px-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-10">
             {visibleJobs.map((job) => (
               <article
                 key={job._id}

@@ -246,7 +246,7 @@ const ChatContainer = ({
       </div>
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center pt-100 gap-2 text-gray-500 bg-white">
+    <div className="flex flex-col items-center relative justify-center pt-88 gap-2 text-gray-500 bg-white">
       <img src={logo_icon} alt="" className="max-w-16" />
       <p className="text-lg font-medium">Chat anytime, anywhere</p>
     </div>

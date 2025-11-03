@@ -111,7 +111,7 @@ const ContinentCompact = () => {
                 <span
                   className="
                     absolute top-2 right-2
-                    bg-blue-600 text-white text-xs font-semibold
+                    bg-pink-600 text-white text-xs font-semibold
                     px-2 py-[2px] rounded-full shadow-sm
                   "
                 >
