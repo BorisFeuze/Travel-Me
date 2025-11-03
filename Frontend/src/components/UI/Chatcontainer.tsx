@@ -12,7 +12,7 @@ import logo_icon from "../../assets/images/Chat/logo_icon.svg";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
 // import gallery_icon from "../../assets/images/Chat/gallery_icon.svg";
 // import send_button from "../../assets/images/Chat/send_button.svg";
-import { formatMessageTime } from "@/library";
+import { formatMessageTime } from "@/utils";
 import { getUserDetails } from "@/data";
 // import { useAuth } from "@/context";
 import { Send } from "lucide-react";

@@ -6,7 +6,6 @@ import {
   Chat,
   Registration,
   CreateJob,
-  CountryLists,
   DetailJob,
   VolunteerAccount,
   HostAccount,
@@ -30,7 +29,6 @@ function App() {
           <Route path="opportunities" element={<Opportunities />} />
           <Route path="host/:id" element={<DisplayHost />} />
           <Route path="job/:id" element={<DetailJob />} />
-          <Route path="countrylist" element={<CountryLists />} />
 
           <Route
             path="continent/:continentName"
