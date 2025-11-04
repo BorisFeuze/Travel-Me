@@ -101,7 +101,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
         border-l border-slate-200
         flex flex-col
         transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "translate-x-[calc(100%-1.75rem)]"}
+        ${isOpen ? "translate-x-0" : "translate-x-[calc(100%-0rem)]"}
       `}
     >
       {/* toggle */}
@@ -109,10 +109,10 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
         onClick={onToggle}
         className="
           absolute -left-7 top-1/2 -translate-y-1/2
-          w-7 h-14 rounded-l-md bg-white border border-slate-200
-          text-slate-500 text-base
+          w-7 h-14 rounded-l-md bg-pink-600 border border-black
+          text-white text-[1.4rem]
           flex items-center justify-center
-          shadow-sm hover:bg-slate-50 transition cursor-pointer
+          shadow-sm hover:bg-black transition cursor-pointer
         "
         title={isOpen ? "Close panel" : "Open panel"}
       >
@@ -273,7 +273,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
             <p className="text-[13px] font-medium text-slate-800 tracking-tight">
               {monthLabel}
             </p>
-            <div className="flex gap-1">
+            <div className="flex gap-1 ">
               <button className="text-xs px-2 py-1 bg-white border border-slate-200 rounded-sm hover:bg-slate-50">
                 {"‹"}
               </button>
