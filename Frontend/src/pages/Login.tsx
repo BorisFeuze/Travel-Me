@@ -64,7 +64,7 @@ const Login = () => {
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Pink gradient overlay */}
-        <div className="absolute inset-0 bg-linear-to-br from-pink-500/20 via-fuchsia-600/50 to-rose-600/50" />
+        <div className="absolute inset-0 bg-linear-to-br from-pink-500/20 via-fuchsia-600/20 to-rose-600/30" />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center p-16 text-white">
