@@ -60,7 +60,7 @@ const HostAccount = () => {
     "French",
     "Portuguese",
   ];
-  const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
+  const educationOptions = ["High School", "Bachelor", "Master", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
   //for dropedown closing
@@ -281,6 +281,7 @@ const HostAccount = () => {
 
               <label className="absolute bottom-0 right-0 bg-black text-white rounded-full p-2 cursor-pointer hover:bg-gray-800 transition">
                 <input
+                  placeholder="Upload Profile Picture"
                   type="file"
                   accept="image/*"
                   className="hidden"
@@ -640,7 +641,9 @@ const HostAccount = () => {
 
         {/* Job Offers — responsive grid */}
         <section className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-200">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">Your Job Offers</h2>
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            Your Job Offers
+          </h2>
 
           <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 mt-6 sm:mt-10">
             {jobOffers.map((job) => (
