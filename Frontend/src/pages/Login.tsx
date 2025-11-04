@@ -55,9 +55,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex">
+    <div className="min-h-screen w-full overflow-hidden lg:grid lg:grid-cols-[1fr_minmax(480px,560px)]">
       {/* Left — Hero (lg+) */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+      <div className="relative hidden lg:block">
         <img
           src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1800&auto=format&fit=crop"
           alt="Mountain lake"

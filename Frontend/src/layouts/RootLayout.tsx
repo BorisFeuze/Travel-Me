@@ -39,7 +39,7 @@ const LayoutContent = () => {
           "
         >
           {/* padding interno lo gestisci tu */}
-          <div className="relative w-[95%] m-auto p-7 sm:p-10 lg:p-16 ">
+          <div className="relative w-[100%] m-auto p-7 sm:p-10 lg:p-16 ">
             {isHome && !isHost && <VolunteerInfoBox />}
             <Outlet />
           </div>

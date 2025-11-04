@@ -152,7 +152,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
         </p>
       ) : (
         <>
-          <div className="px-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-10">
+          <div className="px-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7 mt-10">
             {visibleJobs.map((job) => (
               <article
                 key={job._id}
@@ -209,7 +209,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
                     {/* Details button */}
                     <button
                       onClick={() => navigate(`/job/${job._id}`)}
-                      className="flex-1 text-xs px-2 py-1.5 rounded-full bg-black text-white hover:bg-white hover:text-black border border-transparent hover:border-black transition text-center"
+                      className="flex-1 text-xs px-2 py-1.5 rounded-full bg-black text-white hover:bg-white hover:text-black border border-transparent hover:border-black transition text-center transition"
                     >
                       Details
                     </button>
