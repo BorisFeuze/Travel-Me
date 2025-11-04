@@ -84,48 +84,64 @@ const RequiredSkillsCompact = () => {
             to={`/skills/${key}`}
             className="
               flex flex-col gap-3
-              bg-white
-              border border-slate-100
               rounded-2xl
+              border border-slate-200
+              bg-gradient-to-br from-slate-50 to-slate-100
               p-3
-              hover:border-slate-300 hover:shadow-md
+              shadow-[0_1px_0_0_rgba(0,0,0,0.03)]
+              hover:shadow-md hover:border-slate-300
               transition
             "
           >
             <div className="flex items-center gap-3">
-              {/* Icon pill (replaces image) */}
+              {/* Icon tile */}
               <div
                 className="
                   w-12 h-12 rounded-2xl
-                  bg-gradient-to-br from-pink-50 to-blue-50
-                  border border-slate-100
+                  bg-white
+                  border border-slate-200
                   flex items-center justify-center
+                  shadow-sm
                 "
                 aria-hidden="true"
               >
-                <Icon className="w-6 h-6 text-slate-700" />
+                <Icon className="w-6 h-6 text-slate-800" />
               </div>
 
+              {/* Title with background */}
               <div className="flex-1">
-                <p className="text-sm font-semibold text-slate-900 leading-tight">
+                <span
+                  className="
+                    inline-block
+                    px-2 py-1
+                    rounded-md
+                    bg-slate-800/90
+                    text-white
+                    text-[12px] md:text-xs
+                    font-semibold
+                    leading-none
+                    tracking-wide
+                  "
+                >
                   {label}
-                </p>
-                <p className="text-xs text-slate-400">
+                </span>
+                <p className="mt-1 text-xs text-slate-500">
                   {count} job{count === 1 ? "" : "s"} available
                 </p>
               </div>
 
-              <span className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-full bg-pink-100 text-pink-700">
+              <span className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-full bg-pink-100 text-pink-600 border border-pink-200">
                 in demand
               </span>
             </div>
 
+            {/* Progress */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between text-[10px] text-slate-400">
+              <div className="flex items-center font-bold justify-between text-[12px] text-slate-600">
                 <span>Match level</span>
-                <span>{percent}%</span>
+                <span className="font-bold">{percent}%</span>
               </div>
-              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-white rounded-full overflow-hidden border border-slate-200">
                 <div
                   className="h-full bg-pink-500 rounded-full transition-all"
                   style={{ width: `${percent}%` }}
@@ -133,8 +149,9 @@ const RequiredSkillsCompact = () => {
               </div>
             </div>
 
+            {/* CTA row */}
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-slate-700 font-medium">
                 View {label} jobs →
               </span>
               <span className="text-[11px] bg-slate-900 text-white px-2 py-1 rounded-full">

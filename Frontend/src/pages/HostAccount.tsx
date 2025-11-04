@@ -639,10 +639,10 @@ const HostAccount = () => {
         </section>
 
         {/* Job Offers — responsive grid */}
-        <section className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
-          <h2 className="text-xl font-semibold mb-4">Your Job Offers</h2>
+        <section className="bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-200">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">Your Job Offers</h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 mt-6 sm:mt-10">
             {jobOffers.map((job) => (
               <JobCard
                 key={job._id}
