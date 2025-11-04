@@ -119,4 +119,4 @@ VITE_CLIENT_BASE_URL=http://localhost:5173
 ## Contact
 - Maintainer: add your contact or GitHub handle here.
 
-License: MIT
+Development and Design by Travel-me: Boris Feuze, Mateusz Olszewski, Leon Rabl, Hua Guo
