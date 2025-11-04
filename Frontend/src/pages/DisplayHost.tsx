@@ -12,6 +12,7 @@ import {
   Mail,
   Phone,
   Lightbulb,
+  GraduationCap,
 } from "lucide-react";
 
 import { getUsers, getUserDetails } from "@/data";
@@ -184,7 +185,7 @@ const DisplayHost = () => {
             </div>
           </div>
 
-          {/* Address / Language / Age row */}
+          {/* Address / Language / Age row / education */}
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             <div className="rounded-2xl ring-1 ring-base-200 bg-base-100 p-4 flex items-start gap-3">
               <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -207,6 +208,17 @@ const DisplayHost = () => {
                     ? info.languages.join(", ")
                     : "english, german"}
                 </p>
+              </div>
+            </div>
+
+            {/* ✅ Education (new) */}
+            <div className="rounded-2xl ring-1 ring-base-200 bg-base-100 p-4 flex items-start gap-3">
+              <GraduationCap className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-base-content/60">
+                  Education
+                </p>
+                <p className="text-base">{info?.educations || "—"}</p>
               </div>
             </div>
 
@@ -234,6 +246,7 @@ const DisplayHost = () => {
               <h2 className="text-lg font-semibold">Description</h2>
             </header>
             <textarea
+              placeholder="Host Description"
               readOnly
               className="textarea textarea-bordered w-full min-h-36 text-base"
               value={

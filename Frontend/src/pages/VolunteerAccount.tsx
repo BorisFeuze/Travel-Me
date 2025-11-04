@@ -46,7 +46,7 @@ const VolunteerAccount = () => {
     "French",
     "Portuguese",
   ];
-  const educationOptions = ["High School", "Bachelor's", "Master's", "PhD"];
+  const educationOptions = ["High School", "Bachelor", "Master", "PhD"];
   const genderOptions = ["Female", "Male", "Other"];
 
   //for dropedown closing
@@ -222,6 +222,7 @@ const VolunteerAccount = () => {
 
               <label className="absolute bottom-0 right-0 bg-black text-white rounded-full p-2 cursor-pointer hover:bg-gray-800 transition">
                 <input
+                  placeholder="Upload Profile Picture"
                   type="file"
                   accept="image/*"
                   className="hidden"
