@@ -8,7 +8,7 @@ type CardHostType = {
   email: string;
 };
 
-const CardHost = ({ _id, firstName, email }: CardHostType) => {
+const CardHost = ({ _id, firstName }: CardHostType) => {
   const [info, setInfo] = useState<UserProfileData | null>(null);
 
   useEffect(() => {
