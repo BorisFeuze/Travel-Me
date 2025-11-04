@@ -32,7 +32,7 @@ const VolunteerInfoBox = () => {
       className={`
         /* mobile: dentro il flow */
         w-full max-w-full bg-white border border-slate-200 shadow-sm rounded-md
-        px-3 py-2 mb-4 flex items-center gap-3
+        px-3 py-2 mb-4 flex items-center gap-3 z-10
         /* desktop: torna assoluto in alto a destra */
         md:absolute md:top-3 md:right-6 md:w-auto md:max-w-[200px] md:shadow-md
       `}
