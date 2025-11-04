@@ -40,7 +40,6 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
 
   const [open, setOpen] = useState(false);
 
-  // carico le job offers per popolare i menu
   useEffect(() => {
     const run = async () => {
       try {
@@ -48,9 +47,10 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
         const res = await getAllJobOffers();
         const rows = res?.jobOffers ?? [];
         setJobs(rows);
-      } catch (e: any) {
-        console.error(e);
-        setError(e?.message || "Failed to load job offers.");
+      } catch (e) {
+        const error = e as Error;
+        console.error(error);
+        setError(error.message || "Failed to load job offers.");
       } finally {
         setLoading(false);
       }
@@ -61,18 +61,18 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
   // opzioni base
   useEffect(() => {
     if (!jobs.length) return;
-    setContinentOptions(unique(jobs.map((j: any) => j.continent)));
+    setContinentOptions(unique(jobs.map((j) => j.continent)));
     setSkillsOptions(
-      unique(jobs.flatMap((j: any) => (Array.isArray(j.needs) ? j.needs : [])))
+      unique(jobs.flatMap((j) => (Array.isArray(j.needs) ? j.needs : [])))
     );
   }, [jobs]);
 
   // quando cambia continente → paesi
   useEffect(() => {
-    const filtered = jobs.filter((j: any) =>
+    const filtered = jobs.filter((j) =>
       continent ? j.continent === continent : true
     );
-    const countries = unique(filtered.map((j: any) => j.country));
+    const countries = unique(filtered.map((j) => j.country));
     setCountryOptions(countries);
 
     if (country && !countries.includes(country)) {
@@ -84,11 +84,11 @@ const Filters = ({ onChange, initial }: FiltersProps) => {
   // quando cambia paese → location
   useEffect(() => {
     const filtered = jobs.filter(
-      (j: any) =>
+      (j) =>
         (continent ? j.continent === continent : true) &&
         (country ? j.country === country : true)
     );
-    const locs = unique(filtered.map((j: any) => j.location));
+    const locs = unique(filtered.map((j) => j.location));
     setLocationOptions(locs);
 
     if (location && !locs.includes(location)) {

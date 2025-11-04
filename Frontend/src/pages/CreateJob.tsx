@@ -355,7 +355,7 @@ const CreateJob = () => {
             </span>
           </label>
           <textarea
-            className="textarea textarea-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition capitalize"
+            className="textarea textarea-bordered w-full mb-4 shadow-sm focus:ring-2 focus:ring-gray-400 transition"
             placeholder="Enter job description"
             value={formData.description}
             onChange={(e) => handleInputChange("description", e.target.value)}

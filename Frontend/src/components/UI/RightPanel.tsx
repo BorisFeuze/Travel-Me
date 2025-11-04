@@ -101,7 +101,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
         border-l border-slate-200
         flex flex-col
         transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "translate-x-[calc(100%-1.75rem)]"}
+        ${isOpen ? "translate-x-0" : "translate-x-[calc(100%-0rem)]"}
       `}
     >
       {/* toggle */}
@@ -109,10 +109,10 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
         onClick={onToggle}
         className="
           absolute -left-7 top-1/2 -translate-y-1/2
-          w-7 h-14 rounded-l-md bg-white border border-slate-200
-          text-slate-500 text-base
+          w-7 h-14 rounded-l-md bg-pink-600 border border-black
+          text-white text-[1.4rem]
           flex items-center justify-center
-          shadow-sm hover:bg-slate-50 transition
+          shadow-sm hover:bg-black transition cursor-pointer
         "
         title={isOpen ? "Close panel" : "Open panel"}
       >
@@ -158,13 +158,6 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
                 Logout
               </button>
             </div>
-
-            <button
-              className="w-9 h-9 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center text-sm text-slate-500 hover:bg-slate-50"
-              title="Notifications"
-            >
-              ●
-            </button>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -192,7 +185,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
             {signedIn && (
               <button
                 onClick={handleCreateJob}
-                className="text-xs text-sky-600 hover:text-sky-500"
+                className="text-[0.9rem] text-pink-600 hover:text-black cursor-pointer"
               >
                 + Add
               </button>
@@ -264,7 +257,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
                 disabled={!signedIn}
                 className={`text-xs px-3 py-1.5 rounded-sm transition ${
                   signedIn
-                    ? "bg-sky-500 text-white hover:bg-sky-400"
+                    ? "bg-pink-600 text-white hover:bg-black cursor-pointer"
                     : "bg-slate-100 text-slate-400 cursor-not-allowed"
                 }`}
               >
@@ -280,7 +273,7 @@ const RightPanel = ({ isOpen, onToggle }: RightPanelProps) => {
             <p className="text-[13px] font-medium text-slate-800 tracking-tight">
               {monthLabel}
             </p>
-            <div className="flex gap-1">
+            <div className="flex gap-1 ">
               <button className="text-xs px-2 py-1 bg-white border border-slate-200 rounded-sm hover:bg-slate-50">
                 {"‹"}
               </button>

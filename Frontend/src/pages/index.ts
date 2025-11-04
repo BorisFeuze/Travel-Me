@@ -8,7 +8,6 @@ import DetailJob from "./DetailJob";
 import DetailContinent from "./DetailContinent";
 import DetailSkill from "./DetailSkill";
 
-import CountryLists from "./CountyLists";
 import Opportunities from "./Opportunities";
 
 import VolunteerAccount from "./VolunteerAccount";
@@ -26,7 +25,6 @@ export {
   Registration,
   CreateJob,
   DetailJob,
-  CountryLists,
   Opportunities,
   DisplayHost,
   DetailContinent,

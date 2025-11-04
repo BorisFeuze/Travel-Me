@@ -3,7 +3,7 @@ import { ToastContainer } from "react-toastify";
 import { AuthProvider, UserProvider, useAuth } from "@/context";
 import RightPanel from "@/components/UI/RightPanel";
 import VolunteerInfoBox from "@/components/UI/VolunteerInfoBox";
-import Sidebar from "@/components/UI/Navbar"; // 👈 la tua nuova sidebar compatta
+import Sidebar from "@/components/UI/Navbar";
 import { useState } from "react";
 
 const RootLayout = () => {
@@ -34,12 +34,12 @@ const LayoutContent = () => {
         {/* 👇 spazio per la sidebar: stessa larghezza della sidebar */}
         <main
           className="
-            flex-1 overflow-y-auto bg-white relative
+            flex-1 overflow-y-auto bg-white relative 
             pl-[72px]   /* larghezza sidebar */
           "
         >
           {/* padding interno lo gestisci tu */}
-          <div className="relative w-[90%] m-auto p-7 sm:p-10 lg:p-16">
+          <div className="relative w-[100%] m-auto p-7 sm:p-10 lg:p-16 ">
             {isHome && !isHost && <VolunteerInfoBox />}
             <Outlet />
           </div>

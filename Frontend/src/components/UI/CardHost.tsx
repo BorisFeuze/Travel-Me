@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUserDetails } from "@/data";
+import avatarPlaceholder from "@/assets/images/avatarPlaceholder.png";
 
 type CardHostType = {
   _id: string;
@@ -7,7 +8,7 @@ type CardHostType = {
   email: string;
 };
 
-const CardHost = ({ _id, firstName, email }: CardHostType) => {
+const CardHost = ({ _id, firstName }: CardHostType) => {
   const [info, setInfo] = useState<UserProfileData | null>(null);
 
   useEffect(() => {
@@ -44,7 +45,10 @@ const CardHost = ({ _id, firstName, email }: CardHostType) => {
             className="h-16 w-16 rounded-full object-cover"
           />
         ) : (
-          <span>{email}</span>
+          <img
+            src={avatarPlaceholder}
+            className="h-16 w-16 rounded-full object-cover"
+          ></img>
         )}
       </div>
       <div className="text-sm font-medium">{firstName}</div>

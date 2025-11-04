@@ -93,7 +93,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
   return (
     <div className="max-w-full bg-white pb-10">
       {/* header */}
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-3 pt-5 pb-3">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-3 pt-10 pb-10">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl sm:text-3xl font-semibold text-black leading-tight">
@@ -111,7 +111,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
               </span>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-md sm:text-md text-slate-400 mt-3">
             Welcome to Travel 👋
           </p>
         </div>
@@ -129,18 +129,10 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
         <h2 className="text-sm sm:text-base font-medium text-black">
           {loading
             ? "Loading results…"
-            : `${filteredJobs.length} result${
-                filteredJobs.length === 1 ? "" : "s"
+            : `${filteredJobs.length} Job Offers found${
+                filteredJobs.length === 1 ? "" : ""
               }`}
         </h2>
-        {!loading && filteredJobs.length > visibleCount && (
-          <button
-            onClick={() => setVisibleCount(filteredJobs.length)}
-            className="text-xs sm:text-sm text-black/80 hover:text-black"
-          >
-            View all
-          </button>
-        )}
       </div>
 
       {/* jobs */}
@@ -160,7 +152,7 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
         </p>
       ) : (
         <>
-          <div className="px-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div className="px-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-10">
             {visibleJobs.map((job) => (
               <article
                 key={job._id}

@@ -12,7 +12,7 @@ import logo_icon from "../../assets/images/Chat/logo_icon.svg";
 import avatar_icon from "../../assets/images/Chat/avatar_icon.png";
 // import gallery_icon from "../../assets/images/Chat/gallery_icon.svg";
 // import send_button from "../../assets/images/Chat/send_button.svg";
-import { formatMessageTime } from "@/library";
+import { formatMessageTime } from "@/utils";
 import { getUserDetails } from "@/data";
 // import { useAuth } from "@/context";
 import { Send } from "lucide-react";
@@ -246,7 +246,7 @@ const ChatContainer = ({
       </div>
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center pt-100 gap-2 text-gray-500 bg-white">
+    <div className="flex flex-col items-center relative justify-center pt-88 gap-2 text-gray-500 bg-white">
       <img src={logo_icon} alt="" className="max-w-16" />
       <p className="text-lg font-medium">Chat anytime, anywhere</p>
     </div>
