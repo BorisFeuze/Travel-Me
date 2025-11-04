@@ -4,7 +4,6 @@ import Filters from "./Filters";
 import { MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/context";
-import video from "@/assets/images/3018669-hd_1920_1080_24fps.mp4";
 
 type JobOffersListProps = {
   initial?: Partial<{
@@ -93,31 +92,6 @@ const JobFilterCard = ({ initial }: JobOffersListProps) => {
 
   return (
     <div className="max-w-full bg-white pb-10">
-      {/* 🔹 Banner sopra l'header */}
-      <div className="w-full mb-4 relative rounded-2xl overflow-hidden shadow-md border-2">
-        {/* 🔹 Video di sfondo */}
-        <video
-          src={video} // <-- assicurati che sia nella cartella public/
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-48 sm:h-184 object-cover"
-        ></video>
-
-        {/* 🔹 Testo centrato sopra il video */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-          <div className="flex flex-col">
-            <h2 className="text-white text-xl sm:text-5xl font-semibold text-center">
-              You're next adventure starts here!
-            </h2>
-            <h2 className="text-white text-md sm:text-3xl font-semibold text-center mt-3">
-              Find the perfect job for your Trip
-            </h2>
-          </div>
-        </div>
-      </div>
-
       {/* header */}
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-3 pt-10 pb-10">
         <div>

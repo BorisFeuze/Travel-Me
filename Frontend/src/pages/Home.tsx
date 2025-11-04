@@ -12,6 +12,7 @@ import {
 } from "@/components/UI";
 // import RightPanel from "@/components/UI/RightPanel";
 import JobSectionsTabs from "@/components/UI/JobSelectionTab";
+import video from "@/assets/images/3018669-hd_1920_1080_24fps.mp4";
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
@@ -26,7 +27,30 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen ">
+      <div className="w-full mb-4 relative rounded-2xl overflow-hidden shadow-md border-2">
+        {/* 🔹 Video di sfondo */}
+        <video
+          src={video} // <-- assicurati che sia nella cartella public/
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-48 sm:h-184 object-cover"
+        ></video>
+
+        {/* 🔹 Testo centrato sopra il video */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <div className="flex flex-col">
+            <h2 className="text-white text-xl sm:text-5xl font-semibold text-center">
+              You're next adventure starts here!
+            </h2>
+            <h2 className="text-white text-md sm:text-3xl font-semibold text-center mt-3">
+              Find the perfect job for your Trip
+            </h2>
+          </div>
+        </div>
+      </div>
       {/* NAV placeholder */}
 
       {/* HERO */}
