@@ -24,7 +24,7 @@ Travel‑Me is a full‑stack web app for skill exchange and short‑term hostin
 1. Clone repo
    ```bash
    git clone <repo-url>
-   cd /Users/huaguo/MyFirstDirectory/fullstack/finalproject/Travel-Me
+   cd YOUR DICTORY
    ```
 2. Backend
    ```bash
@@ -82,12 +82,12 @@ DB_NAME=Travel-Me
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
-PORT=4000
+PORT=8000
 ```
 
 Frontend `.env` example:
 ```
-VITE_API_BASE_URL=http://localhost:4000
+VITE_API_BASE_URL=http://localhost:8000
 VITE_CLIENT_BASE_URL=http://localhost:5173
 ```
 
@@ -119,4 +119,5 @@ VITE_CLIENT_BASE_URL=http://localhost:5173
 ## Contact
 - Maintainer: add your contact or GitHub handle here.
 
-License: MIT
+License of all Development and Design by Travel-Me teammember: Boris Feuze, Mateusz Olszewski, Leon Rabl, Hua Guo;
+10-11.2025
