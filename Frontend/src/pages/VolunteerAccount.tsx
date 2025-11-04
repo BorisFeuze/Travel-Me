@@ -1,15 +1,10 @@
 import { useState, useEffect, type ChangeEvent } from "react";
-import {
-  addUserDetails,
-  getUserDetails,
-  updateUserDetails,
-} from "@/data";
+import { addUserDetails, getUserDetails, updateUserDetails } from "@/data";
 import { useAuth } from "@/context";
 import { toast } from "react-toastify";
 import avatarPlaceholder from "@/assets/images/avatarPlaceholder.png";
 
 const VolunteerAccount = () => {
-
   type VolunteerFormData = UserProfileFormData &
     Pick<RegisterData, "firstName" | "lastName" | "email" | "phoneNumber">;
   const { user } = useAuth();
@@ -114,7 +109,6 @@ const VolunteerAccount = () => {
   };
 
   const handleSave = async () => {
-    
     if (!profileId) {
       if (
         !formData.continent ||
@@ -255,7 +249,6 @@ const VolunteerAccount = () => {
                 {user?.firstName} {user?.lastName}
               </h2>
               <p className="text-gray-600 text-sm">{user?.email}</p>
-              <p className="text-gray-600 text-sm">{user?.phoneNumber}</p>
             </div>
           </div>
 
@@ -266,11 +259,9 @@ const VolunteerAccount = () => {
             </label>
             <textarea
               placeholder="Please introduce yourself as a host and describe your place."
-              className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y capitalize"
+              className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y"
               value={formData.description}
-              onChange={(e) =>
-                handleInputChange("description", e.target.value)
-              }
+              onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
         </section>

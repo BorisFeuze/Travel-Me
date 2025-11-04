@@ -54,11 +54,17 @@ const Sidebar = () => {
       >
         {/* Logo */}
         <div className="p-2 mt-6 mb-4">
-          <img src={logo} alt="TravelMe Logo" className="h-20 w-auto" />
+          <Link to="/">
+            <img
+              src={logo}
+              alt="TravelMe Logo"
+              className="h-20 w-auto cursor-pointer hover:opacity-90 transition"
+            />
+          </Link>
         </div>
 
         {/* Menu icons */}
-        <nav className="flex flex-col items-center mb-40 justify-center gap-4 flex-1">
+        <nav className="flex flex-col items-center mb-40 justify-center gap-4 flex-1 transition">
           <SidebarLink
             to="/"
             icon={<Home className="w-5 h-5" />}
@@ -70,7 +76,7 @@ const Sidebar = () => {
           {signedIn && (
             <SidebarLink
               to="/chat"
-              icon={<MessageSquare className="w-5 h-5" />}
+              icon={<MessageSquare className="w-5 h-5 transition " />}
               active={isActive("/chat")}
               label="Chat"
               onClick={() => setIsOpen(false)}
@@ -84,7 +90,7 @@ const Sidebar = () => {
                   ? "/hostAccount"
                   : "/volunteerAccount"
               }
-              icon={<User className="w-5 h-5" />}
+              icon={<User className="w-5 h-5 transition" />}
               active={isActive(
                 user?.roles?.[0] === "host"
                   ? "/hostAccount"

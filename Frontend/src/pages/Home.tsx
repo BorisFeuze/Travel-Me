@@ -43,7 +43,7 @@ const Home = () => {
         <div className="absolute inset-0 flex items-center justify-center bg-black/40">
           <div className="flex flex-col">
             <h2 className="text-white text-xl sm:text-5xl font-semibold text-center">
-              You're next adventure starts here!
+              Your next adventure starts here!
             </h2>
             <h2 className="text-white text-md sm:text-3xl font-semibold text-center mt-3">
               Find the perfect job for your Trip

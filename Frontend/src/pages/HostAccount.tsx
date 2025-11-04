@@ -11,7 +11,6 @@ import { JobCard } from "@/components/UI";
 import { toast } from "react-toastify";
 import avatarPlaceholder from "@/assets/images/avatarPlaceholder.png";
 
-
 const HostAccount = () => {
   const navigate = useNavigate();
 
@@ -169,96 +168,95 @@ const HostAccount = () => {
   };
 
   const handleSave = async () => {
-    
-  if (!profileId) {
-    if (
-      !formData.continent ||
-      !formData.country ||
-      !formData.gender ||
-      !formData.address ||
-      !formData.age ||
-      !formData.description ||
-      !formData.educations ||
-      !formData.skills ||
-      !formData.languages
-    ) {
-      setSaveMessage({
-        text: "Please fill all required fields.",
-        type: "error",
-      });
-      toast.error("Please fill all required fields.");
-      return;
-    }
-  }
-
-  setIsSaving(true);
-  setSaveMessage(null);
-  formData.userId = user!._id;
-
-  try {
-    const data = new FormData();
-    data.append("userId", formData.userId);
-
-    if (selectedFile instanceof File) {
-      data.append("pictureURL", selectedFile);
-    } else if (Array.isArray(formData.pictureURL) && formData.pictureURL[0]) {
-      data.append("existingPictureURL", formData.pictureURL[0]);
-    } else if (typeof formData.pictureURL === "string") {
-      data.append("existingPictureURL", formData.pictureURL);
+    if (!profileId) {
+      if (
+        !formData.continent ||
+        !formData.country ||
+        !formData.gender ||
+        !formData.address ||
+        !formData.age ||
+        !formData.description ||
+        !formData.educations ||
+        !formData.skills ||
+        !formData.languages
+      ) {
+        setSaveMessage({
+          text: "Please fill all required fields.",
+          type: "error",
+        });
+        toast.error("Please fill all required fields.");
+        return;
+      }
     }
 
-    data.append("age", formData.age?.toString() || "");
-    data.append("continent", formData.continent);
-    data.append("country", formData.country);
-    data.append("address", formData.address);
-    data.append("description", formData.description);
-    data.append("gender", formData.gender);
-    formData.educations.forEach((edu) => data.append("educations", edu));
-    formData.skills.forEach((ski) => data.append("skills", ski));
-    formData.languages.forEach((lan) => data.append("languages", lan));
+    setIsSaving(true);
+    setSaveMessage(null);
+    formData.userId = user!._id;
 
-    let updatedUser;
-    if (profileId) {
-      updatedUser = await updateUserDetails(profileId, data);
-    } else {
-      updatedUser = await addUserDetails(data);
+    try {
+      const data = new FormData();
+      data.append("userId", formData.userId);
+
+      if (selectedFile instanceof File) {
+        data.append("pictureURL", selectedFile);
+      } else if (Array.isArray(formData.pictureURL) && formData.pictureURL[0]) {
+        data.append("existingPictureURL", formData.pictureURL[0]);
+      } else if (typeof formData.pictureURL === "string") {
+        data.append("existingPictureURL", formData.pictureURL);
+      }
+
+      data.append("age", formData.age?.toString() || "");
+      data.append("continent", formData.continent);
+      data.append("country", formData.country);
+      data.append("address", formData.address);
+      data.append("description", formData.description);
+      data.append("gender", formData.gender);
+      formData.educations.forEach((edu) => data.append("educations", edu));
+      formData.skills.forEach((ski) => data.append("skills", ski));
+      formData.languages.forEach((lan) => data.append("languages", lan));
+
+      let updatedUser;
+      if (profileId) {
+        updatedUser = await updateUserDetails(profileId, data);
+      } else {
+        updatedUser = await addUserDetails(data);
+      }
+
+      if (
+        updatedUser &&
+        "userProfiles" in updatedUser &&
+        Array.isArray(updatedUser.userProfiles) &&
+        updatedUser.userProfiles[0]
+      ) {
+        setProfileId(updatedUser.userProfiles[0]._id);
+      }
+
+      toast.success(
+        profileId
+          ? "Your Host Profile has been updated successfully."
+          : "Your Host Profile is successfully created."
+      );
+
+      setSaveMessage({ text: "Changes saved successfully!", type: "success" });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong!";
+
+      if (
+        !message.includes("undefined") &&
+        !message.includes("reading '0'") &&
+        !message.includes("userProfiles")
+      ) {
+        toast.error(message);
+      } else {
+        console.warn("Non-critical internal issue:", message);
+      }
+
+      setSaveMessage({ text: "Error while saving changes.", type: "error" });
+    } finally {
+      setIsSaving(false);
     }
-
-    if (
-      updatedUser &&
-      "userProfiles" in updatedUser &&
-      Array.isArray(updatedUser.userProfiles) &&
-      updatedUser.userProfiles[0]
-    ) {
-      setProfileId(updatedUser.userProfiles[0]._id);
-    }
-
-    toast.success(
-      profileId
-        ? "Your Host Profile has been updated successfully."
-        : "Your Host Profile is successfully created."
-    );
-
-    setSaveMessage({ text: "Changes saved successfully!", type: "success" });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Something went wrong!";
-
-    if (
-      !message.includes("undefined") &&
-      !message.includes("reading '0'") &&
-      !message.includes("userProfiles")
-    ) {
-      toast.error(message);
-    } else {
-      console.warn("Non-critical internal issue:", message);
-    }
-
-    setSaveMessage({ text: "Error while saving changes.", type: "error" });
-  } finally {
-    setIsSaving(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-10 pb-8 px-4 sm:px-6 lg:px-8">
@@ -321,11 +319,9 @@ const HostAccount = () => {
             </label>
             <textarea
               placeholder="Please introduce yourself as a host and describe your place."
-              className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y capitalize"
+              className="w-full min-h-[120px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/20 resize-y"
               value={formData.description}
-              onChange={(e) =>
-                handleInputChange("description", e.target.value)
-              }
+              onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
         </section>
