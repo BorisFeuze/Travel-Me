@@ -45,9 +45,10 @@ const ContinentCompact = () => {
         setLoading(true);
         const res = await getAllJobOffers();
         setOffers(res?.jobOffers ?? []);
-      } catch (e: any) {
-        console.error(e);
-        setError(e?.message || "Failed to load job offers.");
+      } catch (e) {
+        const error = e as Error;
+        console.error(error);
+        setError(error.message || "Failed to load job offers.");
       } finally {
         setLoading(false);
       }
