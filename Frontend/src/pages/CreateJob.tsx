@@ -526,14 +526,17 @@ const CreateJob = () => {
             )}
           </div>
 
-          {/* save Button */}
-          <button
-            className={`btn w-full ${isSaving ? "loading" : ""} bg-black text-white border-none hover:shadow-lg transition`}
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            Save Job Offer
-          </button>
+          {/* Save Button */}
+          <div className="col-span-full w-full flex items-center justify-center mt-4 mb-4">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-xl bg-black px-8 py-3 text-white text-sm font-medium shadow-sm hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-black/20 disabled:opacity-50"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save Job Offer"}
+            </button>
+          </div>
 
           {saveMessage && (
             <p
