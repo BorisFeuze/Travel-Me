@@ -56,6 +56,10 @@ const CreateJob = () => {
     "Building",
     "Gardening",
     "First Aid",
+    "Renovation",
+    "Farming",
+    "Painting",
+    "Hostel Work"
   ];
   const languageOptions = [
     "English",
