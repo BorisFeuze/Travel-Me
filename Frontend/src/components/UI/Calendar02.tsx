@@ -26,24 +26,24 @@ export function Calendar02({
   onDateSelect,
   selectedRanges = [],
   onMultiRangeSelect,
-  className,
   classNames,
   showOutsideDays = true,
 }: CalendarProps) {
-  const [month, setMonth] = React.useState(new Date());
+  const [month, setMonth] = React.useState<Date>(new Date());
   const [currentRange, setCurrentRange] = React.useState<DateRange | undefined>();
-  const [monthsToShow, setMonthsToShow] = React.useState(2);
+  const [monthsToShow, setMonthsToShow] = React.useState<number>(2);
 
+  // 🔹 Responsive Verhalten (Wechsel bei < 1100 px)
   React.useEffect(() => {
     const handleResize = () => {
       setMonthsToShow(window.innerWidth < 1200 ? 1 : 2);
     };
-
-    handleResize(); 
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 🔹 Gespeicherte Datumsbereiche in einzelne Tage umwandeln
   const savedDates = React.useMemo(() => {
     const dates: Date[] = [];
     selectedRanges.forEach((range) => {
@@ -60,25 +60,44 @@ export function Calendar02({
     return dates;
   }, [selectedRanges]);
 
-  const baseClassNames = {
-    months:
-      "flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-center justify-center",
-    caption: "text-sm font-medium text-center text-gray-700 mb-2",
-    table: "w-full border-collapse",
+  // 🔹 Basisklassen für DayPicker
+  const baseClassNames: Record<string, string> = {
+    months: cn(
+      "grid gap-8 justify-center items-start",
+      monthsToShow === 1 ? "grid-cols-1" : "grid-cols-2",
+      "transition-all duration-300 ease-in-out"
+    ),
+    month: cn(
+      "flex flex-col items-center justify-start w-full",
+      "text-gray-800 text-sm sm:text-[0.9rem]"
+    ),
+    caption: cn(
+      "text-sm sm:text-base font-medium text-center text-gray-700 mb-3 sm:mb-4"
+    ),
+    table: "w-full border-collapse text-[13px] sm:text-[14px]",
     head_row: "flex justify-between mb-2",
-    head_cell: "text-gray-500 w-8 font-normal text-[0.8rem]",
+    head_cell: "text-gray-500 w-8 font-normal text-[0.8rem] sm:text-[0.9rem]",
     row: "flex w-full justify-between",
-    cell: "text-center w-8 h-8 rounded-md hover:bg-gray-100 cursor-pointer text-sm",
+    cell: cn(
+      "text-center w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-md",
+      "hover:bg-gray-100 cursor-pointer text-sm transition-colors"
+    ),
     day_selected: "bg-blue-600 text-white",
     day_today: "border border-blue-400",
     ...classNames,
   };
 
+  // 🔹 Dynamischer Wrapper – grauer Hintergrund passt sich automatisch an
   const wrapperClasses = cn(
-    "p-4 sm:p-5 w-full max-w-[700px] sm:max-w-[800px] mx-auto transition-all",
-    className
+    "p-3 sm:p-5 rounded-2xl transition-all duration-300 ease-in-out",
+    "flex flex-col items-center justify-center mx-auto",
+    "bg-gray-50 shadow-sm",
+    monthsToShow === 1
+      ? "max-w-[400px]" // kompakter für einen Monat
+      : "max-w-[850px]" // breiter für zwei Monate
   );
 
+  // 🔹 Gemeinsame Props für beide Modi
   const dayPickerProps = {
     month,
     onMonthChange: setMonth,
@@ -92,6 +111,7 @@ export function Calendar02({
     },
   };
 
+  // 🔹 Multi-Range Modus
   if (multiRange) {
     return (
       <DayPicker
@@ -100,7 +120,11 @@ export function Calendar02({
         selected={currentRange}
         onSelect={(range: DateRange | undefined) => {
           setCurrentRange(range);
-          if (range?.from && range?.to && range.from.getTime() !== range.to.getTime()) {
+          if (
+            range?.from &&
+            range?.to &&
+            range.from.getTime() !== range.to.getTime()
+          ) {
             onMultiRangeSelect?.([...selectedRanges, range]);
             setTimeout(() => setCurrentRange(undefined), 200);
           }
@@ -109,11 +133,12 @@ export function Calendar02({
     );
   }
 
+  // 🔹 Single-Date Modus
   return (
     <DayPicker
       {...dayPickerProps}
       mode="single"
-      required={true}
+      required
       selected={selectedDate}
       onSelect={onDateSelect as OnSelectHandler<Date>}
     />
