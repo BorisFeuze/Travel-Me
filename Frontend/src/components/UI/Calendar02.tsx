@@ -33,7 +33,6 @@ export function Calendar02({
   const [currentRange, setCurrentRange] = React.useState<DateRange | undefined>();
   const [monthsToShow, setMonthsToShow] = React.useState<number>(2);
 
-  // 🔹 Responsive Verhalten (Wechsel bei < 1100 px)
   React.useEffect(() => {
     const handleResize = () => {
       setMonthsToShow(window.innerWidth < 1200 ? 1 : 2);
@@ -43,7 +42,6 @@ export function Calendar02({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 🔹 Gespeicherte Datumsbereiche in einzelne Tage umwandeln
   const savedDates = React.useMemo(() => {
     const dates: Date[] = [];
     selectedRanges.forEach((range) => {
@@ -60,7 +58,6 @@ export function Calendar02({
     return dates;
   }, [selectedRanges]);
 
-  // 🔹 Basisklassen für DayPicker
   const baseClassNames: Record<string, string> = {
     months: cn(
       "grid gap-8 justify-center items-start",
@@ -87,17 +84,15 @@ export function Calendar02({
     ...classNames,
   };
 
-  // 🔹 Dynamischer Wrapper – grauer Hintergrund passt sich automatisch an
   const wrapperClasses = cn(
     "p-3 sm:p-5 rounded-2xl transition-all duration-300 ease-in-out",
     "flex flex-col items-center justify-center mx-auto",
     "bg-gray-50 shadow-sm",
     monthsToShow === 1
-      ? "max-w-[400px]" // kompakter für einen Monat
-      : "max-w-[850px]" // breiter für zwei Monate
+      ? "max-w-[400px]" 
+      : "max-w-[850px]" 
   );
 
-  // 🔹 Gemeinsame Props für beide Modi
   const dayPickerProps = {
     month,
     onMonthChange: setMonth,
